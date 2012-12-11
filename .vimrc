@@ -40,7 +40,6 @@ NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'tyru/altercmd'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
-
 " required!
 filetype plugin indent on
 " }}}
@@ -148,6 +147,13 @@ let g:neocomplcache_enable_underbar_completion= 1
 " Align {{{
 let g:Align_xstrlen= 3
 " }}}
+" vimwiki {{{
+let g:vimwiki_list= [{
+            \'path':      '~/documents/site/vimwiki/wiki',
+            \'path_html': '~/documents/site/vimwiki/html',
+            \'ext':       '.md',
+            \}]
+" }}}
 " }}}
 " mapping {{{
 cnoremap <C-D>            <Del>
@@ -202,6 +208,12 @@ set title
 set expandtab
 set nowrap
 set textwidth=0
+" .swpとbackupファイルをテンポラリに作成
+set backup
+set writebackup
+set backupdir=/tmp/vim,.
+set swapfile
+set directory=/tmp/vim,.
 " 全角スペースを視覚化
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
 augroup Hilighting
