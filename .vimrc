@@ -40,6 +40,7 @@ NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'tyru/altercmd'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
+NeoBundle 'tomtom/tcomment_vim'
 " required!
 filetype plugin indent on
 " }}}
@@ -149,8 +150,8 @@ let g:Align_xstrlen= 3
 " }}}
 " vimwiki {{{
 let g:vimwiki_list= [{
-            \'path':      '~/documents/site/vimwiki/wiki',
-            \'path_html': '~/documents/site/vimwiki/html',
+            \'path':      '~/documents/site/vimwiki/wiki/',
+            \'path_html': '~/documents/site/vimwiki/html/',
             \'ext':       '.md',
             \}]
 " }}}
@@ -224,7 +225,7 @@ augroup END
 " template {{{
 augroup ReadTemplate
     autocmd!
-    autocmd FileType perl,cgi :compiler perl
+    autocmd FileType perl,cgi compiler perl
     autocmd BufNewFile *.pl,*.cgi 0r $HOME/templates/BufNewFile.pl
     autocmd BufNewFile *.pm       0r $HOME/templates/BufNewFile.pm
     autocmd BufNewFile *.h,*.hpp  0r $HOME/templates/BufNewFile.h
@@ -236,6 +237,7 @@ augroup END
 call altercmd#define('perldoc', 'Unite ref/perldoc')
 call altercmd#define('unite', 'Unite')
 call altercmd#define('ref', 'Unite ref')
+call altercmd#define('vimwi[ki2html]', 'VimwikiAll2HTML')
 " }}}
 " auto make directory when write file {{{
 augroup AutoMakeDiectoryWhenWriteFile
@@ -247,9 +249,6 @@ augroup AutoMakeDiectoryWhenWriteFile
         endif
     endfunction
 augroup END
-" }}}
-" Q {{{
-command! -nargs=0 -complete=command Q qall
 " }}}
 " auto open qfix window when make {{{
 command! -nargs=* Make make <args> | cwindow 3
