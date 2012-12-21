@@ -6,8 +6,8 @@
 let g:ref_use_vimproc= 1
 let g:ref_jscore_path= ''
 let g:ref_jsdom_path=  ''
-let g:ref_html_path=   $HOME . '/documents/vim-ref-doc/www.aptana.com/reference/html/api/'
-let g:ref_html5_path=  $HOME . '/documents/vim-ref-doc/www.html5.jp/tag/elements/'
+let g:ref_html_path=   $HOME.'/documents/vim-ref-doc/www.aptana.com/reference/html/api/'
+let g:ref_html5_path=  $HOME.'/documents/vim-ref-doc/www.html5.jp/tag/elements/'
 " }}}
 " neobundle {{{
 filetype off
@@ -37,10 +37,11 @@ NeoBundle 'taglist.vim'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'thinca/vim-quickrun'
-NeoBundle 'tyru/altercmd'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
+NeoBundle 'vimwiki'
 NeoBundle 'tomtom/tcomment_vim'
+NeoBundle 'tyru/vim-altercmd'
 " required!
 filetype plugin indent on
 " }}}
@@ -139,6 +140,20 @@ let g:netrw_nogx= 1 " disable netrw's gx mapping.
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 " }}}
+" quickrun {{{
+let g:quickrun_config= {}
+let g:quickrun_config.perl= {
+            \   'type'                     : 'perl/perl6',
+            \   'outputter'                : 'buffer',
+            \   'outputter/close_on_empty' : '1',
+            \}
+let g:quickrun_config.vimwiki= {
+            \   'type'                     : 'vimwiki',
+            \   'outputter'                : 'buffer',
+            \   'outputter/close_on_empty' : '1',
+            \   'command'                  : '/home/kamichidu/local/bin/markdown',
+            \}
+" }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup= 1
 let g:neocomplcache_enable_wildcard=   1
@@ -150,9 +165,10 @@ let g:Align_xstrlen= 3
 " }}}
 " vimwiki {{{
 let g:vimwiki_list= [{
-            \'path':      '~/documents/site/vimwiki/wiki/',
-            \'path_html': '~/documents/site/vimwiki/html/',
-            \'ext':       '.md',
+            \'path'      : '~/documents/site/vimwiki/wiki/',
+            \'path_html' : '~/documents/site/vimwiki/html/',
+            \'syntax'    : 'markdown',
+            \'ext'       : '.md',
             \}]
 " }}}
 " }}}
@@ -185,6 +201,12 @@ inoremap <Leader>w3cd <C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR>
 " }}}
 " color {{{
 colorscheme peachpuff
+" }}}
+" filetype {{{
+augroup tex-filetype-config
+    au!
+    autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex
+augroup END
 " }}}
 " editor {{{
 " 新しい行のインデントを現在行と同じにする
@@ -221,6 +243,10 @@ augroup Hilighting
     autocmd!
     autocmd BufNewFile,BufRead * match ZenkakuSpace /　/
 augroup END
+" 全角文字のずれを修正
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
 " }}}
 " template {{{
 augroup ReadTemplate
@@ -234,10 +260,15 @@ augroup END
 " }}}
 " command {{{
 " altercmd {{{
-call altercmd#define('perldoc', 'Unite ref/perldoc')
-call altercmd#define('unite', 'Unite')
-call altercmd#define('ref', 'Unite ref')
-call altercmd#define('vimwi[ki2html]', 'VimwikiAll2HTML')
+"call altercmd#define('perldoc','Unite ref/perldoc')
+"call altercmd#define('unite','Unite')
+"call altercmd#define('ref','Unite ref')
+"call altercmd#define('vimwi[ki2html]','VimwikiAll2HTML')
+call altercmd#load()
+AlterCommand perldoc Ref perldoc
+AlterCommand unite Unite
+AlterCommand ref Unite ref
+AlterCommand vimwi[ki2html] VimwikiAll2HTML
 " }}}
 " auto make directory when write file {{{
 augroup AutoMakeDiectoryWhenWriteFile
