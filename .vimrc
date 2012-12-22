@@ -33,6 +33,9 @@ NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/vimshell', {
             \'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
             \}
+NeoBundle 'Shougo/vimfiler', {
+            \'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+            \}
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/webapi-vim'
