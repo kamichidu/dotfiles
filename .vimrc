@@ -21,12 +21,18 @@ endif
 " required!
 NeoBundle 'Shougo/neobundle.vim'
 " recommended to install
-NeoBundle 'Shougo/vimproc'
+NeoBundle 'Shougo/vimproc', {
+            \'build': {
+            \   'unix': 'make -f make_unix.mak', 
+            \   }, 
+            \}
 " after install, turn shell ~/.bundle/vimproc, (n,g)make -f your_machines_makefile
 NeoBundle 'DrawIt'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/vimshell'
+NeoBundle 'Shougo/vimshell', {
+            \'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+            \}
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/webapi-vim'
@@ -202,10 +208,14 @@ inoremap <Leader>w3cd <C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR>
 " color {{{
 colorscheme peachpuff
 " }}}
-" filetype {{{
+" filetype depended config {{{
 augroup tex-filetype-config
     au!
     autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex
+augroup END
+augroup perl-filetype-config
+    au!
+    autocmd BufNewFile *.pl,*.cgi,*.t setlocal fileencoding=utf8
 augroup END
 " }}}
 " editor {{{
@@ -249,7 +259,7 @@ if exists('&ambiwidth')
 endif
 " }}}
 " template {{{
-augroup ReadTemplate
+augroup read-template-file
     autocmd!
     autocmd FileType perl,cgi compiler perl
     autocmd BufNewFile *.pl,*.cgi 0r $HOME/templates/BufNewFile.pl
@@ -265,13 +275,14 @@ augroup END
 "call altercmd#define('ref','Unite ref')
 "call altercmd#define('vimwi[ki2html]','VimwikiAll2HTML')
 call altercmd#load()
-AlterCommand perldoc Ref perldoc
-AlterCommand unite Unite
-AlterCommand ref Unite ref
+AlterCommand perldoc        Ref perldoc
+AlterCommand unite          Unite
+AlterCommand ref            Unite ref
 AlterCommand vimwi[ki2html] VimwikiAll2HTML
+AlterCommand man            Ref man
 " }}}
-" auto make directory when write file {{{
-augroup AutoMakeDiectoryWhenWriteFile
+" automatically make directory when write file {{{
+augroup automatically-make-directory
     autocmd!
     autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
     function! s:auto_mkdir(dir, force)
