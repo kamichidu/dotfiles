@@ -36,6 +36,9 @@ NeoBundle 'Shougo/vimshell', {
 NeoBundle 'Shougo/vimfiler', {
             \'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
             \}
+NeoBundle 'Shougo/neosnippet', {
+            \'depends': ['Shougo/neocomplcache'], 
+            \}
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/webapi-vim'
@@ -118,7 +121,7 @@ let g:proj_run2='!git checkout -- %f'
 let g:proj_run_fold2='*!git checkout -- %f'
 " git status
 let g:proj_run3='!git status'
-augroup VimProjectOpen
+augroup vim-project-open
     autocmd!
     autocmd BufAdd .vimprojects silent! %foldopen!
 augroup END
@@ -152,15 +155,21 @@ vmap gx <Plug>(openbrowser-smart-search)
 " quickrun {{{
 let g:quickrun_config= {}
 let g:quickrun_config.perl= {
-            \   'type'                     : 'perl/perl6',
+            \   'type'                     : 'perl',
             \   'outputter'                : 'buffer',
-            \   'outputter/close_on_empty' : '1',
+            \   'outputter/close_on_empty' : 1,
             \}
 let g:quickrun_config.vimwiki= {
             \   'type'                     : 'vimwiki',
             \   'outputter'                : 'buffer',
-            \   'outputter/close_on_empty' : '1',
-            \   'command'                  : '/home/kamichidu/local/bin/markdown',
+            \   'outputter/close_on_empty' : 1,
+            \   'command'                  : $HOME.'/local/markdown/1.0.1/Markdown.pl',
+            \}
+let g:quickrun_config.perl6= {
+            \   'type'                     : 'perl6',
+            \   'outputter'                : 'buffer',
+            \   'outputter/close_on_empty' : 1,
+            \   'command'                  : $HOME.'/perl6.rakudo/rakudo/perl6',
             \}
 " }}}
 " neocomplcache {{{
@@ -168,6 +177,12 @@ let g:neocomplcache_enable_at_startup= 1
 let g:neocomplcache_enable_wildcard=   1
 let g:neocomplcache_enable_camel_case_completion= 1
 let g:neocomplcache_enable_underbar_completion= 1
+" }}}
+" neosnippet {{{
+let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
+let g:neosnippet#disable_runtime_snippets= {
+            \'_': 1, 
+            \}
 " }}}
 " Align {{{
 let g:Align_xstrlen= 3
@@ -201,6 +216,13 @@ nnoremap <silent>         <C-P>    :tabN<CR>
 noremap  <silent>         <C-O>    :Tlist<CR><C-w>h
 vnoremap <                <gv
 vnoremap >                >gv
+imap     <expr><Tab>      neocomplcache#sources#snippets_complete#expandable() ? 
+            \   "\<Plug>(neocomplcache_snippets_expand)"
+            \:
+            \   pumvisible() ?
+            \       "\<C-n>"
+            \   :
+            \       "\<Tab>"
 
 " 時刻入力用のコマンド
 inoremap <Leader>date <C-R>=strftime('%Y-%m-%d (%a)')<CR>
@@ -252,7 +274,7 @@ set swapfile
 set directory=/tmp/vim,.
 " 全角スペースを視覚化
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
-augroup Hilighting
+augroup hilighting-special-character
     autocmd!
     autocmd BufNewFile,BufRead * match ZenkakuSpace /　/
 augroup END
@@ -261,27 +283,13 @@ if exists('&ambiwidth')
     set ambiwidth=double
 endif
 " }}}
-" template {{{
-augroup read-template-file
-    autocmd!
-    autocmd FileType perl,cgi compiler perl
-    autocmd BufNewFile *.pl,*.cgi 0r $HOME/templates/BufNewFile.pl
-    autocmd BufNewFile *.pm       0r $HOME/templates/BufNewFile.pm
-    autocmd BufNewFile *.h,*.hpp  0r $HOME/templates/BufNewFile.h
-    autocmd BufNewFile *.c,*.cpp  0r $HOME/templates/BufNewFile.cpp
-augroup END
-" }}}
 " command {{{
 " altercmd {{{
-"call altercmd#define('perldoc','Unite ref/perldoc')
-"call altercmd#define('unite','Unite')
-"call altercmd#define('ref','Unite ref')
-"call altercmd#define('vimwi[ki2html]','VimwikiAll2HTML')
 call altercmd#load()
 AlterCommand perldoc        Ref perldoc
 AlterCommand unite          Unite
 AlterCommand ref            Unite ref
-AlterCommand vimwi[ki2html] VimwikiAll2HTML
+AlterCommand vimwi[ki2html] !~/documents/sources/perl/tools/markdown/vimwikiall2html.sh
 AlterCommand man            Ref man
 " }}}
 " automatically make directory when write file {{{
@@ -297,7 +305,7 @@ augroup END
 " }}}
 " auto open qfix window when make {{{
 command! -nargs=* Make make <args> | cwindow 3
-augroup AutoOpenQFixWindow
+augroup automatically-open-qfixwindow
     autocmd!
     autocmd QuickFixCmdPost [^l]* nested cwindow
     autocmd QuickFixCmdPost    l* nested lwindow
