@@ -301,7 +301,7 @@ function! s:make_dirs(dir_list)
 
         for l:tmpdir in l:tmpdirs
             if !isdirectory(l:tmpdir)
-                call mkdir(l:tmpdir, 'p', 0700)
+                call mkdir(iconv(l:tmpdir, &encoding, &termencoding), 'p')
             endif
         endfor
     else
@@ -377,6 +377,13 @@ set swapfile
 set directory=~/.tmp/vim/,.
 " swpとbackupファイルの宛先がなければ作成
 call s:make_dirs(&backupdir.','.&directory)
+" 無限undo
+if has('persistent_undo')
+    set undodir=~/.tmp/vim/undo/
+    set undofile
+
+    call s:make_dirs(&undodir)
+endif
 " 全角スペースを視覚化
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
 augroup hilighting-special-character
