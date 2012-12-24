@@ -196,93 +196,6 @@ let g:vimwiki_list= [{
             \}]
 " }}}
 " }}}
-" mapping {{{
-cnoremap <C-D>            <Del>
-cnoremap <C-H>            <Left>
-cnoremap <C-L>            <Right>
-inoremap <C-D>            <Del>
-inoremap <C-H>            <Left>
-inoremap <C-J>            <Down>
-inoremap <C-K>            <Up>
-inoremap <C-L>            <Right>
-inoremap <Leader><Leader> <Leader>
-inoremap <Leader>H        <Home>
-inoremap <Leader>e        <End>
-inoremap <Leader>h        <Esc>I
-nnoremap <silent>         ,t       :tabnew<CR>
-nnoremap <silent>         <C-H>    :nohlsearch<CR>
-nnoremap <silent>         <C-N>    :tabn<CR>
-nnoremap <silent>         <C-P>    :tabN<CR>
-noremap  <silent>         <C-O>    :Tlist<CR><C-w>h
-vnoremap <                <gv
-vnoremap >                >gv
-imap     <expr><Tab>      neocomplcache#sources#snippets_complete#expandable() ? 
-            \   "\<Plug>(neocomplcache_snippets_expand)"
-            \:
-            \   pumvisible() ?
-            \       "\<C-n>"
-            \   :
-            \       "\<Tab>"
-
-" 時刻入力用のコマンド
-inoremap <Leader>date <C-R>=strftime('%Y-%m-%d (%a)')<CR>
-inoremap <Leader>time <C-R>=strftime('%H:%M:%S')<CR>
-inoremap <Leader>now  <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
-inoremap <Leader>w3cd <C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR>
-" }}}
-" color {{{
-colorscheme peachpuff
-" }}}
-" filetype depended config {{{
-augroup tex-filetype-config
-    au!
-    autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex
-augroup END
-augroup perl-filetype-config
-    au!
-    autocmd BufNewFile *.pl,*.cgi,*.t setlocal fileencoding=utf8
-augroup END
-" }}}
-" editor {{{
-" 新しい行のインデントを現在行と同じにする
-set autoindent
-" 行番号を表示
-set number
-" シフト移動幅
-set shiftwidth=4
-" 閉じ括弧が入力されたとき、対応する括弧を表示
-set showmatch
-" 新しい行が入力されたとき、高度な自動インデントを行う
-set smartindent
-" 行頭の余白内でtabを入力すると、shiftwidthの数だけインデント
-set smarttab
-" ファイル内の<tab>が対応する空白の数
-set tabstop=4
-" カーソルを行頭行末で止まらないようにする
-set whichwrap=b,s,h,l,<,>,[,]
-" 検索をファイル先頭にループしない
-set nowrapscan
-set title
-set expandtab
-set nowrap
-set textwidth=0
-" .swpとbackupファイルをテンポラリに作成
-set backup
-set writebackup
-set backupdir=/tmp/vim,.
-set swapfile
-set directory=/tmp/vim,.
-" 全角スペースを視覚化
-highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
-augroup hilighting-special-character
-    autocmd!
-    autocmd BufNewFile,BufRead * match ZenkakuSpace /　/
-augroup END
-" 全角文字のずれを修正
-if exists('&ambiwidth')
-    set ambiwidth=double
-endif
-" }}}
 " command {{{
 " altercmd {{{
 call altercmd#load()
@@ -342,5 +255,121 @@ endfunction
 " AlignReset {{{
 command! -nargs=0 AlignReset call Align#AlignCtrl('default')
 " }}}
+" mapping helper {{{
+function! MappingHelperTabBehavior()
+    if neocomplcache#sources#snippets_complete#expandable()
+        return "\<Plug>(neocomplcache_snippets_expand)"
+    elseif pumvisible()
+        return "\<C-n>"
+    else
+        return "\<Tab>"
+    endif
+endfunction
+" }}}
+" on save action {{{
+augroup on-save-action
+    au!
+    autocmd BufWritePre * call s:trim_or_append_empty_line()
+augroup END
+
+function! s:trim_or_append_empty_line()
+    " 現在のカーソル位置を記憶
+    let l:store_cursor_pos= getpos('.')
+
+    " 最終行が空行でなければ、改行追加
+    if !empty(getline('$'))
+        normal G$o
+    else
+        " 空行でない最終行番号 + 1 <  最終行番号
+        " この場合余分に改行がついているので、トリム
+        while prevnonblank('$') + 1 < line('$')
+            normal GkJ
+        endwhile
+    endif
+    
+    " 処理前のカーソル位置に戻す
+    call setpos('.', l:store_cursor_pos)
+endfunction
+" }}}
+" }}}
+" mapping {{{
+cnoremap <C-D>            <Del>
+cnoremap <C-H>            <Left>
+cnoremap <C-L>            <Right>
+inoremap <C-D>            <Del>
+inoremap <C-H>            <Left>
+inoremap <C-J>            <Down>
+inoremap <C-K>            <Up>
+inoremap <C-L>            <Right>
+inoremap <Leader><Leader> <Leader>
+inoremap <Leader>H        <Home>
+inoremap <Leader>e        <End>
+inoremap <Leader>h        <Esc>I
+nnoremap <silent>         ,t       :tabnew<CR>
+nnoremap <silent>         <C-H>    :nohlsearch<CR>
+nnoremap <silent>         <C-N>    :tabn<CR>
+nnoremap <silent>         <C-P>    :tabN<CR>
+noremap  <silent>         <C-O>    :Tlist<CR><C-w>h
+vnoremap <                <gv
+vnoremap >                >gv
+imap     <expr><Tab>      MappingHelperTabBehavior()
+" 時刻入力用のコマンド
+inoremap <Leader>date <C-R>=strftime('%Y-%m-%d (%a)')<CR>
+inoremap <Leader>time <C-R>=strftime('%H:%M:%S')<CR>
+inoremap <Leader>now  <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
+inoremap <Leader>w3cd <C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR>
+" }}}
+" color {{{
+colorscheme peachpuff
+" }}}
+" filetype depended config {{{
+augroup tex-filetype-config
+    au!
+    autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex
+augroup END
+augroup perl-filetype-config
+    au!
+    autocmd BufNewFile *.pl,*.cgi,*.t setlocal fileencoding=utf8
+augroup END
+" }}}
+" editor {{{
+" 新しい行のインデントを現在行と同じにする
+set autoindent
+" 行番号を表示
+set number
+" シフト移動幅
+set shiftwidth=4
+" 閉じ括弧が入力されたとき、対応する括弧を表示
+set showmatch
+" 新しい行が入力されたとき、高度な自動インデントを行う
+set smartindent
+" 行頭の余白内でtabを入力すると、shiftwidthの数だけインデント
+set smarttab
+" ファイル内の<tab>が対応する空白の数
+set tabstop=4
+" カーソルを行頭行末で止まらないようにする
+set whichwrap=b,s,h,l,<,>,[,]
+" 検索をファイル先頭にループしない
+set nowrapscan
+set title
+set expandtab
+set nowrap
+set textwidth=0
+" .swpとbackupファイルをテンポラリに作成
+set backup
+set writebackup
+set backupdir=/tmp/vim,.
+set swapfile
+set directory=/tmp/vim,.
+" 全角スペースを視覚化
+highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
+augroup hilighting-special-character
+    autocmd!
+    autocmd BufNewFile,BufRead * match ZenkakuSpace /　/
+augroup END
+" 全角文字のずれを修正
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
 " }}}
 
