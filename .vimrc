@@ -181,7 +181,9 @@ let g:neocomplcache_enable_underbar_completion= 1
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
 let g:neosnippet#disable_runtime_snippets= {
-            \'_': 1, 
+            \'cpp': 1, 
+            \'perl': 1, 
+            \'sh': 1, 
             \}
 " }}}
 " Align {{{
@@ -255,17 +257,6 @@ endfunction
 " AlignReset {{{
 command! -nargs=0 AlignReset call Align#AlignCtrl('default')
 " }}}
-" mapping helper {{{
-function! MappingHelperTabBehavior()
-    if neocomplcache#sources#snippets_complete#expandable()
-        return "\<Plug>(neocomplcache_snippets_expand)"
-    elseif pumvisible()
-        return "\<C-n>"
-    else
-        return "\<Tab>"
-    endif
-endfunction
-" }}}
 " on save action {{{
 augroup on-save-action
     au!
@@ -291,6 +282,34 @@ function! s:trim_or_append_empty_line()
     call setpos('.', l:store_cursor_pos)
 endfunction
 " }}}
+" helper {{{
+" mapping helper {{{
+function! MappingHelperTabBehavior()
+    if neocomplcache#sources#snippets_complete#expandable()
+        return "\<Plug>(neocomplcache_snippets_expand)"
+    elseif pumvisible()
+        return "\<C-n>"
+    else
+        return "\<Tab>"
+    endif
+endfunction
+" }}}
+" mkdir by dir list comma separated form {{{
+function! s:make_dirs(dir_list)
+    if exists('*mkdir')
+        let l:tmpdirs= split(a:dir_list, ',', 0)
+
+        for l:tmpdir in l:tmpdirs
+            if !isdirectory(l:tmpdir)
+                call mkdir(l:tmpdir, 'p', 0700)
+            endif
+        endfor
+    else
+        echoerr "doesn't exists mkdir function!"
+    endif
+endfunction
+" }}}
+" }}}
 " }}}
 " mapping {{{
 cnoremap <C-D>            <Del>
@@ -313,11 +332,6 @@ noremap  <silent>         <C-O>    :Tlist<CR><C-w>h
 vnoremap <                <gv
 vnoremap >                >gv
 imap     <expr><Tab>      MappingHelperTabBehavior()
-" 時刻入力用のコマンド
-inoremap <Leader>date <C-R>=strftime('%Y-%m-%d (%a)')<CR>
-inoremap <Leader>time <C-R>=strftime('%H:%M:%S')<CR>
-inoremap <Leader>now  <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
-inoremap <Leader>w3cd <C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR>
 " }}}
 " color {{{
 colorscheme peachpuff
@@ -358,9 +372,11 @@ set textwidth=0
 " .swpとbackupファイルをテンポラリに作成
 set backup
 set writebackup
-set backupdir=/tmp/vim,.
+set backupdir=~/.tmp/vim/,.
 set swapfile
-set directory=/tmp/vim,.
+set directory=~/.tmp/vim/,.
+" swpとbackupファイルの宛先がなければ作成
+call s:make_dirs(&backupdir.','.&directory)
 " 全角スペースを視覚化
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
 augroup hilighting-special-character

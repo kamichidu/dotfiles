@@ -1,0 +1,11 @@
+snippet include_guard
+alias   #if
+options head
+	#ifndef ${1:#:unique_identifier}
+	#define $1
+
+	${2:TARGET}
+
+	#endif // $1
+	${99}
+
