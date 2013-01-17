@@ -54,6 +54,8 @@ NeoBundle 'kana/vim-tabpagecd'
 NeoBundle 'vimwiki'
 NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tyru/vim-altercmd'
+NeoBundle 'koron/maze3d-vim'
+NeoBundle 'koron/nyancat-vim'
 " required!
 filetype plugin indent on
 " }}}
@@ -121,7 +123,7 @@ let g:proj_run2='!git checkout -- %f'
 let g:proj_run_fold2='*!git checkout -- %f'
 " git status
 let g:proj_run3='!git status'
-augroup vim-project-open
+augroup vim_project_open
     autocmd!
     autocmd BufAdd .vimprojects silent! %foldopen!
 augroup END
@@ -197,6 +199,13 @@ let g:vimwiki_list= [{
             \'ext'       : '.md',
             \}]
 " }}}
+" vimfiler {{{
+let g:vimfiler_as_default_explorer= 1
+" }}}
+" matchit {{{
+let b:match_ignorecase= 1
+let b:match_words=      &matchpairs.",<:>,<if>:<endif>,<function>:<endfunction>"
+" }}}
 " }}}
 " command {{{
 " altercmd {{{
@@ -208,7 +217,7 @@ AlterCommand vimwi[ki2html] !~/documents/sources/perl/tools/markdown/vimwikiall2
 AlterCommand man            Ref man
 " }}}
 " automatically make directory when write file {{{
-augroup automatically-make-directory
+augroup automatically_make_directory
     autocmd!
     autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
     function! s:auto_mkdir(dir, force)
@@ -220,7 +229,7 @@ augroup END
 " }}}
 " auto open qfix window when make {{{
 command! -nargs=* Make make <args> | cwindow 3
-augroup automatically-open-qfixwindow
+augroup automatically_open_qfixwindow
     autocmd!
     autocmd QuickFixCmdPost [^l]* nested cwindow
     autocmd QuickFixCmdPost    l* nested lwindow
@@ -258,7 +267,7 @@ endfunction
 command! -nargs=0 AlignReset call Align#AlignCtrl('default')
 " }}}
 " on save action {{{
-augroup on-save-action
+augroup on_save_action
     au!
     autocmd BufWritePre * call s:trim_or_append_empty_line()
 augroup END
@@ -284,6 +293,14 @@ endfunction
 " }}}
 " helper {{{
 " mapping helper {{{
+function! MappingHelperToggleCursorLine()
+    if &cursorline
+        setlocal nocursorline
+    else
+        setlocal cursorline
+    endif
+    return "\<C-L>"
+endfunction
 function! MappingHelperTabBehavior()
     if neocomplcache#sources#snippets_complete#expandable()
         return "\<Plug>(neocomplcache_snippets_expand)"
@@ -312,38 +329,48 @@ endfunction
 " }}}
 " }}}
 " mapping {{{
-cnoremap <C-D>            <Del>
-cnoremap <C-H>            <Left>
-cnoremap <C-L>            <Right>
-inoremap <C-D>            <Del>
-inoremap <C-H>            <Left>
-inoremap <C-J>            <Down>
-inoremap <C-K>            <Up>
-inoremap <C-L>            <Right>
-inoremap <Leader><Leader> <Leader>
-inoremap <Leader>H        <Home>
-inoremap <Leader>e        <End>
-inoremap <Leader>h        <Esc>I
-nnoremap <silent>         ,t       :tabnew<CR>
-nnoremap <silent>         <C-H>    :nohlsearch<CR>
-nnoremap <silent>         <C-N>    :tabn<CR>
-nnoremap <silent>         <C-P>    :tabN<CR>
-noremap  <silent>         <C-O>    :Tlist<CR><C-w>h
-vnoremap <                <gv
-vnoremap >                >gv
-imap     <expr><Tab>      MappingHelperTabBehavior()
+cnoremap <C-D>             <Del>
+cnoremap <C-H>             <Left>
+cnoremap <C-L>             <Right>
+inoremap <C-D>             <Del>
+inoremap <C-H>             <Left>
+inoremap <C-J>             <Down>
+inoremap <C-K>             <Up>
+inoremap <C-L>             <Right>
+inoremap <Leader><Leader>  <Leader>
+inoremap <Leader>H         <Home>
+inoremap <Leader>e         <End>
+inoremap <Leader>h         <Esc>I
+nnoremap <silent>,t        :tabnew<CR>
+nnoremap <silent><C-H>     :nohlsearch<CR>
+nnoremap <silent><C-N>     :tabn<CR>
+nnoremap <silent><C-P>     :tabN<CR>
+nnoremap zl                zL
+nnoremap zh                zH
+nnoremap <CR>              i<CR><Esc>
+nnoremap <expr><Leader>cl  MappingHelperToggleCursorLine()
+noremap  <silent><Leader>o :Tlist<CR><C-w>h
+" noremap  <C-[>             <C-[><C-L>
+" noremap  <Esc>             <Esc><C-L>
+vnoremap <                 <gv
+vnoremap >                 >gv
+imap     <expr><Tab>       MappingHelperTabBehavior()
 " }}}
 " color {{{
 colorscheme peachpuff
 " }}}
 " filetype depended config {{{
-augroup tex-filetype-config
+augroup tex_filetype_config
     au!
     autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex
 augroup END
-augroup perl-filetype-config
+augroup perl_filetype_config
     au!
     autocmd BufNewFile *.pl,*.cgi,*.t setlocal fileencoding=utf8
+augroup END
+augroup freemarker_config
+    au!
+    autocmd BufEnter,BufReadPre *.ftl setlocal filetype=ftl
 augroup END
 " }}}
 " editor {{{
@@ -386,7 +413,7 @@ if has('persistent_undo')
 endif
 " 全角スペースを視覚化
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
-augroup hilighting-special-character
+augroup hilighting_special_character
     autocmd!
     autocmd BufNewFile,BufRead * match ZenkakuSpace /　/
 augroup END
