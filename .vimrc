@@ -350,8 +350,7 @@ nnoremap zh                zH
 nnoremap <CR>              i<CR><Esc>
 nnoremap <expr><Leader>cl  MappingHelperToggleCursorLine()
 noremap  <silent><Leader>o :Tlist<CR><C-w>h
-" noremap  <C-[>             <C-[><C-L>
-" noremap  <Esc>             <Esc><C-L>
+inoremap <C-[>             <C-[><C-L>
 vnoremap <                 <gv
 vnoremap >                 >gv
 imap     <expr><Tab>       MappingHelperTabBehavior()
@@ -421,5 +420,7 @@ augroup END
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
+" キーシーケンスの待ち時間を設定
+set timeoutlen=200
 " }}}
 
