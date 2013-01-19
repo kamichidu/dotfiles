@@ -341,7 +341,7 @@ inoremap <Leader><Leader>  <Leader>
 inoremap <Leader>H         <Home>
 inoremap <Leader>e         <End>
 inoremap <Leader>h         <Esc>I
-nnoremap <silent>,t        :tabnew<CR>
+nnoremap <silent><Leader>t :tabnew<CR>
 nnoremap <silent><C-H>     :nohlsearch<CR>
 nnoremap <silent><C-N>     :tabn<CR>
 nnoremap <silent><C-P>     :tabN<CR>
@@ -420,7 +420,5 @@ augroup END
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
-" キーシーケンスの待ち時間を設定
-set timeoutlen=200
 " }}}
 
