@@ -291,9 +291,19 @@ function! s:trim_or_append_empty_line()
     call setpos('.', l:store_cursor_pos)
 endfunction
 " }}}
+" }}}
+" mapping {{{
 " helper {{{
 " mapping helper {{{
-function! MappingHelperToggleCursorLine()
+function! s:toggle_virtualedit()
+    if &virtualedit =~# 'all'
+        setlocal virtualedit=
+    else
+        setlocal virtualedit=all
+    endif
+    return "\<C-L>"
+endfunction
+function! s:toggle_cursorline()
     if &cursorline
         setlocal nocursorline
     else
@@ -301,7 +311,7 @@ function! MappingHelperToggleCursorLine()
     endif
     return "\<C-L>"
 endfunction
-function! MappingHelperTabBehavior()
+function! s:emulate_tab()
     if neocomplcache#sources#snippets_complete#expandable()
         return "\<Plug>(neocomplcache_snippets_expand)"
     elseif pumvisible()
@@ -327,8 +337,6 @@ function! s:make_dirs(dir_list)
 endfunction
 " }}}
 " }}}
-" }}}
-" mapping {{{
 cnoremap <C-D>             <Del>
 cnoremap <C-H>             <Left>
 cnoremap <C-L>             <Right>
@@ -337,23 +345,30 @@ inoremap <C-H>             <Left>
 inoremap <C-J>             <Down>
 inoremap <C-K>             <Up>
 inoremap <C-L>             <Right>
-inoremap <Leader><Leader>  <Leader>
-inoremap <Leader>H         <Home>
-inoremap <Leader>e         <End>
-inoremap <Leader>h         <Esc>I
-nnoremap <silent><Leader>t :tabnew<CR>
+" prefix-tag for insert-mode
+inoremap <SID>[tag] <Nop>
+imap     <Leader>   <SID>[tag]
+" prefix-tag for normal-mode
+nnoremap <SID>[tag] <Nop>
+nmap     <Leader>   <SID>[tag]
+inoremap <SID>[tag]<Leader>  <Leader>
+inoremap <SID>[tag]H         <Home>
+inoremap <SID>[tag]e         <End>
+inoremap <SID>[tag]h         <Esc>I
+nnoremap <silent><SID>[tag]t :tabnew<CR>
 nnoremap <silent><C-H>     :nohlsearch<CR>
 nnoremap <silent><C-N>     :tabn<CR>
 nnoremap <silent><C-P>     :tabN<CR>
 nnoremap zl                zL
 nnoremap zh                zH
 nnoremap <CR>              i<CR><Esc>
-nnoremap <expr><Leader>cl  MappingHelperToggleCursorLine()
-noremap  <silent><Leader>o :Tlist<CR><C-w>h
+nmap <expr><SID>[tag]cl  <SID>toggle_cursorline()
+nmap <expr><SID>[tag]ve  <SID>toggle_virtualedit()
+nnoremap <silent><SID>[tag]o :Tlist<CR><C-w>h
 inoremap <C-[>             <C-[><C-L>
 vnoremap <                 <gv
 vnoremap >                 >gv
-imap     <expr><Tab>       MappingHelperTabBehavior()
+imap     <expr><Tab>       <SID>emulate_tab()
 " }}}
 " color {{{
 colorscheme peachpuff
