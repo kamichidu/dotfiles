@@ -1,0 +1,85 @@
+snippet comment
+alias javadoc
+    /**
+     * ${0:TARGET}
+     */
+
+snippet author
+alias @author
+    @author ${0:$TM_FULLNAME}
+
+snippet {code
+alias @code
+abbr {
+    {@code ${0}
+
+snippet deprecated
+alias @deprecated
+    @deprecated ${0:#:description}
+
+snippet {docRoot
+alias @docRoot
+abbr {
+    {@docRoot
+
+snippet {inheritDoc
+alias @inheritDoc
+abbr {
+    {@inheritDoc
+
+snippet {link
+alias @link
+abbr {
+    {@link ${1:#:target} ${0:#:label}}
+
+snippet {linkplain
+alias @link_plain
+abbr {
+    {@linkplain ${1:#:target} ${0:#:label}}
+
+snippet {literal
+alias @literal
+abbr {
+    {@literal ${0}}
+
+snippet param
+alias @param
+    @param ${1:#:var} ${0:#:description}
+
+snippet return
+alias @return
+    @return ${0:#:description}
+
+snippet see
+alias @see
+    @see ${0:#:reference}
+
+snippet serial
+alias @serial
+    @serial ${0:#:description}
+
+snippet sd
+alias @serialField
+    @serialField ${0:#:description}
+
+snippet sf
+alias @serialField
+    @serialField ${1:#:name} ${2:#:type} ${0:#:description}
+
+snippet since
+alias @since
+    @since ${0:#:version}
+
+snippet throws
+alias @throws
+    @throws ${1:#:class} ${0:#:description}
+
+snippet {value
+alias @value
+abbr {
+    {@value ${0}
+
+snippet version
+alias @version
+    @version ${0:#:version}
+

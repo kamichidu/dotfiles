@@ -1,5 +1,5 @@
 " vim:foldmethod=marker:fen:
-" scriptencoding utf-8
+scriptencoding utf-8
 
 " plugin {{{
 " vim-ref {{{
@@ -56,6 +56,7 @@ NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tyru/vim-altercmd'
 NeoBundle 'koron/maze3d-vim'
 NeoBundle 'koron/nyancat-vim'
+NeoBundle 'h1mesuke/vim-alignta'
 " required!
 filetype plugin indent on
 " }}}
@@ -178,18 +179,27 @@ let g:quickrun_config.perl6= {
 let g:neocomplcache_enable_at_startup= 1
 let g:neocomplcache_enable_wildcard=   1
 let g:neocomplcache_enable_camel_case_completion= 1
-let g:neocomplcache_enable_underbar_completion= 1
+let g:neocomplcache_enable_underbar_completion=   1
+let g:neocomplcache_enable_ignore_case= 1
+let g:neocomplcache_enable_smart_case=  1
+" キャッシュ置き場
+if has('unix')
+    let g:neocomplcache_temporary_dir= $HOME.'/.tmp/vim/.neocomplcache/'
+elseif has('win64') || has('win32') || has('win16')
+    let g:neocomplcache_temporary_dir= $TEMP.'/vim/.neocomplcache/'
+endif
+" シンタックス補完はうざいのでいらない
+let g:neocomplcache_disabled_sources_list= get(g:, 'neocomplcache_disabled_sources_list', {})
+let g:neocomplcache_disabled_sources_list['_']= ['syntax_complete']
+" 関数補完時の区切り文字
+let g:neocomplcache_delimiter_patterns= get(g:, 'neocomplcache_delimiter_patterns', {})
+let g:neocomplcache_delimiter_patterns.cpp= ['\.', '->', '::']
 " }}}
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
 let g:neosnippet#disable_runtime_snippets= {
-            \'cpp': 1, 
-            \'perl': 1, 
-            \'sh': 1, 
+            \'_': 1, 
             \}
-" }}}
-" Align {{{
-let g:Align_xstrlen= 3
 " }}}
 " vimwiki {{{
 let g:vimwiki_list= [{
@@ -263,9 +273,6 @@ function! s:cmd_capture(q_args)
     call setline(1, split(output, '\n'))
 endfunction
 " }}}
-" AlignReset {{{
-command! -nargs=0 AlignReset call Align#AlignCtrl('default')
-" }}}
 " on save action {{{
 augroup on_save_action
     au!
@@ -311,15 +318,6 @@ function! s:toggle_cursorline()
     endif
     return "\<C-L>"
 endfunction
-function! s:emulate_tab()
-    if neocomplcache#sources#snippets_complete#expandable()
-        return "\<Plug>(neocomplcache_snippets_expand)"
-    elseif pumvisible()
-        return "\<C-n>"
-    else
-        return "\<Tab>"
-    endif
-endfunction
 " }}}
 " mkdir by dir list comma separated form {{{
 function! s:make_dirs(dir_list)
@@ -355,25 +353,39 @@ inoremap <SID>[tag]<Leader>  <Leader>
 inoremap <SID>[tag]H         <Home>
 inoremap <SID>[tag]e         <End>
 inoremap <SID>[tag]h         <Esc>I
-nnoremap <silent><SID>[tag]t :tabnew<CR>
+nnoremap <silent><SID>[tag]tt :tabnew<CR>
+nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
+nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
+nnoremap <silent><SID>[tag]vf :VimFiler<CR>
+nnoremap <expr><SID>[tag]cl  <SID>toggle_cursorline()
+nnoremap <expr><SID>[tag]ve  <SID>toggle_virtualedit()
+nnoremap <silent><SID>[tag]o :Tlist<CR><C-w>h
 nnoremap <silent><C-H>     :nohlsearch<CR>
 nnoremap <silent><C-N>     :tabn<CR>
 nnoremap <silent><C-P>     :tabN<CR>
 nnoremap zl                zL
 nnoremap zh                zH
 nnoremap <CR>              i<CR><Esc>
-nmap <expr><SID>[tag]cl  <SID>toggle_cursorline()
-nmap <expr><SID>[tag]ve  <SID>toggle_virtualedit()
-nnoremap <silent><SID>[tag]o :Tlist<CR><C-w>h
 inoremap <C-[>             <C-[><C-L>
 vnoremap <                 <gv
 vnoremap >                 >gv
-imap     <expr><Tab>       <SID>emulate_tab()
+imap <expr><Tab> neosnippet#expandable_or_jumpable() ? 
+            \"\<Plug>(neosnippet_expand_or_jump)" : 
+            \pumvisible() ? 
+            \   "\<C-N>" :
+            \   "\<Tab>"
+smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
+            \"\<Plug>(neosnippet_expand_or_jump)" :
+            \"\<Tab>"
 " }}}
 " color {{{
 colorscheme peachpuff
 " }}}
 " filetype depended config {{{
+augroup antlr3_filetype_config
+    au!
+    autocmd BufNewFile,BufRead *.g setl filetype=antlr3
+augroup END
 augroup tex_filetype_config
     au!
     autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex

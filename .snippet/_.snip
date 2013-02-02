@@ -1,24 +1,29 @@
 snippet     today
+alias       date_today
 abbr        yyyy:mm:dd
 options     word
 	`strftime('%Y-%m-%d')`
 
 snippet     today_a
+alias       date_today_a
 abbr        yyyy:mm:dd (a)
 options     word
 	`strftime('%Y-%m-%d (%a)')`
 
 snippet     now
+alias       date_now
 abbr        yyyy:mm:dd hh:mm:ss
 options     word
 	`strftime('%Y-%m-%d %H:%M:%S')`
 
 snippet     now_a
+alias       date_now_a
 abbr        YYYY:mm:dd (a) hh:mm:ss
 options     word
 	`strftime('%Y-%m-%d (%a) %H:%M:%S')`
 
 snippet     time
+alias       date_time
 abbr        hh:mm:ss
 options     word
 	`strftime('%H:%M:%S')`
