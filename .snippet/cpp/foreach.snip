@@ -1,6 +1,13 @@
-snippet foreach
-alias   each
+snippet		foreach
+alias		each
 	for(auto ${1:#:var} : ${2:#:container}){
 		${3:TARGET}
 	}
+
+snippet		for
+	for(${1:int i= 0}; ${2:i < ${3\}}; ${4:++i})
+	{
+		${0}
+	}
+	
 

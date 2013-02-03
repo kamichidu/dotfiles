@@ -1,0 +1,21 @@
+# #include <...>
+snippet include
+alias   #include
+    #include <${1:#:name}>${0}
+
+# #include "..."
+snippet include2
+alias   #include
+    #include "${1}"${0}
+
+snippet ifndef
+alias   #ifndef
+abbr #ifndef ... #define ... #endif
+    #ifndef $1
+    #define ${1:#:SYMBOL}
+    #endif${0}
+
+snippet def
+alias   #define
+    #define $0
+
