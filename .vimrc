@@ -276,7 +276,7 @@ endfunction
 " on save action {{{
 augroup on_save_action
     au!
-    autocmd BufWritePre * call s:trim_or_append_empty_line()
+    " autocmd BufWritePre * call s:trim_or_append_empty_line()
 augroup END
 
 function! s:trim_or_append_empty_line()
@@ -353,27 +353,25 @@ inoremap <SID>[tag]<Leader>  <Leader>
 inoremap <SID>[tag]H         <Home>
 inoremap <SID>[tag]e         <End>
 inoremap <SID>[tag]h         <Esc>I
-nnoremap <silent><SID>[tag]tt :tabnew<CR>
-nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
-nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
-nnoremap <silent><SID>[tag]vf :VimFiler<CR>
-nnoremap <expr><SID>[tag]cl  <SID>toggle_cursorline()
-nnoremap <expr><SID>[tag]ve  <SID>toggle_virtualedit()
-nnoremap <silent><SID>[tag]o :Tlist<CR><C-w>h
+nnoremap <silent><SID>[tag]tt   :tabnew<CR>
+nnoremap <silent><SID>[tag]ubo  :Unite bookmark<CR>
+nnoremap <silent><SID>[tag]ubu  :Unite buffer<CR>
+nnoremap <silent><SID>[tag]vf   :VimFiler<CR>
+nnoremap <expr><SID>[tag]cl     <SID>toggle_cursorline()
+nnoremap <expr><SID>[tag]ve     <SID>toggle_virtualedit()
+nnoremap <silent><SID>[tag]o    :Tlist<CR><C-w>h
 nnoremap <silent><C-H>     :nohlsearch<CR>
 nnoremap <silent><C-N>     :tabn<CR>
 nnoremap <silent><C-P>     :tabN<CR>
 nnoremap zl                zL
 nnoremap zh                zH
-nnoremap <CR>              i<CR><Esc>
+nnoremap <C-CR>              i<CR><Esc>
 inoremap <C-[>             <C-[><C-L>
 vnoremap <                 <gv
 vnoremap >                 >gv
 imap <expr><Tab> neosnippet#expandable_or_jumpable() ? 
             \"\<Plug>(neosnippet_expand_or_jump)" : 
-            \pumvisible() ? 
-            \   "\<C-N>" :
-            \   "\<Tab>"
+            \"\<Tab>"
 smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
             \"\<Plug>(neosnippet_expand_or_jump)" :
             \"\<Tab>"
@@ -447,5 +445,7 @@ augroup END
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
+" ファイル読み込み時のエンコーディング優先順
+set fileencodings=iso-2022-jp,utf-8,cp932,euc-jp,default,latin
 " }}}
 
