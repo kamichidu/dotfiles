@@ -42,7 +42,11 @@ NeoBundle 'Shougo/neosnippet', {
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/webapi-vim'
-NeoBundle 'mattn/zencoding-vim'
+NeoBundleLazy 'mattn/zencoding-vim', {
+            \   'autoload': {
+            \       'filetypes': ['html', 'xml', 'javascript'], 
+            \   }, 
+            \}
 NeoBundle 'quickhl.vim'
 NeoBundle 'sudo.vim'
 NeoBundle 'taglist.vim'
@@ -57,6 +61,26 @@ NeoBundle 'tyru/vim-altercmd'
 NeoBundle 'koron/maze3d-vim'
 NeoBundle 'koron/nyancat-vim'
 NeoBundle 'h1mesuke/vim-alignta'
+NeoBundleLazy 'jiangmiao/simple-javascript-indenter', {
+            \   'autoload': {
+            \       'filetypes': ['javascript'], 
+            \   }, 
+            \}
+NeoBundleLazy 'jelera/vim-javascript-syntax', {
+            \   'autoload': {
+            \       'filetypes': ['javascript'], 
+            \   }
+            \}
+NeoBundleLazy 'teramako/jscomplete-vim', {
+            \   'autoload': {
+            \       'filetypes': ['javascript'], 
+            \   }
+            \}
+NeoBundleLazy 'scrooloose/syntastic', {
+            \   'autoload': {
+            \       'filetypes': ['javascript'], 
+            \   }
+            \}
 " required!
 filetype plugin indent on
 " }}}
