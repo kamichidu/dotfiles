@@ -303,6 +303,12 @@ unlet s:bundle
 " endfunction
 " unlet s:bundle
 " }}}
+" javacomplete {{{
+let s:bundle= neobundle#get('javacomplete')
+function! s:bundle.hooks.sources(bundle)
+endfunction
+unlet s:bundle
+" }}}
 " tagbar {{{
 let g:tagbar_left= 1
 let g:tagbar_autoclose= 1
@@ -488,6 +494,11 @@ augroup END
 augroup freemarker_config
     au!
     autocmd BufEnter,BufReadPre *.ftl setlocal filetype=ftl
+augroup END
+augroup java_config
+    autocmd!
+    autocmd FileType java setlocal omnifunc=javacomplete#Complete
+    autocmd FileType java setlocal completefunc=javacomplete#CompleteParamInfo
 augroup END
 " }}}
 " editor {{{
