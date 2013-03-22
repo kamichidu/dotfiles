@@ -1,17 +1,17 @@
 snippet class
-	class ${1} ${2:extends} ${3:#:Parent} ${4:implements} ${5:#:Interface}
+	class ${1}${2: extends ${3:#:Parent\}}${4: implements ${5:#:Interface\}}
 	{
 		${0:TARGET}
 	}
 
 snippet interface
-	interface ${1} ${2:extends} ${3:#:Parent}
+	interface ${1}${2: extends ${3:#:Parent\}}
 	{
 		${0:TARGET}
 	}
 
 snippet method
-	${1:void} ${2:#:method}(${3}) ${4:throws}
+	${1:void} ${2:#:method}(${3})${4: throws ${5:Throwable\}}
 	{
 		${0:TARGET}
 	}
@@ -80,7 +80,7 @@ abbr switch_default
 		break;${0}
 
 snippet catch
-	catch(${1:#:Exception} ${2:e})
+	catch(${1:Exception} ${2:e})
 	{
 		${0}
 	}
