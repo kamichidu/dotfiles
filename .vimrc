@@ -49,13 +49,18 @@ NeoBundleLazy 'mattn/zencoding-vim', {
             \}
 NeoBundle 'quickhl.vim'
 NeoBundle 'sudo.vim'
-NeoBundle 'taglist.vim'
+" NeoBundle 'taglist.vim'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'thinca/vim-quickrun'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
-NeoBundle 'vimwiki'
+NeoBundleLazy 'https://code.google.com/p/vimwiki/', {
+            \   'type': 'hg', 
+            \   'autoload': {
+            \       'mappings': ['\\ww', '\\wt', '<Plug>VimwikiIndex', '<Plug>VimwikiTabIndex'], 
+            \   }
+            \}
 NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tyru/vim-altercmd'
 NeoBundle 'koron/maze3d-vim'
@@ -69,18 +74,29 @@ NeoBundleLazy 'jiangmiao/simple-javascript-indenter', {
 NeoBundleLazy 'jelera/vim-javascript-syntax', {
             \   'autoload': {
             \       'filetypes': ['javascript'], 
-            \   }
+            \   }, 
             \}
 NeoBundleLazy 'teramako/jscomplete-vim', {
             \   'autoload': {
             \       'filetypes': ['javascript'], 
-            \   }
+            \   }, 
             \}
 NeoBundleLazy 'scrooloose/syntastic', {
             \   'autoload': {
-            \       'filetypes': ['javascript'], 
-            \   }
+            \       'filetypes': ['javascript', 'html', 'xml', 'css', 'perl'], 
+            \   }, 
             \}
+NeoBundleLazy 'kchmck/vim-coffee-script', {
+            \   'autoload': {
+            \       'filetypes': ['coffee'], 
+            \   }, 
+            \}
+NeoBundleLazy 'javacomplete', {
+            \   'autoload': {
+            \       'filetypes': ['java'], 
+            \   },
+            \}
+NeoBundle 'majutsushi/tagbar'
 " required!
 filetype plugin indent on
 " }}}
@@ -180,7 +196,12 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 " }}}
 " quickrun {{{
-let g:quickrun_config= {}
+let g:quickrun_config= get(g:, 'quickrun_config', {})
+let g:quickrun_config._= {
+            \   'runner'                    : 'vimproc',
+            \   'runner/vimproc/sleep'      : 50,
+            \   'runner/vimproc/updatetime' : 100,
+            \}
 let g:quickrun_config.perl= {
             \   'type'                     : 'perl',
             \   'outputter'                : 'buffer',
@@ -201,6 +222,7 @@ let g:quickrun_config.perl6= {
 " }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup= 1
+let g:neocomplcache_use_vimproc=       1
 let g:neocomplcache_enable_wildcard=   1
 let g:neocomplcache_enable_camel_case_completion= 1
 let g:neocomplcache_enable_underbar_completion=   1
@@ -217,7 +239,15 @@ let g:neocomplcache_disabled_sources_list= get(g:, 'neocomplcache_disabled_sourc
 let g:neocomplcache_disabled_sources_list['_']= ['syntax_complete']
 " 関数補完時の区切り文字
 let g:neocomplcache_delimiter_patterns= get(g:, 'neocomplcache_delimiter_patterns', {})
-let g:neocomplcache_delimiter_patterns.cpp= ['\.', '->', '::']
+let g:neocomplcache_delimiter_patterns['cpp']= ['\.', '->', '::']
+let g:neocomplcache_delimiter_patterns['java']= ['\.']
+" インクルード補完用
+let g:neocomplcache_include_exprs= get(g:, 'neocomplcache_include_exprs', {})
+let g:neocomplcache_include_exprs['perl']= 'substitute(v:fname, ''::'', ''/'', ''g'')'
+let g:neocomplcache_include_exprs['cpp']=  'substitute(v:fname, ''::'', ''/'', ''g'')'
+let g:neocomplcache_include_exprs['java']= 'substitute(v:fname, ''\.'', ''/'', ''g'')'
+let g:neocomplcache_include_patterns= get(g:, 'neocomplcache_include_patterns', {})
+let g:neocomplcache_include_patterns['java']= '^\s\*import'
 " }}}
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
@@ -239,6 +269,45 @@ let g:vimfiler_as_default_explorer= 1
 " matchit {{{
 let b:match_ignorecase= 1
 let b:match_words=      &matchpairs.",<:>,<if>:<endif>,<function>:<endfunction>"
+" }}}
+" ref {{{
+let s:bundle= neobundle#get('vim-ref')
+function! s:bundle.hooks.on_source(bundle)
+    let g:ref_no_default_key_mappings= 1
+
+    " 上書き
+    nmap <silent><expr> K mapping#ref('normal')
+    vmap <silent><expr> K mapping#ref('visual')
+endfunction
+unlet s:bundle
+" }}}
+" syntastic {{{
+" 遅延初期化ではうまく設定されなかった at 2013-03-17 00:33:15
+" let s:bundle= neobundle#get('syntastic')
+" function! s:bundle.hooks.on_source(bundle)
+    let g:syntastic_enable_signs=         1
+    let g:syntastic_error_symbol=         'E>'
+    let g:syntastic_warning_symbol=       'W>'
+    let g:syntastic_style_error_symbol=   'S>'
+    let g:syntastic_style_warning_symbol= 's>'
+    let g:syntastic_auto_jump=            0
+    " When set to 2 the error window will be automatically closed when no errors are
+    " detected, but not opened automatically. >
+    let g:syntastic_auto_loc_list= 2
+    " passive: manually check, active: automatically check
+    let g:syntastic_mode_map= {
+                \   'mode'              : 'passive',
+                \   'active_filetypes'  : ['javascript', 'html', 'xml', 'css', 'perl'],
+                \   'passive_filetypes' : [],
+                \}
+" endfunction
+" unlet s:bundle
+" }}}
+" tagbar {{{
+let g:tagbar_left= 1
+let g:tagbar_autoclose= 1
+let g:tagbar_autofocus= 1
+let g:tagbar_show_visibility= 1
 " }}}
 " }}}
 " command {{{
@@ -383,7 +452,7 @@ nnoremap <silent><SID>[tag]ubu  :Unite buffer<CR>
 nnoremap <silent><SID>[tag]vf   :VimFiler<CR>
 nnoremap <expr><SID>[tag]cl     <SID>toggle_cursorline()
 nnoremap <expr><SID>[tag]ve     <SID>toggle_virtualedit()
-nnoremap <silent><SID>[tag]o    :Tlist<CR><C-w>h
+nnoremap <silent><SID>[tag]o    :TagbarToggle<CR>
 nnoremap <silent><C-H>     :nohlsearch<CR>
 nnoremap <silent><C-N>     :tabn<CR>
 nnoremap <silent><C-P>     :tabN<CR>
