@@ -22,8 +22,8 @@ endif
 NeoBundle 'Shougo/neobundle.vim'
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
-            \'build': {
-            \   'unix': 'make -f make_unix.mak', 
+            \   'build': {
+            \       'unix': 'make -f make_unix.mak', 
             \   }, 
             \}
 " after install, turn shell ~/.bundle/vimproc, (n,g)make -f your_machines_makefile
@@ -31,14 +31,16 @@ NeoBundle 'DrawIt'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/vimshell', {
-            \'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+            \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
             \}
 NeoBundle 'Shougo/vimfiler', {
-            \'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+            \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
             \}
 NeoBundle 'Shougo/neosnippet', {
-            \'depends': ['Shougo/neocomplcache'], 
+            \   'depends': ['Shougo/neocomplcache'], 
             \}
+" 読み込み設定は、-bつきで起動されたときくらい？
+NeoBundleLazy 'Shougo/vinarise'
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/webapi-vim'
@@ -51,6 +53,9 @@ NeoBundle 'quickhl.vim'
 NeoBundle 'sudo.vim'
 " NeoBundle 'taglist.vim'
 NeoBundle 'thinca/vim-ref'
+NeoBundle 'pekepeke/ref-javadoc', {
+            \   'depends': ['thinca/vim-ref'], 
+            \}
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'thinca/vim-quickrun'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
@@ -97,6 +102,9 @@ NeoBundleLazy 'javacomplete', {
             \   },
             \}
 NeoBundle 'majutsushi/tagbar'
+NeoBundle 't9md/vim-textmanip'
+NeoBundle 'CSApprox'
+
 " required!
 filetype plugin indent on
 " }}}
@@ -218,6 +226,11 @@ let g:quickrun_config.perl6= {
             \   'outputter'                : 'buffer',
             \   'outputter/close_on_empty' : 1,
             \   'command'                  : $HOME.'/perl6.rakudo/rakudo/perl6',
+            \}
+let g:quickrun_config.markdown= {
+            \   'type': 'markdown', 
+            \   'outputter': 'browser', 
+            \   'command': expand('~/local/markdown/1.0.1/Markdown.pl'), 
             \}
 " }}}
 " neocomplcache {{{
@@ -434,40 +447,47 @@ function! s:make_dirs(dir_list)
 endfunction
 " }}}
 " }}}
-cnoremap <C-D>             <Del>
-cnoremap <C-H>             <Left>
-cnoremap <C-L>             <Right>
-inoremap <C-D>             <Del>
-inoremap <C-H>             <Left>
-inoremap <C-J>             <Down>
-inoremap <C-K>             <Up>
-inoremap <C-L>             <Right>
+cnoremap <C-D> <Del>
+cnoremap <C-H> <Left>
+cnoremap <C-L> <Right>
+inoremap <C-D> <Del>
+inoremap <C-H> <Left>
+inoremap <C-J> <Down>
+inoremap <C-K> <Up>
+inoremap <C-L> <Right>
 " prefix-tag for insert-mode
 inoremap <SID>[tag] <Nop>
 imap     <Leader>   <SID>[tag]
 " prefix-tag for normal-mode
 nnoremap <SID>[tag] <Nop>
 nmap     <Leader>   <SID>[tag]
-inoremap <SID>[tag]<Leader>  <Leader>
-inoremap <SID>[tag]H         <Home>
-inoremap <SID>[tag]e         <End>
-inoremap <SID>[tag]h         <Esc>I
-nnoremap <silent><SID>[tag]tt   :tabnew<CR>
-nnoremap <silent><SID>[tag]ubo  :Unite bookmark<CR>
-nnoremap <silent><SID>[tag]ubu  :Unite buffer<CR>
-nnoremap <silent><SID>[tag]vf   :VimFiler<CR>
-nnoremap <expr><SID>[tag]cl     <SID>toggle_cursorline()
-nnoremap <expr><SID>[tag]ve     <SID>toggle_virtualedit()
-nnoremap <silent><SID>[tag]o    :TagbarToggle<CR>
-nnoremap <silent><C-H>     :nohlsearch<CR>
-nnoremap <silent><C-N>     :tabn<CR>
-nnoremap <silent><C-P>     :tabN<CR>
-nnoremap zl                zL
-nnoremap zh                zH
-nnoremap <C-CR>              i<CR><Esc>
-inoremap <C-[>             <C-[><C-L>
-vnoremap <                 <gv
-vnoremap >                 >gv
+inoremap <SID>[tag]<Leader>    <Leader>
+inoremap <SID>[tag]H           <Home>
+inoremap <SID>[tag]e           <End>
+inoremap <SID>[tag]h           <Esc>I
+nnoremap <silent><SID>[tag]tt  :tabnew<CR>
+nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
+nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
+nnoremap <silent><SID>[tag]uff :Unite file<CR>
+nnoremap <silent><SID>[tag]ufr :Unite file_rec/async<CR>
+nnoremap <silent><SID>[tag]vf  :VimFiler<CR>
+nnoremap <expr><SID>[tag]cl    <SID>toggle_cursorline()
+nnoremap <expr><SID>[tag]ve    <SID>toggle_virtualedit()
+nnoremap <silent><SID>[tag]o   :TagbarToggle<CR>
+nnoremap <silent><C-H>         :nohlsearch<CR>
+nnoremap <silent><C-N>         :tabn<CR>
+nnoremap <silent><C-P>         :tabN<CR>
+nnoremap zl                    zL
+nnoremap zh                    zH
+nnoremap <C-CR>                i<CR><Esc>
+inoremap <C-[>                 <C-[><C-L>
+vnoremap <                     <gv
+vnoremap >                     >gv
+vmap     <C-H>                 <Plug>(textmanip-move-left)
+vmap     <C-J>                 <Plug>(textmanip-move-down)
+vmap     <C-K>                 <Plug>(textmanip-move-up)
+vmap     <C-L>                 <Plug>(textmanip-move-right)
+" super tab emu.
 imap <expr><Tab> neosnippet#expandable_or_jumpable() ? 
             \"\<Plug>(neosnippet_expand_or_jump)" : 
             \"\<Tab>"
@@ -499,6 +519,11 @@ augroup java_config
     autocmd!
     autocmd FileType java setlocal omnifunc=javacomplete#Complete
     autocmd FileType java setlocal completefunc=javacomplete#CompleteParamInfo
+augroup END
+augroup load_vinarise
+    autocmd!
+    autocmd BufNewFile,BufReadPre * if &binary | NeoBundleSource vinarise
+    autocmd BufNewFile,BufReadPre * endif
 augroup END
 " }}}
 " editor {{{
