@@ -496,7 +496,7 @@ smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
             \"\<Tab>"
 " }}}
 " color {{{
-colorscheme peachpuff
+colorscheme hydrangea
 " }}}
 " filetype depended config {{{
 augroup antlr3_filetype_config
