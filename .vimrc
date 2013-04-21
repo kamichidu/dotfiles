@@ -103,7 +103,14 @@ NeoBundleLazy 'javacomplete', {
             \}
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 't9md/vim-textmanip'
-NeoBundle 'CSApprox'
+NeoBundle 'godlygeek/csapprox'
+NeoBundleLazy 'Rykka/colorv.vim', {
+            \   'depends': ['mattn/webapi-vim'], 
+            \   'build': {
+            \       'unix': 'make -f autoload/Makefile', 
+            \   }, 
+            \}
+NeoBundle 'candycode.vim'
 
 " required!
 filetype plugin indent on
@@ -328,6 +335,16 @@ let g:tagbar_autoclose= 1
 let g:tagbar_autofocus= 1
 let g:tagbar_show_visibility= 1
 " }}}
+" colorv.vim {{{
+let s:bundle= neobundle#get('colorv.vim')
+function! s:bundle.hooks.on_source(bundle)
+    " 2, if +python
+    " 3, if +python3
+    " 0, if no python
+    let g:colorv_has_python= 0
+endfunction
+unlet s:bundle
+" }}}
 " }}}
 " command {{{
 " altercmd {{{
@@ -470,7 +487,8 @@ nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
 nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
 nnoremap <silent><SID>[tag]uff :Unite file<CR>
 nnoremap <silent><SID>[tag]ufr :Unite file_rec/async<CR>
-nnoremap <silent><SID>[tag]vf  :VimFiler<CR>
+nnoremap <silent><SID>[tag]vfb :VimFiler<CR>
+nnoremap <silent><SID>[tag]vfe :VimFiler -explorer<CR>
 nnoremap <expr><SID>[tag]cl    <SID>toggle_cursorline()
 nnoremap <expr><SID>[tag]ve    <SID>toggle_virtualedit()
 nnoremap <silent><SID>[tag]o   :TagbarToggle<CR>

@@ -1,102 +1,85 @@
-" local syntax file - set colors on a per-machine basis:
-" Vim color file
-" Maintainer:  kamichidu <c.kamunagi@gmail.com>
-" Last Change: 20-Apr-2013.
+" Vim color file -- hydrangea
+" Maintainer:   kamichidu <c.kamunagi@gmail.com>
+" Last Change:  20-Apr-2013.
 
-hi clear
 set background=dark
-if exists("syntax_on")
-  syntax reset
-endif
-let g:colors_name = "hydrange"
+highlight clear
+let g:colors_name="hydrangea"
 
-let s:save_cpo= &cpo
+let save_cpo = &cpo
 set cpo&vim
 
-" basic
-hi Normal guifg=#dddddd guibg=#000000
-hi link NonText Normal
-" basic groups (:h group-name) {{{
-" comment group
-hi Comment guifg=#666666 guibg=NONE gui=NONE
-" constant group
-hi Constant guifg=#ff0000 guibg=NONE gui=NONE
-hi default link String Constant
-hi Character guifg=#ff5555 guibg=NONE gui=NONE
-hi default link Number Constant
-hi default link Boolean Constant
-hi default link Float Constant
-" identifier group {{{
-hi Identifier guifg=NONE    guibg=NONE    gui=NONE
-hi Function   guifg=NONE    guibg=NONE    gui=NONE
+" basic highlight groups (:help highlight-groups) {{{
+" text {{{
+hi Normal       guifg=#ffffff       guibg=#050505       gui=NONE
+hi Folded       guifg=#c2bfa5       guibg=#050505       gui=underline
+hi LineNr       guifg=#928c75       guibg=NONE          gui=NONE
+hi Directory    guifg=#00bbdd       guibg=NONE          gui=NONE
+hi default link NonText Normal
+hi SpecialKey   guifg=#559933       guibg=NONE          gui=NONE
+hi SpellBad     guifg=NONE          guibg=NONE          gui=undercurl
+hi SpellCap     guifg=NONE          guibg=NONE          gui=undercurl
+hi SpellLocal   guifg=NONE          guibg=NONE          gui=undercurl
+hi SpellRare    guifg=NONE          guibg=NONE          gui=undercurl
+hi DiffAdd      guifg=#ffffff       guibg=#126493       gui=NONE
+hi DiffChange   guifg=#000000       guibg=#976398       gui=NONE
+hi DiffDelete   guifg=#000000       guibg=#be1923       gui=NONE
+hi DiffText     guifg=#ffffff       guibg=#976398       gui=NONE
 " }}}
-" statement group {{{
-hi Statement  guifg=NONE    guibg=NONE    gui=NONE
-" if, then, else, endif, switch, etc.
-hi Conditional  guifg=NONE    guibg=NONE    gui=NONE
-" for, do, while, etc.
-hi Repeat      guifg=NONE    guibg=NONE    gui=NONE
-" case, default, etc.
-hi Label       guifg=NONE    guibg=NONE    gui=NONE
-" "sizeof", "+", "*", etc.
-hi Operator    guifg=NONE    guibg=NONE    gui=NONE
-" any other keyword
-hi Keyword     guifg=NONE    guibg=NONE    gui=NONE
-" try, catch, throw
-hi Exception   guifg=NONE    guibg=NONE    gui=NONE
+" borders / separators / menus {{{
+hi FoldColumn   guifg=#c8bcb9       guibg=#786d65       gui=NONE            
+hi SignColumn   guifg=#c8bcb9       guibg=#786d65       gui=NONE
+hi Pmenu        guifg=#000000       guibg=#a6a190       gui=NONE
+hi PmenuSel     guifg=#ffffff       guibg=#133293       gui=NONE
+hi PmenuSbar    guifg=NONE          guibg=#555555       gui=NONE
+hi PmenuThumb   guifg=NONE          guibg=#cccccc       gui=NONE
+hi StatusLine   guifg=#000000       guibg=#c2bfa5       gui=NONE    
+hi StatusLineNC guifg=#444444       guibg=#c2bfa5       gui=NONE    
+hi WildMenu     guifg=#ffffff       guibg=#133293       gui=NONE
+hi VertSplit    guifg=#c2bfa5       guibg=#c2bfa5       gui=NONE
+hi TabLine      guifg=#000000       guibg=#c2bfa5       gui=NONE
+hi TabLineFill  guifg=#000000       guibg=#c2bfa5       gui=NONE
+hi TabLineSel   guifg=#ffffff       guibg=#133293       gui=NONE
+"hi Menu
+"hi Scrollbar
+"hi Tooltip
 " }}}
-" preproc group. e.g.#include {{{
-hi PreProc    guifg=NONE guibg=NONE gui=NONE
-" preprocessor #include
-hi Include    guifg=NONE guibg=NONE gui=NONE
-" preprocessor #define
-hi Define     guifg=NONE guibg=NONE gui=NONE
-" same as Define
-hi default link Macro Define
-" preprocessor #if, #else, #endif, etc.
-hi default link PreCondit PreProc
+" cursor / dynamic / other {{{
+hi Cursor       guifg=#000000       guibg=#ffff99       gui=NONE
+hi default link CursorIM Cursor
+hi CursorLine   guifg=NONE          guibg=NONE          gui=underline
+hi CursorColumn guifg=NONE          guibg=#1b1b1b       gui=NONE
+hi Visual       guifg=#ffffff       guibg=#606070       gui=NONE
+hi IncSearch    guifg=#000000       guibg=#eedd33       gui=NONE 
+hi Search       guifg=#efefd0       guibg=#937340       gui=NONE
+hi MatchParen   guifg=NONE          guibg=#3377aa       gui=NONE
+"hi VisualNOS
 " }}}
-" type group. e.g. int, long, char, etc. {{{
-hi Type guifg=#338838 guibg=NONE gui=NONE
-" static, register, volatile, etc.
-hi default link StorageClass Type
-" struct, union, enum, etc.
-hi default link Structure Type
-" A typedef
-hi default link Typedef Type   
+" listings / messages {{{
+hi ModeMsg      guifg=#eecc18       guibg=NONE          gui=NONE
+hi Title        guifg=#dd4452       guibg=NONE          gui=NONE
+hi Question     guifg=#66d077       guibg=NONE          gui=NONE
+hi MoreMsg      guifg=#39d049       guibg=NONE          gui=NONE
+hi ErrorMsg     guifg=#ffffff       guibg=#ff0000       gui=NONE
+hi WarningMsg   guifg=#ccae22       guibg=NONE          gui=NONE    
 " }}}
-" special symbol group. {{{
-" any special symbol
-hi Special guifg=NONE guibg=NONE gui=NONE
-" special character in a constant
-hi default link SpecialChar Special
-" you can use CTRL-] on this
-hi default link Tag Special
-" character that needs attention
-hi default link Delimiter Special
-" special things inside a comment
-hi default link SpecialComment Special
-" debugging statements
-hi default link Debug Special
 " }}}
-" underlined group {{{
-" text that stands out, HTML links
-hi Underlined guifg=NONE guibg=NONE gui=underline
-" }}}
-" ignore group. (:h hl-Ignore) {{{
-" left blank, hidden  |hl-Ignore|
-hi Ignore guifg=NONE guibg=NONE gui=NONE
-" }}}
-" error group. {{{
-" any erroneous construct
-hi Error guifg=#ffffff guibg=#ff0000 gui=NONE
-" }}}
-" todo group {{{
-" anything that needs extra attention; mostly the keywords TODO FIXME and XXX
-hi Todo guifg=#000000 guibg=#00ffff gui=NONE
-" }}}
+" syntax highlighting groups (:help group-name) {{{
+hi Comment      guifg=#ff9922       guibg=NONE          gui=NONE
+hi Constant     guifg=#ff6050       guibg=NONE          gui=NONE
+hi Boolean      guifg=#ff6050       guibg=NONE          gui=NONE  
+hi Identifier   guifg=#eecc44       guibg=NONE          gui=NONE
+hi Statement    guifg=#66d077       guibg=NONE          gui=NONE
+hi PreProc      guifg=#bb88dd       guibg=NONE          gui=NONE
+hi Type         guifg=#4093cc       guibg=NONE          gui=NONE
+hi Special      guifg=#9999aa       guibg=NONE          gui=NONE  
+hi Underlined   guifg=#80a0ff       guibg=NONE          gui=underline
+hi Ignore       guifg=#888888       guibg=NONE          gui=NONE
+hi Error        guifg=#ffffff       guibg=#ff0000       gui=NONE
+hi Todo         guifg=#ffffff       guibg=#ee7700       gui=NONE
 " }}}
 
-let &cpo=s:save_cpo
-" vim: tw=0 ts=4 sw=4 fen foldmethod=marker
+let &cpo = save_cpo
+
+" vim: fdm=marker fdl=0
 
