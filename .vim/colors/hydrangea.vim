@@ -1,9 +1,10 @@
 " Vim color file -- hydrangea
 " Maintainer:   kamichidu <c.kamunagi@gmail.com>
-" Last Change:  20-Apr-2013.
+" Last Change:  26-Apr-2013.
 
 set background=dark
-highlight clear
+hi clear
+syn reset
 let g:colors_name="hydrangea"
 
 let save_cpo = &cpo
@@ -12,10 +13,10 @@ set cpo&vim
 " basic highlight groups (:help highlight-groups) {{{
 " text {{{
 hi Normal       guifg=#ffffff       guibg=#050505       gui=NONE
+hi NonText      guifg=#ffffff       guibg=#050505       gui=NONE
 hi Folded       guifg=#c2bfa5       guibg=#050505       gui=underline
 hi LineNr       guifg=#928c75       guibg=NONE          gui=NONE
 hi Directory    guifg=#00bbdd       guibg=NONE          gui=NONE
-hi default link NonText Normal
 hi SpecialKey   guifg=#559933       guibg=NONE          gui=NONE
 hi SpellBad     guifg=NONE          guibg=NONE          gui=undercurl
 hi SpellCap     guifg=NONE          guibg=NONE          gui=undercurl
@@ -46,7 +47,7 @@ hi TabLineSel   guifg=#ffffff       guibg=#133293       gui=NONE
 " }}}
 " cursor / dynamic / other {{{
 hi Cursor       guifg=#000000       guibg=#ffff99       gui=NONE
-hi default link CursorIM Cursor
+hi link CursorIM Cursor
 hi CursorLine   guifg=NONE          guibg=NONE          gui=underline
 hi CursorColumn guifg=NONE          guibg=#1b1b1b       gui=NONE
 hi Visual       guifg=#ffffff       guibg=#606070       gui=NONE
@@ -65,7 +66,7 @@ hi WarningMsg   guifg=#ccae22       guibg=NONE          gui=NONE
 " }}}
 " }}}
 " syntax highlighting groups (:help group-name) {{{
-hi Comment      guifg=#ff9922       guibg=NONE          gui=NONE
+hi Comment      guifg=#4F4F4F       guibg=NONE          gui=NONE
 hi Constant     guifg=#ff6050       guibg=NONE          gui=NONE
 hi Boolean      guifg=#ff6050       guibg=NONE          gui=NONE  
 hi Identifier   guifg=#eecc44       guibg=NONE          gui=NONE

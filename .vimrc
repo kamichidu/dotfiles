@@ -60,6 +60,7 @@ NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'thinca/vim-quickrun'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
+NeoBundle 'kana/vim-surround'
 NeoBundleLazy 'https://code.google.com/p/vimwiki/', {
             \   'type': 'hg', 
             \   'autoload': {
@@ -96,11 +97,6 @@ NeoBundleLazy 'kchmck/vim-coffee-script', {
             \       'filetypes': ['coffee'], 
             \   }, 
             \}
-NeoBundleLazy 'javacomplete', {
-            \   'autoload': {
-            \       'filetypes': ['java'], 
-            \   },
-            \}
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 't9md/vim-textmanip'
 NeoBundle 'godlygeek/csapprox'
@@ -111,6 +107,22 @@ NeoBundleLazy 'Rykka/colorv.vim', {
             \   }, 
             \}
 NeoBundle 'candycode.vim'
+NeoBundleLazy 'Rip-Rip/clang_complete', {
+            \   'autoload': {
+            \       'filetypes': ['c', 'cpp'], 
+            \   }, 
+            \}
+NeoBundleLazy 'Shougo/neocomplcache-clang_complete', {
+            \   'autoload': {
+            \       'filetypes': ['c', 'cpp'], 
+            \   }, 
+            \}
+NeoBundle 'javacomplete', {
+            \   'build': {
+            \       'unix': 'javac autoload/Reflection.java', 
+            \   }, 
+            \}
+NeoBundle 'Shougo/echodoc'
 
 " required!
 filetype plugin indent on
@@ -171,6 +183,9 @@ let g:quickrun_config.markdown= {
             \   'command': expand('~/local/markdown/1.0.1/Markdown.pl'), 
             \}
 " }}}
+" echodoc {{{
+let g:echodoc_enable_at_startup= 1
+" }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup= 1
 let g:neocomplcache_use_vimproc=       1
@@ -179,6 +194,8 @@ let g:neocomplcache_enable_camel_case_completion= 1
 let g:neocomplcache_enable_underbar_completion=   1
 let g:neocomplcache_enable_ignore_case= 1
 let g:neocomplcache_enable_smart_case=  1
+" 表示する候補数
+let g:neocomplcache_max_list= 1000
 " キャッシュ置き場
 if has('unix')
     let g:neocomplcache_temporary_dir= $HOME.'/.tmp/vim/.neocomplcache/'
@@ -193,12 +210,42 @@ let g:neocomplcache_delimiter_patterns= get(g:, 'neocomplcache_delimiter_pattern
 let g:neocomplcache_delimiter_patterns['cpp']= ['\.', '->', '::']
 let g:neocomplcache_delimiter_patterns['java']= ['\.']
 " インクルード補完用
+let g:neocomplcache_include_paths= get(g:, 'neocomplcache_include_paths', {})
+let g:neocomplcache_include_paths['java']= $HOME.'/local/java/default/src/'
 let g:neocomplcache_include_exprs= get(g:, 'neocomplcache_include_exprs', {})
-let g:neocomplcache_include_exprs['perl']= 'substitute(v:fname, ''::'', ''/'', ''g'')'
-let g:neocomplcache_include_exprs['cpp']=  'substitute(v:fname, ''::'', ''/'', ''g'')'
-let g:neocomplcache_include_exprs['java']= 'substitute(v:fname, ''\.'', ''/'', ''g'')'
+let g:neocomplcache_include_exprs['perl']= 'substitute(v:fname, "::", "/", "g")'
+let g:neocomplcache_include_exprs['cpp']=  'substitute(v:fname, "<\|>\|\"", "", "g")'
+let g:neocomplcache_include_exprs['java']= 'substitute(v:fname, "\.", "/", "g")'
 let g:neocomplcache_include_patterns= get(g:, 'neocomplcache_include_patterns', {})
-let g:neocomplcache_include_patterns['java']= '^\s\*import'
+let g:neocomplcache_include_patterns['cpp']= '\<\(include\)\>'
+let g:neocomplcache_include_patterns['java']= '\<\(import\)\>'
+let g:neocomplcache_include_suffixes= get(g:, 'neocomplcache_include_suffixes', {})
+let g:neocomplcache_include_suffixes['cpp']= ['', '.h', '.hpp', '.hxx']
+let g:neocomplcache_include_suffixes['java']= ['.java']
+let g:neocomplcache_include_suffixes['perl']= ['.pm', '.pl']
+" clang_complete
+let g:neocomplcache_force_overwrite_completefunc= 1
+let g:neocomplcache_force_omni_patterns= get(g:, 'neocomplcache_force_omni_patterns', {})
+" let g:neocomplcache_force_omni_patterns['java']= '\.'
+" let g:neocomplcache_force_omni_patterns['cpp']= '[^.[:digit:] *\t]\%(\.\|->\)\|::'
+" let g:neocomplcache_force_omni_patterns['cpp']= '\.\|->\|::'
+let g:neocomplcache_omni_functions= get(g:, 'neocomplcache_omni_functions', {})
+let g:neocomplcache_omni_functions['java']= 'javacomplete#Complete'
+let g:neocomplcache_vim_completefuncs= get(g:, 'neocomplcache_vim_completefuncs', {})
+let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
+" augroup javacomplete_set
+"     autocmd!
+"     autocmd FileType java setlocal omnifunc=javacomplete#Complete
+"     autocmd FileType java setlocal completefunc=javacomplete#CompleteParamsInfo
+" augroup END
+
+let g:clang_exec= $HOME.'/local/bin/clang++'
+let g:clang_complete_auto= 1
+let g:clang_use_library= 1
+let g:clang_library_path= $HOME.'/local/lib/'
+let g:clang_user_options= '-std=c++11 -fms-extensions --fgnu-runtime'
+
+call javacomplete#AddSourcePath($HOME.'/local/java/default/src/')
 " }}}
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
@@ -216,6 +263,7 @@ let g:vimwiki_list= [{
 " }}}
 " vimfiler {{{
 let g:vimfiler_as_default_explorer= 1
+let g:vimfiler_safe_mode_by_default= 0
 " }}}
 " matchit {{{
 let b:match_ignorecase= 1
@@ -253,12 +301,6 @@ unlet s:bundle
                 \}
 " endfunction
 " unlet s:bundle
-" }}}
-" javacomplete {{{
-let s:bundle= neobundle#get('javacomplete')
-function! s:bundle.hooks.sources(bundle)
-endfunction
-unlet s:bundle
 " }}}
 " tagbar {{{
 let g:tagbar_left= 1
@@ -445,6 +487,7 @@ smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
             \"\<Tab>"
 " }}}
 " color {{{
+set t_Co=256
 colorscheme hydrangea
 " }}}
 " filetype depended config {{{
@@ -463,11 +506,6 @@ augroup END
 augroup freemarker_config
     au!
     autocmd BufEnter,BufReadPre *.ftl setlocal filetype=ftl
-augroup END
-augroup java_config
-    autocmd!
-    autocmd FileType java setlocal omnifunc=javacomplete#Complete
-    autocmd FileType java setlocal completefunc=javacomplete#CompleteParamInfo
 augroup END
 augroup load_vinarise
     autocmd!
