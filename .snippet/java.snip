@@ -1,4 +1,5 @@
 snippet class
+options word
 	class ${1}${2: extends ${3:#:Parent\}}${4: implements ${5:#:Interface\}}
 	{
 		${0:TARGET}
@@ -21,11 +22,11 @@ snippet var
 
 snippet co
 alias constant
-	public static final ${1:#:type} ${2:#:var} = ${3};${4}
+	public static final ${1:#:type} ${2:#:var}= ${3};${4}
 
 snippet cos
 alias constant_string
-	public static final String ${1:var} = "${2}";${4}
+	public static final String ${1:var}= "${2}";${4}
 
 snippet assert
 	assert ${1:#:test} ${2:#:Failure message};
@@ -93,7 +94,8 @@ snippet package
 
 snippet test
 	@Test
-	public void ${1:#:Name}() throws Exception {
+	public void ${1:#:Name}() throws Exception
+	{
 		${0:TARGET}
 	}
 
@@ -101,7 +103,8 @@ snippet import
 	import ${1};
 
 snippet main
-	public static void main(String[] args){
+	public static void main(String[] args)
+	{
 		${0}
 	}
 

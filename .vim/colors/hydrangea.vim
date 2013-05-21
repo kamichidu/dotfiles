@@ -1,6 +1,6 @@
 " Vim color file -- hydrangea
 " Maintainer:   kamichidu <c.kamunagi@gmail.com>
-" Last Change:  26-Apr-2013.
+" Last Change:  19-May-2013.
 
 set background=dark
 hi clear
@@ -66,7 +66,7 @@ hi WarningMsg   guifg=#ccae22       guibg=NONE          gui=NONE
 " }}}
 " }}}
 " syntax highlighting groups (:help group-name) {{{
-hi Comment      guifg=#4F4F4F       guibg=NONE          gui=NONE
+hi Comment      guifg=#6F6F6F       guibg=NONE          gui=NONE
 hi Constant     guifg=#ff6050       guibg=NONE          gui=NONE
 hi Boolean      guifg=#ff6050       guibg=NONE          gui=NONE  
 hi Identifier   guifg=#eecc44       guibg=NONE          gui=NONE

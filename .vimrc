@@ -1,25 +1,28 @@
 " vim:foldmethod=marker:fen:
 scriptencoding utf-8
 
+" .vimrcで使用する設定値
+let g:gyokuro_constants= {
+            \   'temporary_dir': expand('~/.tmp/vim/'), 
+            \   'dev-plugin-paths': [
+            \       expand('~/sources/vim-plugin/vim-gdbfrontend/'), 
+            \       expand('~/sources/vim-plugin/vim-java-smartimport/'), 
+            \   ], 
+            \}
+
 " plugin {{{
-" vim-ref {{{
-let g:ref_use_vimproc= 1
-let g:ref_jscore_path= ''
-let g:ref_jsdom_path=  ''
-let g:ref_html_path=   $HOME.'/documents/vim-ref-doc/www.aptana.com/reference/html/api/'
-let g:ref_html5_path=  $HOME.'/documents/vim-ref-doc/www.html5.jp/tag/elements/'
-" }}}
 " neobundle {{{
+if has('vim_starting')
+    set runtimepath+=~/.bundle/neobundle.vim/
+endif
+call neobundle#rc(expand('~/.bundle/'))
+" let NeoBundle manage NeoBundle
+" required!
 filetype off
 filetype plugin indent off
 
-if has('vim_starting')
-    set runtimepath+=~/.bundle/neobundle.vim/
-    call neobundle#rc(expand('~/.bundle/'))
-endif
-" let NeoBundle manage NeoBundle
-" required!
-NeoBundle 'Shougo/neobundle.vim'
+" neobundleはneobundle管理しないほうがいい
+NeoBundleFetch 'Shougo/neobundle.vim'
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
             \   'build': {
@@ -29,7 +32,9 @@ NeoBundle 'Shougo/vimproc', {
 " after install, turn shell ~/.bundle/vimproc, (n,g)make -f your_machines_makefile
 NeoBundle 'DrawIt'
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/unite.vim', {
+            \   'name': 'unite.vim', 
+            \}
 NeoBundle 'Shougo/vimshell', {
             \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
             \}
@@ -64,7 +69,7 @@ NeoBundle 'kana/vim-surround'
 NeoBundleLazy 'https://code.google.com/p/vimwiki/', {
             \   'type': 'hg', 
             \   'autoload': {
-            \       'mappings': ['\\ww', '\\wt', '<Plug>VimwikiIndex', '<Plug>VimwikiTabIndex'], 
+            \       'mappings': ['\ww', '\wt', '<Plug>VimwikiIndex', '<Plug>VimwikiTabIndex'], 
             \   }
             \}
 NeoBundle 'tomtom/tcomment_vim'
@@ -123,9 +128,26 @@ NeoBundle 'javacomplete', {
             \   }, 
             \}
 NeoBundle 'Shougo/echodoc'
+NeoBundle 'kana/vim-submode'
+NeoBundle 'osyo-manga/vim-precious'
+NeoBundle 'choplin/unite-vim_hacks', {
+            \   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'], 
+            \}
+" TODO: qfixhowmもneobundle管理してdepends設定
+NeoBundle 'osyo-manga/unite-qfixhowm', {
+            \   'depends': ['Shougo/unite.vim'], 
+            \}
+NeoBundle 'mattn/qiita-vim'
 
 " required!
 filetype plugin indent on
+" }}}
+" vim-ref {{{
+let g:ref_use_vimproc= 1
+let g:ref_jscore_path= ''
+let g:ref_jsdom_path=  ''
+let g:ref_html_path=   $HOME.'/documents/vim-ref-doc/www.aptana.com/reference/html/api/'
+let g:ref_html5_path=  $HOME.'/documents/vim-ref-doc/www.html5.jp/tag/elements/'
 " }}}
 " qfixhowm {{{
 set runtimepath+=~/.vim/plugin/qfixapp
@@ -155,32 +177,39 @@ vmap gx <Plug>(openbrowser-smart-search)
 " }}}
 " quickrun {{{
 let g:quickrun_config= get(g:, 'quickrun_config', {})
-let g:quickrun_config._= {
+let g:quickrun_config['_']= {
             \   'runner'                    : 'vimproc',
             \   'runner/vimproc/sleep'      : 50,
             \   'runner/vimproc/updatetime' : 100,
             \}
-let g:quickrun_config.perl= {
+let g:quickrun_config['perl']= {
             \   'type'                     : 'perl',
             \   'outputter'                : 'buffer',
             \   'outputter/close_on_empty' : 1,
             \}
-let g:quickrun_config.vimwiki= {
+let g:quickrun_config['vimwiki']= {
             \   'type'                     : 'vimwiki',
             \   'outputter'                : 'buffer',
             \   'outputter/close_on_empty' : 1,
             \   'command'                  : $HOME.'/local/markdown/1.0.1/Markdown.pl',
             \}
-let g:quickrun_config.perl6= {
+let g:quickrun_config['perl6']= {
             \   'type'                     : 'perl6',
             \   'outputter'                : 'buffer',
             \   'outputter/close_on_empty' : 1,
             \   'command'                  : $HOME.'/perl6.rakudo/rakudo/perl6',
             \}
-let g:quickrun_config.markdown= {
+let g:quickrun_config['markdown']= {
             \   'type': 'markdown', 
             \   'outputter': 'browser', 
             \   'command': expand('~/local/markdown/1.0.1/Markdown.pl'), 
+            \}
+let g:quickrun_config['cpp']= {
+            \   'type': 'cpp', 
+            \   'outputter': 'buffer', 
+            \   'command': expand('~/local/gcc/default/bin/g++'), 
+            \   'runner': 'vimproc', 
+            \   'cmdopt': '-std=c++11 -Wall', 
             \}
 " }}}
 " echodoc {{{
@@ -188,6 +217,7 @@ let g:echodoc_enable_at_startup= 1
 " }}}
 " neocomplcache {{{
 let g:neocomplcache_enable_at_startup= 1
+let g:neocomplcache_enable_auto_close_preview= 0
 let g:neocomplcache_use_vimproc=       1
 let g:neocomplcache_enable_wildcard=   1
 let g:neocomplcache_enable_camel_case_completion= 1
@@ -195,12 +225,12 @@ let g:neocomplcache_enable_underbar_completion=   1
 let g:neocomplcache_enable_ignore_case= 1
 let g:neocomplcache_enable_smart_case=  1
 " 表示する候補数
-let g:neocomplcache_max_list= 1000
+let g:neocomplcache_max_list= 100000
 " キャッシュ置き場
 if has('unix')
-    let g:neocomplcache_temporary_dir= $HOME.'/.tmp/vim/.neocomplcache/'
+    let g:neocomplcache_temporary_dir= g:gyokuro_constants['temporary_dir'].'/.neocomplcache/'
 elseif has('win64') || has('win32') || has('win16')
-    let g:neocomplcache_temporary_dir= $TEMP.'/vim/.neocomplcache/'
+    let g:neocomplcache_temporary_dir= g:gyokuro_constants['temporary_dir'].'/.neocomplcache/'
 endif
 " シンタックス補完はうざいのでいらない
 let g:neocomplcache_disabled_sources_list= get(g:, 'neocomplcache_disabled_sources_list', {})
@@ -211,11 +241,12 @@ let g:neocomplcache_delimiter_patterns['cpp']= ['\.', '->', '::']
 let g:neocomplcache_delimiter_patterns['java']= ['\.']
 " インクルード補完用
 let g:neocomplcache_include_paths= get(g:, 'neocomplcache_include_paths', {})
-let g:neocomplcache_include_paths['java']= $HOME.'/local/java/default/src/'
+let g:neocomplcache_include_paths['java']= '~/local/java/default/src/'
+let g:neocomplcache_include_paths['cpp']=  '.,'.&path
 let g:neocomplcache_include_exprs= get(g:, 'neocomplcache_include_exprs', {})
 let g:neocomplcache_include_exprs['perl']= 'substitute(v:fname, "::", "/", "g")'
-let g:neocomplcache_include_exprs['cpp']=  'substitute(v:fname, "<\|>\|\"", "", "g")'
-let g:neocomplcache_include_exprs['java']= 'substitute(v:fname, "\.", "/", "g")'
+let g:neocomplcache_include_exprs['cpp']=  'substitute(v:fname, "<\\|>\\|\"", "", "g")'
+let g:neocomplcache_include_exprs['java']= 'substitute(substitute(v:fname, "\\.", "/", "g"), "$", ".java", "")'
 let g:neocomplcache_include_patterns= get(g:, 'neocomplcache_include_patterns', {})
 let g:neocomplcache_include_patterns['cpp']= '\<\(include\)\>'
 let g:neocomplcache_include_patterns['java']= '\<\(import\)\>'
@@ -223,29 +254,28 @@ let g:neocomplcache_include_suffixes= get(g:, 'neocomplcache_include_suffixes', 
 let g:neocomplcache_include_suffixes['cpp']= ['', '.h', '.hpp', '.hxx']
 let g:neocomplcache_include_suffixes['java']= ['.java']
 let g:neocomplcache_include_suffixes['perl']= ['.pm', '.pl']
+
+let g:neocomplcache_ctags_program= 'ctags'
+let g:neocomplcache_ctags_arguments_list= get(g:, 'neocomplcache_ctags_arguments_list', {})
+let g:neocomplcache_ctags_arguments_list['java']= '--java-kinds=cefgilmp'
+
 " clang_complete
 let g:neocomplcache_force_overwrite_completefunc= 1
 let g:neocomplcache_force_omni_patterns= get(g:, 'neocomplcache_force_omni_patterns', {})
-" let g:neocomplcache_force_omni_patterns['java']= '\.'
+let g:neocomplcache_force_omni_patterns['java']= '\.'
 " let g:neocomplcache_force_omni_patterns['cpp']= '[^.[:digit:] *\t]\%(\.\|->\)\|::'
 " let g:neocomplcache_force_omni_patterns['cpp']= '\.\|->\|::'
 let g:neocomplcache_omni_functions= get(g:, 'neocomplcache_omni_functions', {})
 let g:neocomplcache_omni_functions['java']= 'javacomplete#Complete'
 let g:neocomplcache_vim_completefuncs= get(g:, 'neocomplcache_vim_completefuncs', {})
 let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
-" augroup javacomplete_set
-"     autocmd!
-"     autocmd FileType java setlocal omnifunc=javacomplete#Complete
-"     autocmd FileType java setlocal completefunc=javacomplete#CompleteParamsInfo
-" augroup END
 
 let g:clang_exec= $HOME.'/local/bin/clang++'
 let g:clang_complete_auto= 1
 let g:clang_use_library= 1
+let g:clang_auto_select= 0
 let g:clang_library_path= $HOME.'/local/lib/'
 let g:clang_user_options= '-std=c++11 -fms-extensions --fgnu-runtime'
-
-call javacomplete#AddSourcePath($HOME.'/local/java/default/src/')
 " }}}
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
@@ -317,6 +347,28 @@ function! s:bundle.hooks.on_source(bundle)
     let g:colorv_has_python= 0
 endfunction
 unlet s:bundle
+" }}}
+" submode {{{
+let s:bundle= neobundle#get('vim-submode')
+function! s:bundle.hooks.on_source(bundle)
+    call submode#enter_with('winsize', 'n', '', '<C-W>>', '<C-W>>')
+    call submode#enter_with('winsize', 'n', '', '<C-W><', '<C-W><')
+    call submode#enter_with('winsize', 'n', '', '<C-W>-', '<C-W>-')
+    call submode#enter_with('winsize', 'n', '', '<C-W>+', '<C-W>+')
+
+    call submode#map('winsize', 'n', '', '>', '<C-W>>')
+    call submode#map('winsize', 'n', '', '<', '<C-W><')
+    call submode#map('winsize', 'n', '', '-', '<C-W>-')
+    call submode#map('winsize', 'n', '', '+', '<C-W>+')
+endfunction
+unlet s:bundle
+" }}}
+" unite {{{
+" let s:bundle= neobundle#get('unite.vim')
+" function! s:bundle.hooks.on_source(bundle)
+    let g:unite_data_directory= g:gyokuro_constants['temporary_dir'].'/.unite/'
+" endfunction
+" unlet s:bundle
 " }}}
 " }}}
 " command {{{
@@ -399,6 +451,24 @@ function! s:trim_or_append_empty_line()
     " 処理前のカーソル位置に戻す
     call setpos('.', l:store_cursor_pos)
 endfunction
+" }}}
+" yank to remote {{{
+" http://blog.remora.cx/2011/08/yank-to-local-clipboard-from-vim-on-screen.html
+" let g:y2r_config = {
+"             \   'tmp_file': expand('~/.tmp/vim/yank_remote'),
+"             \   'key_file': expand('~/.tmp/vim/.yank_remote.key'),
+"             \   'host': 'lady-grey.tea',
+"             \   'port': 22,
+"             \}
+" function Yank2Remote()
+"     call writefile(split(@*, '\n'), g:y2r_config['tmp_file'], 'b')
+"     let s:params = ['cat %s %s | nc -w1 %s %s']
+"     for s:item in ['key_file', 'tmp_file', 'host', 'port']
+"         let s:params += [shellescape(g:y2r_config[s:item])]
+"     endfor
+"     let s:ret = system(call(function('printf'), s:params))
+" endfunction
+" nnoremap <silent> <unique> <Leader>y :call Yank2Remote()<CR>
 " }}}
 " }}}
 " mapping {{{
@@ -485,6 +555,7 @@ imap <expr><Tab> neosnippet#expandable_or_jumpable() ?
 smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
             \"\<Plug>(neosnippet_expand_or_jump)" :
             \"\<Tab>"
+" vnoremap <silent>"*y  :call<Space>Yank2Remote()<CR>
 " }}}
 " color {{{
 set t_Co=256
@@ -539,14 +610,17 @@ set textwidth=0
 " .swpとbackupファイルをテンポラリに作成
 set backup
 set writebackup
-set backupdir=~/.tmp/vim/,.
+" set backupdir=~/.tmp/vim/,.
+let &backupdir= g:gyokuro_constants['temporary_dir'].',.'
 set swapfile
-set directory=~/.tmp/vim/,.
+" set directory=~/.tmp/vim/,.
+let &directory= g:gyokuro_constants['temporary_dir'].',.'
 " swpとbackupファイルの宛先がなければ作成
 call s:make_dirs(&backupdir.','.&directory)
 " 無限undo
 if has('persistent_undo')
-    set undodir=~/.tmp/vim/undo/
+    " set undodir=~/.tmp/vim/undo/
+    let &undodir= g:gyokuro_constants['temporary_dir'].'/undo/'
     set undofile
 
     call s:make_dirs(&undodir)
@@ -563,5 +637,19 @@ if exists('&ambiwidth')
 endif
 " ファイル読み込み時のエンコーディング優先順
 set fileencodings=iso-2022-jp,utf-8,cp932,euc-jp,default,latin
+" 検索時に大文字小文字区別なし
+set ignorecase
+" }}}
+
+" plugin開発用 {{{
+if exists('g:gyokuro_constants') && has_key(g:gyokuro_constants, 'dev-plugin-paths')
+    filetype off
+    filetype plugin indent off
+    for s:path in g:gyokuro_constants['dev-plugin-paths']
+        let &runtimepath= join([&runtimepath, s:path], ',')
+    endfor
+    unlet s:path
+    filetype plugin indent on
+endif
 " }}}
 
