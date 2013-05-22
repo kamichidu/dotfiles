@@ -5,6 +5,7 @@ scriptencoding utf-8
 let g:gyokuro_constants= {
             \   'temporary_dir': expand('~/.tmp/vim/'), 
             \   'dev-plugin-paths': [
+            \       expand('~/sources/vim-plugin/vim-edit-properties/'), 
             \       expand('~/sources/vim-plugin/vim-gdbfrontend/'), 
             \       expand('~/sources/vim-plugin/vim-java-smartimport/'), 
             \   ], 
