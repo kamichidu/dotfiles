@@ -4,11 +4,7 @@ scriptencoding utf-8
 " .vimrcで使用する設定値
 let g:gyokuro_constants= {
             \   'temporary_dir': expand('~/.tmp/vim/'), 
-            \   'dev-plugin-paths': [
-            \       expand('~/sources/vim-plugin/vim-edit-properties/'), 
-            \       expand('~/sources/vim-plugin/vim-gdbfrontend/'), 
-            \       expand('~/sources/vim-plugin/vim-java-smartimport/'), 
-            \   ], 
+            \   'dev-plugin-dir': '~/sources/vim-plugin/',
             \}
 
 " plugin {{{
@@ -24,6 +20,8 @@ filetype plugin indent off
 
 " neobundleはneobundle管理しないほうがいい
 NeoBundleFetch 'Shougo/neobundle.vim'
+" 開発用
+execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
             \   'build': {
@@ -48,7 +46,13 @@ NeoBundle 'Shougo/neosnippet', {
 " 読み込み設定は、-bつきで起動されたときくらい？
 NeoBundleLazy 'Shougo/vinarise'
 NeoBundle 'autodate.vim'
-NeoBundle 'mattn/gist-vim'
+NeoBundle 'mattn/gist-vim', {
+            \   'lazy': 1, 
+            \   'depends': ['mattn/webapi-vim'], 
+            \   'autoload': {
+            \       'commands': 'Gist', 
+            \   }, 
+            \}
 NeoBundle 'mattn/webapi-vim'
 NeoBundleLazy 'mattn/zencoding-vim', {
             \   'autoload': {
@@ -130,15 +134,18 @@ NeoBundle 'javacomplete', {
             \}
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'kana/vim-submode'
-NeoBundle 'osyo-manga/vim-precious'
+" NeoBundle 'osyo-manga/vim-precious'
 NeoBundle 'choplin/unite-vim_hacks', {
             \   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'], 
             \}
-" TODO: qfixhowmもneobundle管理してdepends設定
+NeoBundle 'fuenor/qfixhowm', {
+            \}
 NeoBundle 'osyo-manga/unite-qfixhowm', {
-            \   'depends': ['Shougo/unite.vim'], 
+            \   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
             \}
 NeoBundle 'mattn/qiita-vim'
+" NeoBundle 'vim-jp/vital.vim'
+NeoBundle 'KamunagiChiduru/vital.vim'
 
 " required!
 filetype plugin indent on
@@ -151,8 +158,6 @@ let g:ref_html_path=   $HOME.'/documents/vim-ref-doc/www.aptana.com/reference/ht
 let g:ref_html5_path=  $HOME.'/documents/vim-ref-doc/www.html5.jp/tag/elements/'
 " }}}
 " qfixhowm {{{
-set runtimepath+=~/.vim/plugin/qfixapp
-
 let g:QFixHowm_DatePattern= '%Y-%m-%d'
 let g:QFixHowm_FileType=    'markdown.howm_memo'
 let g:QFixHowm_Title=       '#'
@@ -169,7 +174,7 @@ let g:QFixHowm_SplitMode= 1
 let g:howm_dir=           '~/documents/qfixmemo'
 let g:howm_fileencoding=  &encoding
 let g:howm_fileformat=    &fileformat
-let g:howm_filename=      '%Y/%m/%Y-%m%d-%H%M%S'
+let g:howm_filename=      '%Y/%m/%Y-%m-%d-%H%M%S'
 " }}}
 " open browser {{{
 let g:netrw_nogx= 1 " disable netrw's gx mapping.
@@ -370,6 +375,14 @@ unlet s:bundle
     let g:unite_data_directory= g:gyokuro_constants['temporary_dir'].'/.unite/'
 " endfunction
 " unlet s:bundle
+" }}}
+" gist {}{{
+let s:bundle= neobundle#get('gist-vim')
+function! s:bundle.hooks.on_source(bundle)
+    " Only :w! updates a gist.
+    let g:gist_update_on_write = 2
+endfunction
+unlet s:bundle
 " }}}
 " }}}
 " command {{{
@@ -640,17 +653,9 @@ endif
 set fileencodings=iso-2022-jp,utf-8,cp932,euc-jp,default,latin
 " 検索時に大文字小文字区別なし
 set ignorecase
-" }}}
-
-" plugin開発用 {{{
-if exists('g:gyokuro_constants') && has_key(g:gyokuro_constants, 'dev-plugin-paths')
-    filetype off
-    filetype plugin indent off
-    for s:path in g:gyokuro_constants['dev-plugin-paths']
-        let &runtimepath= join([&runtimepath, s:path], ',')
-    endfor
-    unlet s:path
-    filetype plugin indent on
-endif
+" statuslineを常に表示する
+set laststatus=2
+" swapfileを書き出す待ち時間
+set updatetime=500
 " }}}
 
