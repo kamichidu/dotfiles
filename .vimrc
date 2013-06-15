@@ -144,8 +144,8 @@ NeoBundle 'osyo-manga/unite-qfixhowm', {
             \   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
             \}
 NeoBundle 'mattn/qiita-vim'
+" XXX
 " NeoBundle 'vim-jp/vital.vim'
-NeoBundle 'KamunagiChiduru/vital.vim'
 
 " required!
 filetype plugin indent on
