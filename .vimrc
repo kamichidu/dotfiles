@@ -20,8 +20,6 @@ filetype plugin indent off
 
 " neobundleはneobundle管理しないほうがいい
 NeoBundleFetch 'Shougo/neobundle.vim'
-" 開発用
-execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
             \   'build': {
@@ -144,8 +142,11 @@ NeoBundle 'osyo-manga/unite-qfixhowm', {
             \   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
             \}
 NeoBundle 'mattn/qiita-vim'
-" XXX
 " NeoBundle 'vim-jp/vital.vim'
+NeoBundle 'KamunagiChiduru/vital.vim'
+
+" 開発用
+execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
 
 " required!
 filetype plugin indent on
