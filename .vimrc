@@ -145,6 +145,19 @@ NeoBundle 'mattn/qiita-vim'
 " NeoBundle 'vim-jp/vital.vim'
 NeoBundle 'KamunagiChiduru/vital.vim'
 
+" for twitter
+NeoBundle 'basyura/TweetVim', {
+            \   'depends': [
+            \       'tyru/open-browser.vim', 
+            \       'basyura/twibill.vim', 
+            \       'mattn/webapi-vim', 
+            \       'h1mesuke/unite-outline', 
+            \       'basyura/bitly.vim', 
+            \       'Shougo/unite.vim', 
+            \       'mattn/favstar-vim', 
+            \   ], 
+            \}
+
 " 開発用
 execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
 
@@ -377,11 +390,18 @@ unlet s:bundle
 " endfunction
 " unlet s:bundle
 " }}}
-" gist {}{{
+" gist {{{
 let s:bundle= neobundle#get('gist-vim')
 function! s:bundle.hooks.on_source(bundle)
     " Only :w! updates a gist.
     let g:gist_update_on_write = 2
+endfunction
+unlet s:bundle
+" }}}
+" tweetvim {{{
+let s:bundle= neobundle#get('TweetVim')
+function! s:bundle.hooks.on_source(bundle)
+    let g:tweetvim_tweet_per_page= 200
 endfunction
 unlet s:bundle
 " }}}
@@ -522,14 +542,14 @@ function! s:make_dirs(dir_list)
 endfunction
 " }}}
 " }}}
-cnoremap <C-D> <Del>
+" cnoremap <C-D> <Del>
 cnoremap <C-H> <Left>
 cnoremap <C-L> <Right>
-inoremap <C-D> <Del>
-inoremap <C-H> <Left>
-inoremap <C-J> <Down>
-inoremap <C-K> <Up>
-inoremap <C-L> <Right>
+" inoremap <C-D> <Del>
+" inoremap <C-H> <Left>
+" inoremap <C-J> <Down>
+" inoremap <C-K> <Up>
+" inoremap <C-L> <Right>
 " prefix-tag for insert-mode
 inoremap <SID>[tag] <Nop>
 imap     <Leader>   <SID>[tag]
@@ -545,6 +565,7 @@ nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
 nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
 nnoremap <silent><SID>[tag]uff :Unite file<CR>
 nnoremap <silent><SID>[tag]ufr :Unite file_rec/async<CR>
+nnoremap <silent><SID>[tag]uo  :Unite outline<CR>
 nnoremap <silent><SID>[tag]vfb :VimFiler<CR>
 nnoremap <silent><SID>[tag]vfe :VimFiler -explorer<CR>
 nnoremap <expr><SID>[tag]cl    <SID>toggle_cursorline()
@@ -556,6 +577,11 @@ nnoremap <silent><C-P>         :tabN<CR>
 nnoremap zl                    zL
 nnoremap zh                    zH
 nnoremap <C-CR>                i<CR><Esc>
+" keep center
+nnoremap *                     *zzzv
+nnoremap #                     #zzzv
+nnoremap n                     nzzzv
+nnoremap N                     Nzzzv
 inoremap <C-[>                 <C-[><C-L>
 vnoremap <                     <gv
 vnoremap >                     >gv
