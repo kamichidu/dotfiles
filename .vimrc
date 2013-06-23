@@ -182,10 +182,10 @@ let g:QFixHowm_DefaultTag= ''
 " 新規エントリの雛形
 " %TAG% == g:QFixHowm_DefaultTag
 let g:QFixHowm_Template= [
-\ '%TITLE% %TAG%', 
-\ '%DATE%', 
-\ ''
-\ ]
+\   '%TITLE% %TAG%', 
+\   '%DATE%', 
+\   ''
+\]
 let g:QFixHowm_SaveTime=  1
 let g:QFixHowm_SplitMode= 1
 let g:howm_dir=           '~/documents/qfixmemo'
@@ -303,15 +303,15 @@ let g:clang_user_options= '-std=c++11 -fms-extensions --fgnu-runtime'
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
 let g:neosnippet#disable_runtime_snippets= {
-\'_': 1, 
+\   '_': 1, 
 \}
 " }}}
 " vimwiki {{{
 let g:vimwiki_list= [{
-\'path'      : '~/documents/site/vimwiki/wiki/',
-\'path_html' : '~/documents/site/vimwiki/html/',
-\'syntax'    : 'markdown',
-\'ext'       : '.md',
+\   'path'      : '~/documents/site/vimwiki/wiki/',
+\   'path_html' : '~/documents/site/vimwiki/html/',
+\   'syntax'    : 'markdown',
+\   'ext'       : '.md',
 \}]
 " }}}
 " vimfiler {{{
