@@ -3,9 +3,9 @@ scriptencoding utf-8
 
 " .vimrcで使用する設定値
 let g:gyokuro_constants= {
-            \   'temporary_dir': expand('~/.tmp/vim/'), 
-            \   'dev-plugin-dir': '~/sources/vim-plugin/',
-            \}
+\   'temporary_dir': expand('~/.tmp/vim/'), 
+\   'dev-plugin-dir': '~/sources/vim-plugin/',
+\}
 
 " plugin {{{
 " neobundle {{{
@@ -22,141 +22,144 @@ filetype plugin indent off
 NeoBundleFetch 'Shougo/neobundle.vim'
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
-            \   'build': {
-            \       'unix': 'make -f make_unix.mak', 
-            \   }, 
-            \}
+\   'build': {
+\       'unix': 'make -f make_unix.mak', 
+\   }, 
+\}
 " after install, turn shell ~/.bundle/vimproc, (n,g)make -f your_machines_makefile
 NeoBundle 'DrawIt'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/unite.vim', {
-            \   'name': 'unite.vim', 
-            \}
+\   'name': 'unite.vim', 
+\}
 NeoBundle 'Shougo/vimshell', {
-            \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
-            \}
+\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+\}
 NeoBundle 'Shougo/vimfiler', {
-            \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
-            \}
+\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+\}
 NeoBundle 'Shougo/neosnippet', {
-            \   'depends': ['Shougo/neocomplcache'], 
-            \}
+\   'depends': ['Shougo/neocomplcache'], 
+\}
 " 読み込み設定は、-bつきで起動されたときくらい？
 NeoBundleLazy 'Shougo/vinarise'
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim', {
-            \   'lazy': 1, 
-            \   'depends': ['mattn/webapi-vim'], 
-            \   'autoload': {
-            \       'commands': 'Gist', 
-            \   }, 
-            \}
+\   'lazy': 1, 
+\   'depends': ['mattn/webapi-vim'], 
+\   'autoload': {
+\       'commands': 'Gist', 
+\   }, 
+\}
 NeoBundle 'mattn/webapi-vim'
 NeoBundleLazy 'mattn/zencoding-vim', {
-            \   'autoload': {
-            \       'filetypes': ['html', 'xml', 'javascript'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['html', 'xml', 'javascript'], 
+\   }, 
+\}
 NeoBundle 'quickhl.vim'
 NeoBundle 'sudo.vim'
 " NeoBundle 'taglist.vim'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'pekepeke/ref-javadoc', {
-            \   'depends': ['thinca/vim-ref'], 
-            \}
+\   'depends': ['thinca/vim-ref'], 
+\}
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'thinca/vim-quickrun'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
 NeoBundle 'kana/vim-surround'
 NeoBundleLazy 'https://code.google.com/p/vimwiki/', {
-            \   'type': 'hg', 
-            \   'autoload': {
-            \       'mappings': ['\ww', '\wt', '<Plug>VimwikiIndex', '<Plug>VimwikiTabIndex'], 
-            \   }
-            \}
+\   'type': 'hg', 
+\   'autoload': {
+\       'mappings': ['\ww', '\wt', '<Plug>VimwikiIndex', '<Plug>VimwikiTabIndex'], 
+\   }
+\}
 NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tyru/vim-altercmd'
 NeoBundle 'koron/maze3d-vim'
 NeoBundle 'koron/nyancat-vim'
 NeoBundle 'h1mesuke/vim-alignta'
 NeoBundleLazy 'jiangmiao/simple-javascript-indenter', {
-            \   'autoload': {
-            \       'filetypes': ['javascript'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['javascript'], 
+\   }, 
+\}
 NeoBundleLazy 'jelera/vim-javascript-syntax', {
-            \   'autoload': {
-            \       'filetypes': ['javascript'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['javascript'], 
+\   }, 
+\}
 NeoBundleLazy 'teramako/jscomplete-vim', {
-            \   'autoload': {
-            \       'filetypes': ['javascript'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['javascript'], 
+\   }, 
+\}
 NeoBundleLazy 'scrooloose/syntastic', {
-            \   'autoload': {
-            \       'filetypes': ['javascript', 'html', 'xml', 'css', 'perl'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['javascript', 'html', 'xml', 'css', 'perl'], 
+\   }, 
+\}
 NeoBundleLazy 'kchmck/vim-coffee-script', {
-            \   'autoload': {
-            \       'filetypes': ['coffee'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['coffee'], 
+\   }, 
+\}
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 't9md/vim-textmanip'
 NeoBundle 'godlygeek/csapprox'
 NeoBundleLazy 'Rykka/colorv.vim', {
-            \   'depends': ['mattn/webapi-vim'], 
-            \   'build': {
-            \       'unix': 'make -f autoload/Makefile', 
-            \   }, 
-            \}
+\   'depends': ['mattn/webapi-vim'], 
+\   'build': {
+\       'unix': 'make -f autoload/Makefile', 
+\   }, 
+\}
 NeoBundle 'candycode.vim'
 NeoBundleLazy 'Rip-Rip/clang_complete', {
-            \   'autoload': {
-            \       'filetypes': ['c', 'cpp'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['c', 'cpp'], 
+\   }, 
+\}
 NeoBundleLazy 'Shougo/neocomplcache-clang_complete', {
-            \   'autoload': {
-            \       'filetypes': ['c', 'cpp'], 
-            \   }, 
-            \}
+\   'autoload': {
+\       'filetypes': ['c', 'cpp'], 
+\   }, 
+\}
 NeoBundle 'javacomplete', {
-            \   'build': {
-            \       'unix': 'javac autoload/Reflection.java', 
-            \   }, 
-            \}
+\   'build': {
+\       'unix': 'javac autoload/Reflection.java', 
+\   }, 
+\}
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'kana/vim-submode'
 " NeoBundle 'osyo-manga/vim-precious'
 NeoBundle 'choplin/unite-vim_hacks', {
-            \   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'], 
-            \}
+\   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'], 
+\}
 NeoBundle 'fuenor/qfixhowm', {
-            \}
+\}
 NeoBundle 'osyo-manga/unite-qfixhowm', {
-            \   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
-            \}
+\   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
+\}
 NeoBundle 'mattn/qiita-vim'
 " NeoBundle 'vim-jp/vital.vim'
 NeoBundle 'KamunagiChiduru/vital.vim'
 
 " for twitter
 NeoBundle 'basyura/TweetVim', {
-            \   'depends': [
-            \       'tyru/open-browser.vim', 
-            \       'basyura/twibill.vim', 
-            \       'mattn/webapi-vim', 
-            \       'h1mesuke/unite-outline', 
-            \       'basyura/bitly.vim', 
-            \       'Shougo/unite.vim', 
-            \       'mattn/favstar-vim', 
-            \   ], 
-            \}
+\   'depends': [
+\       'tyru/open-browser.vim', 
+\       'basyura/twibill.vim', 
+\       'mattn/webapi-vim', 
+\       'h1mesuke/unite-outline', 
+\       'basyura/bitly.vim', 
+\       'Shougo/unite.vim', 
+\       'mattn/favstar-vim', 
+\   ], 
+\}
+NeoBundle 'rbtnn/vimconsole.vim', {
+\   'depends': ['thinca/vim-prettyprint'], 
+\}
 
 " 開発用
 execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
@@ -179,10 +182,10 @@ let g:QFixHowm_DefaultTag= ''
 " 新規エントリの雛形
 " %TAG% == g:QFixHowm_DefaultTag
 let g:QFixHowm_Template= [
-            \ '%TITLE% %TAG%', 
-            \ '%DATE%', 
-            \ ''
-            \ ]
+\ '%TITLE% %TAG%', 
+\ '%DATE%', 
+\ ''
+\ ]
 let g:QFixHowm_SaveTime=  1
 let g:QFixHowm_SplitMode= 1
 let g:howm_dir=           '~/documents/qfixmemo'
@@ -198,39 +201,39 @@ vmap gx <Plug>(openbrowser-smart-search)
 " quickrun {{{
 let g:quickrun_config= get(g:, 'quickrun_config', {})
 let g:quickrun_config['_']= {
-            \   'runner'                    : 'vimproc',
-            \   'runner/vimproc/sleep'      : 50,
-            \   'runner/vimproc/updatetime' : 100,
-            \}
+\   'runner'                    : 'vimproc',
+\   'runner/vimproc/sleep'      : 50,
+\   'runner/vimproc/updatetime' : 100,
+\}
 let g:quickrun_config['perl']= {
-            \   'type'                     : 'perl',
-            \   'outputter'                : 'buffer',
-            \   'outputter/close_on_empty' : 1,
-            \}
+\   'type'                     : 'perl',
+\   'outputter'                : 'buffer',
+\   'outputter/close_on_empty' : 1,
+\}
 let g:quickrun_config['vimwiki']= {
-            \   'type'                     : 'vimwiki',
-            \   'outputter'                : 'buffer',
-            \   'outputter/close_on_empty' : 1,
-            \   'command'                  : $HOME.'/local/markdown/1.0.1/Markdown.pl',
-            \}
+\   'type'                     : 'vimwiki',
+\   'outputter'                : 'buffer',
+\   'outputter/close_on_empty' : 1,
+\   'command'                  : $HOME.'/local/markdown/1.0.1/Markdown.pl',
+\}
 let g:quickrun_config['perl6']= {
-            \   'type'                     : 'perl6',
-            \   'outputter'                : 'buffer',
-            \   'outputter/close_on_empty' : 1,
-            \   'command'                  : $HOME.'/perl6.rakudo/rakudo/perl6',
-            \}
+\   'type'                     : 'perl6',
+\   'outputter'                : 'buffer',
+\   'outputter/close_on_empty' : 1,
+\   'command'                  : $HOME.'/perl6.rakudo/rakudo/perl6',
+\}
 let g:quickrun_config['markdown']= {
-            \   'type': 'markdown', 
-            \   'outputter': 'browser', 
-            \   'command': expand('~/local/markdown/1.0.1/Markdown.pl'), 
-            \}
+\   'type': 'markdown', 
+\   'outputter': 'browser', 
+\   'command': expand('~/local/markdown/1.0.1/Markdown.pl'), 
+\}
 let g:quickrun_config['cpp']= {
-            \   'type': 'cpp', 
-            \   'outputter': 'buffer', 
-            \   'command': expand('~/local/gcc/default/bin/g++'), 
-            \   'runner': 'vimproc', 
-            \   'cmdopt': '-std=c++11 -Wall', 
-            \}
+\   'type': 'cpp', 
+\   'outputter': 'buffer', 
+\   'command': expand('~/local/gcc/default/bin/g++'), 
+\   'runner': 'vimproc', 
+\   'cmdopt': '-std=c++11 -Wall', 
+\}
 " }}}
 " echodoc {{{
 let g:echodoc_enable_at_startup= 1
@@ -300,16 +303,16 @@ let g:clang_user_options= '-std=c++11 -fms-extensions --fgnu-runtime'
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
 let g:neosnippet#disable_runtime_snippets= {
-            \'_': 1, 
-            \}
+\'_': 1, 
+\}
 " }}}
 " vimwiki {{{
 let g:vimwiki_list= [{
-            \'path'      : '~/documents/site/vimwiki/wiki/',
-            \'path_html' : '~/documents/site/vimwiki/html/',
-            \'syntax'    : 'markdown',
-            \'ext'       : '.md',
-            \}]
+\'path'      : '~/documents/site/vimwiki/wiki/',
+\'path_html' : '~/documents/site/vimwiki/html/',
+\'syntax'    : 'markdown',
+\'ext'       : '.md',
+\}]
 " }}}
 " vimfiler {{{
 let g:vimfiler_as_default_explorer= 1
@@ -334,21 +337,21 @@ unlet s:bundle
 " 遅延初期化ではうまく設定されなかった at 2013-03-17 00:33:15
 " let s:bundle= neobundle#get('syntastic')
 " function! s:bundle.hooks.on_source(bundle)
-    let g:syntastic_enable_signs=         1
-    let g:syntastic_error_symbol=         'E>'
-    let g:syntastic_warning_symbol=       'W>'
-    let g:syntastic_style_error_symbol=   'S>'
-    let g:syntastic_style_warning_symbol= 's>'
-    let g:syntastic_auto_jump=            0
-    " When set to 2 the error window will be automatically closed when no errors are
-    " detected, but not opened automatically. >
-    let g:syntastic_auto_loc_list= 2
-    " passive: manually check, active: automatically check
-    let g:syntastic_mode_map= {
-                \   'mode'              : 'passive',
-                \   'active_filetypes'  : ['javascript', 'html', 'xml', 'css', 'perl'],
-                \   'passive_filetypes' : [],
-                \}
+let g:syntastic_enable_signs=         1
+let g:syntastic_error_symbol=         'E>'
+let g:syntastic_warning_symbol=       'W>'
+let g:syntastic_style_error_symbol=   'S>'
+let g:syntastic_style_warning_symbol= 's>'
+let g:syntastic_auto_jump=            0
+" When set to 2 the error window will be automatically closed when no errors are
+" detected, but not opened automatically. >
+let g:syntastic_auto_loc_list= 2
+" passive: manually check, active: automatically check
+let g:syntastic_mode_map= {
+\   'mode'              : 'passive',
+\   'active_filetypes'  : ['javascript', 'html', 'xml', 'css', 'perl'],
+\   'passive_filetypes' : [],
+\}
 " endfunction
 " unlet s:bundle
 " }}}
@@ -386,7 +389,7 @@ unlet s:bundle
 " unite {{{
 " let s:bundle= neobundle#get('unite.vim')
 " function! s:bundle.hooks.on_source(bundle)
-    let g:unite_data_directory= g:gyokuro_constants['temporary_dir'].'/.unite/'
+let g:unite_data_directory= g:gyokuro_constants['temporary_dir'].'/.unite/'
 " endfunction
 " unlet s:bundle
 " }}}
@@ -402,6 +405,13 @@ unlet s:bundle
 let s:bundle= neobundle#get('TweetVim')
 function! s:bundle.hooks.on_source(bundle)
     let g:tweetvim_tweet_per_page= 200
+endfunction
+unlet s:bundle
+" }}}
+" vimconsole {{{
+let s:bundle= neobundle#get('vimconsole.vim')
+function! s:bundle.hooks.on_source(bundle)
+    let g:vimconsole#height= 20
 endfunction
 unlet s:bundle
 " }}}
@@ -439,15 +449,15 @@ command! -nargs=* Ls !ls <args>
 " }}}
 " AllMaps {{{
 command! 
-    \ -nargs=* -complete=command
-    \ AllMaps
-    \ map <args> | map! <args> | lmap <args>
+\ -nargs=* -complete=command
+\ AllMaps
+\ map <args> | map! <args> | lmap <args>
 " }}}
 " Capture {{{
 command!
-    \ -nargs=+ -complete=command
-    \ Capture
-    \ call s:cmd_capture(<q-args>)
+\ -nargs=+ -complete=command
+\ Capture
+\ call s:cmd_capture(<q-args>)
 
 function! s:cmd_capture(q_args)
     redir => output
@@ -482,7 +492,7 @@ function! s:trim_or_append_empty_line()
             normal GkJ
         endwhile
     endif
-    
+
     " 処理前のカーソル位置に戻す
     call setpos('.', l:store_cursor_pos)
 endfunction
@@ -546,10 +556,10 @@ endfunction
 cnoremap <C-H> <Left>
 cnoremap <C-L> <Right>
 " inoremap <C-D> <Del>
-" inoremap <C-H> <Left>
-" inoremap <C-J> <Down>
-" inoremap <C-K> <Up>
-" inoremap <C-L> <Right>
+inoremap <C-H> <Left>
+inoremap <C-J> <Down>
+inoremap <C-K> <Up>
+inoremap <C-L> <Right>
 " prefix-tag for insert-mode
 inoremap <SID>[tag] <Nop>
 imap     <Leader>   <SID>[tag]
@@ -591,11 +601,11 @@ vmap     <C-K>                 <Plug>(textmanip-move-up)
 vmap     <C-L>                 <Plug>(textmanip-move-right)
 " super tab emu.
 imap <expr><Tab> neosnippet#expandable_or_jumpable() ? 
-            \"\<Plug>(neosnippet_expand_or_jump)" : 
-            \"\<Tab>"
+\"\<Plug>(neosnippet_expand_or_jump)" : 
+\"\<Tab>"
 smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
-            \"\<Plug>(neosnippet_expand_or_jump)" :
-            \"\<Tab>"
+\"\<Plug>(neosnippet_expand_or_jump)" :
+\"\<Tab>"
 " vnoremap <silent>"*y  :call<Space>Yank2Remote()<CR>
 " }}}
 " color {{{
@@ -684,5 +694,58 @@ set ignorecase
 set laststatus=2
 " swapfileを書き出す待ち時間
 set updatetime=500
+set cmdheight=2
+" }}}
+" indent-expr {{{
+function GetVimIndent()
+    " Find a non-blank line above the current line.
+    let lnum = prevnonblank(v:lnum - 1)
+
+    " If the current line doesn't start with '\' and below a line that starts
+    " with '\', use the indent of the line above it.
+    if getline(v:lnum) !~ '^\s*\\'
+        while lnum > 0 && getline(lnum) =~ '^\s*\\'
+            let lnum = lnum - 1
+        endwhile
+    endif
+
+    " At the start of the file use zero indent.
+    if lnum == 0
+        return 0
+    endif
+
+    " Add a 'shiftwidth' after :if, :while, :try, :catch, :finally, :function
+    " and :else.  Add it three times for a line that starts with '\' after
+    " a line that doesn't (or g:vim_indent_cont if it exists).
+    let ind = indent(lnum)
+    if getline(v:lnum) =~ '^\s*\\' && v:lnum > 1 && getline(lnum) !~ '^\s*\\'
+        " 現在行のインデントと同じがいい
+        let ind= ind
+    elseif getline(lnum) =~ '\(^\||\)\s*\(if\|wh\%[ile]\|for\|try\|cat\%[ch]\|fina\%[lly]\|fu\%[nction]\|el\%[seif]\)\>'
+        let ind = ind + &sw
+    elseif getline(lnum) =~ '^\s*aug\%[roup]' && getline(lnum) !~ '^\s*aug\%[roup]\s*!\=\s\+END'
+        let ind = ind + &sw
+    endif
+
+    " If the previous line contains an "end" after a pipe, but not in an ":au"
+    " command.  And not when there is a backslash before the pipe.
+    " And when syntax HL is enabled avoid a match inside a string.
+    let line = getline(lnum)
+    let i = match(line, '[^\\]|\s*\(ene\@!\)')
+    if i > 0 && line !~ '^\s*au\%[tocmd]'
+        if !has('syntax_items') || synIDattr(synID(lnum, i + 2, 1), "name") !~ '\(Comment\|String\)$'
+            let ind = ind - &sw
+        endif
+    endif
+
+
+    " Subtract a 'shiftwidth' on a :endif, :endwhile, :catch, :finally, :endtry,
+    " :endfun, :else and :augroup END.
+    if getline(v:lnum) =~ '^\s*\(ene\@!\|cat\|fina\|el\|aug\%[roup]\s*!\=\s\+END\)'
+        let ind = ind - &sw
+    endif
+
+    return ind
+endfunction
 " }}}
 
