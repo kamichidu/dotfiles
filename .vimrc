@@ -69,11 +69,9 @@ NeoBundle 'thinca/vim-quickrun'
 " NeoBundle 'git://github.com/tyru/vim-altercmd.git'
 NeoBundle 'kana/vim-tabpagecd'
 NeoBundle 'kana/vim-surround'
-NeoBundleLazy 'https://code.google.com/p/vimwiki/', {
+NeoBundle 'https://code.google.com/p/vimwiki/', {
 \   'type': 'hg', 
-\   'autoload': {
-\       'mappings': ['\ww', '\wt', '<Plug>VimwikiIndex', '<Plug>VimwikiTabIndex'], 
-\   }
+\   'directory': 'vimwiki/src/', 
 \}
 NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tyru/vim-altercmd'
