@@ -132,7 +132,9 @@ NeoBundle 'javacomplete', {
 \}
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'kana/vim-submode'
-" NeoBundle 'osyo-manga/vim-precious'
+NeoBundle 'osyo-manga/vim-precious', {
+\   'depends': ['Shougo/context_filetype.vim'], 
+\}
 NeoBundle 'choplin/unite-vim_hacks', {
 \   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'], 
 \}
@@ -414,6 +416,17 @@ function! s:bundle.hooks.on_source(bundle)
     let g:vimconsole#height= 20
 endfunction
 unlet s:bundle
+" }}}
+" context_filetype {{{
+let g:context_filetype#filetypes= {
+\   'vim': [
+\       {
+\           'start': '\<perl\>\s\+<<\s*\(\w\+\)$', 
+\           'end': '^\1$', 
+\           'filetype': 'perl', 
+\       }, 
+\   ], 
+\}
 " }}}
 " }}}
 " command {{{
