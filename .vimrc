@@ -144,8 +144,7 @@ NeoBundle 'osyo-manga/unite-qfixhowm', {
 \   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
 \}
 NeoBundle 'mattn/qiita-vim'
-" NeoBundle 'vim-jp/vital.vim'
-NeoBundle 'KamunagiChiduru/vital.vim'
+NeoBundle 'vim-jp/vital.vim'
 
 " for twitter
 NeoBundle 'basyura/TweetVim', {
