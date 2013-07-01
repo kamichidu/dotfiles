@@ -159,6 +159,9 @@ NeoBundle 'basyura/TweetVim', {
 NeoBundle 'rbtnn/vimconsole.vim', {
 \   'depends': ['thinca/vim-prettyprint'], 
 \}
+NeoBundle 'gregsexton/gitv', {
+\   'depends': ['tpope/vim-fugitive'], 
+\}
 
 " 開発用
 execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
@@ -434,6 +437,10 @@ AlterCommand unite          Unite
 AlterCommand ref            Unite ref
 AlterCommand vimwi[ki2html] !~/documents/sources/perl/tools/markdown/vimwikiall2html.sh
 AlterCommand man            Ref man
+" git-statusのように区切り文字入れたい
+AlterCommand gits[tatus] Gstatus
+AlterCommand gitd[iff] Gdiff
+AlterCommand gitb[lame] Gblame
 " }}}
 " automatically make directory when write file {{{
 augroup automatically_make_directory
