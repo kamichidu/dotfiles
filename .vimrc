@@ -173,6 +173,12 @@ NeoBundle 'gregsexton/gitv', {
 \   'depends': ['tpope/vim-fugitive'], 
 \}
 NeoBundle 'AnsiEsc.vim'
+NeoBundle 'kannokanno/previm', {
+\   'lazy': 1, 
+\   'autoload': {
+\       'filetypes': ['markdown'], 
+\   }, 
+\}
 
 " 開発用
 execute 'NeoBundleLocal '.s:gyokuro_constants['dev-plugin-dir']
