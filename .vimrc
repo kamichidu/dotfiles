@@ -2,9 +2,19 @@
 scriptencoding utf-8
 
 " .vimrcで使用する設定値
-let g:gyokuro_constants= {
-\   'temporary_dir': expand('~/.tmp/vim/'), 
-\   'dev-plugin-dir': '~/sources/vim-plugin/',
+let s:gyokuro_constants= {
+\   'temporary_dir':  expand('~/.tmp/vim/'),
+\   'dev-plugin-dir': expand('~/sources/vim-plugin/'),
+\   'grepprgs': [
+\       {
+\           'grepprg': 'ag', 
+\           'args': ['-n', '$*', '%'], 
+\       }, 
+\       {
+\           'grepprg': 'grep', 
+\           'args': ['-n', '$*', '%'], 
+\       }, 
+\   ], 
 \}
 
 " plugin {{{
@@ -162,9 +172,10 @@ NeoBundle 'rbtnn/vimconsole.vim', {
 NeoBundle 'gregsexton/gitv', {
 \   'depends': ['tpope/vim-fugitive'], 
 \}
+NeoBundle 'AnsiEsc.vim'
 
 " 開発用
-execute 'NeoBundleLocal '.g:gyokuro_constants['dev-plugin-dir']
+execute 'NeoBundleLocal '.s:gyokuro_constants['dev-plugin-dir']
 
 " required!
 filetype plugin indent on
@@ -253,9 +264,9 @@ let g:neocomplcache_enable_smart_case=  1
 let g:neocomplcache_max_list= 100000
 " キャッシュ置き場
 if has('unix')
-    let g:neocomplcache_temporary_dir= g:gyokuro_constants['temporary_dir'].'/.neocomplcache/'
+    let g:neocomplcache_temporary_dir= s:gyokuro_constants['temporary_dir'].'/.neocomplcache/'
 elseif has('win64') || has('win32') || has('win16')
-    let g:neocomplcache_temporary_dir= g:gyokuro_constants['temporary_dir'].'/.neocomplcache/'
+    let g:neocomplcache_temporary_dir= s:gyokuro_constants['temporary_dir'].'/.neocomplcache/'
 endif
 " シンタックス補完はうざいのでいらない
 let g:neocomplcache_disabled_sources_list= get(g:, 'neocomplcache_disabled_sources_list', {})
@@ -391,7 +402,7 @@ unlet s:bundle
 " unite {{{
 " let s:bundle= neobundle#get('unite.vim')
 " function! s:bundle.hooks.on_source(bundle)
-let g:unite_data_directory= g:gyokuro_constants['temporary_dir'].'/.unite/'
+let g:unite_data_directory= s:gyokuro_constants['temporary_dir'].'/.unite/'
 " endfunction
 " unlet s:bundle
 " }}}
@@ -679,16 +690,16 @@ set textwidth=0
 set backup
 set writebackup
 " set backupdir=~/.tmp/vim/,.
-let &backupdir= g:gyokuro_constants['temporary_dir'].',.'
+let &backupdir= s:gyokuro_constants['temporary_dir'].',.'
 set swapfile
 " set directory=~/.tmp/vim/,.
-let &directory= g:gyokuro_constants['temporary_dir'].',.'
+let &directory= s:gyokuro_constants['temporary_dir'].',.'
 " swpとbackupファイルの宛先がなければ作成
 call s:make_dirs(&backupdir.','.&directory)
 " 無限undo
 if has('persistent_undo')
     " set undodir=~/.tmp/vim/undo/
-    let &undodir= g:gyokuro_constants['temporary_dir'].'/undo/'
+    let &undodir= s:gyokuro_constants['temporary_dir'].'/undo/'
     set undofile
 
     call s:make_dirs(&undodir)
@@ -714,7 +725,7 @@ set updatetime=500
 set cmdheight=2
 " }}}
 " indent-expr {{{
-function GetVimIndent()
+function! GetVimIndent()
     " Find a non-blank line above the current line.
     let lnum = prevnonblank(v:lnum - 1)
 
@@ -765,4 +776,27 @@ function GetVimIndent()
     return ind
 endfunction
 " }}}
+function! s:first_match(expr, pat)
+    let l:filtered= filter(a:expr, a:pat)
+
+    if empty(l:filtered)
+        return 'none'
+    endif
+
+    return l:filtered[0]
+endfunction
+
+if exists('s:gyokuro_constants') && has_key(s:gyokuro_constants, 'grepprgs')
+    for s:candidate in s:gyokuro_constants.grepprgs
+        if executable(s:candidate.grepprg)
+            let &grepprg= join([s:candidate.grepprg, join(s:candidate.args, ' ')], ' ')
+            break
+        endif
+    endfor
+    unlet s:candidate
+endif
+
+if filereadable('~/.vimrc.local')
+    source ~/.vimrc.local
+endif
 
