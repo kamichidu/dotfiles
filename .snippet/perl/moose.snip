@@ -1,0 +1,40 @@
+snippet     moose
+abbr        new Moose class
+options     head
+	package ${1};
+
+	use utf8;
+	use Moose;
+	use namespace::clean -except => [qw/meta/];
+
+	${0}
+
+	__PACKAGE__->meta->make_immutable;
+
+	1;
+
+snippet     role
+abbr        new Moose::Role
+options     head
+	package ${1};
+
+	use utf8;
+	use Moose::Role;
+	use namespace::clean -except => [qw/meta/];
+
+	requires qw(${0});
+
+	1;
+
+snippet     has
+abbr        has property => (...config...);
+options     head
+	has ${1} => (
+		${0}
+	);
+
+snippet     with
+abbr        with ...role...;
+options     head
+	with qw(${0});
+

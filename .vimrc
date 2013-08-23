@@ -16,6 +16,9 @@ let s:gyokuro_constants= {
 \       }, 
 \   ], 
 \}
+augroup gyokuro
+    autocmd!
+augroup END
 
 " plugin {{{
 " neobundle {{{
@@ -23,6 +26,7 @@ if has('vim_starting')
     set runtimepath+=~/.bundle/neobundle.vim/
 endif
 call neobundle#rc(expand('~/.bundle/'))
+let g:neobundle#types#git#default_protocol= 'ssh'
 " let NeoBundle manage NeoBundle
 " required!
 filetype off
@@ -179,9 +183,12 @@ NeoBundle 'kannokanno/previm', {
 \       'filetypes': ['markdown'], 
 \   }, 
 \}
+NeoBundle 'c9s/perlomni.vim', {
+\}
+NeoBundle 'mattn/msgpack-vim'
 
 " 開発用
-execute 'NeoBundleLocal '.s:gyokuro_constants['dev-plugin-dir']
+execute 'NeoBundleLocal ' . s:gyokuro_constants['dev-plugin-dir']
 
 " required!
 filetype plugin indent on
@@ -211,6 +218,7 @@ let g:howm_dir=           '~/documents/qfixmemo'
 let g:howm_fileencoding=  &encoding
 let g:howm_fileformat=    &fileformat
 let g:howm_filename=      '%Y/%m/%Y-%m-%d-%H%M%S'
+let g:calendar_holidayfile= '~/documents/qfixmemo/Sche-Hd-0000-00-00-000000.txt'
 " }}}
 " open browser {{{
 let g:netrw_nogx= 1 " disable netrw's gx mapping.
@@ -252,6 +260,11 @@ let g:quickrun_config['cpp']= {
 \   'command': expand('~/local/gcc/default/bin/g++'), 
 \   'runner': 'vimproc', 
 \   'cmdopt': '-std=c++11 -Wall', 
+\}
+let g:quickrun_config['sql/psql']= {
+\   'type': 'sql/psql', 
+\   'command': 'psql', 
+\   'cmdopt': ['--host=localhost', '--port=5432', '--username=postgres', '--dbname=test'], 
 \}
 " }}}
 " echodoc {{{
@@ -305,12 +318,15 @@ let g:neocomplcache_ctags_arguments_list['java']= '--java-kinds=cefgilmp'
 let g:neocomplcache_force_overwrite_completefunc= 1
 let g:neocomplcache_force_omni_patterns= get(g:, 'neocomplcache_force_omni_patterns', {})
 let g:neocomplcache_force_omni_patterns['java']= '\.'
+let g:neocomplcache_force_omni_patterns['perl']= '::\|->\|\$\|@\|%'
 " let g:neocomplcache_force_omni_patterns['cpp']= '[^.[:digit:] *\t]\%(\.\|->\)\|::'
 " let g:neocomplcache_force_omni_patterns['cpp']= '\.\|->\|::'
 let g:neocomplcache_omni_functions= get(g:, 'neocomplcache_omni_functions', {})
 let g:neocomplcache_omni_functions['java']= 'javacomplete#Complete'
+let g:neocomplcache_omni_functions['perl']= 'PerlComplete'
 let g:neocomplcache_vim_completefuncs= get(g:, 'neocomplcache_vim_completefuncs', {})
 let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
+let g:neocomplcache_vim_completefuncs['perl']= 'PerlComplete'
 
 let g:clang_exec= $HOME.'/local/bin/clang++'
 let g:clang_complete_auto= 1
@@ -342,13 +358,35 @@ let b:match_ignorecase= 1
 let b:match_words=      &matchpairs.",<:>,<if>:<endif>,<function>:<endfunction>"
 " }}}
 " ref {{{
+function! s:map(lhs, rhs, opt, modes) " {{{
+    call s:_map('map', a:lhs, a:rhs, a:opt, a:modes)
+endfunction
+" }}}
+function! s:noremap(lhs, rhs, opt, modes) " {{{
+    call s:_map('noremap', a:lhs, a:rhs, a:opt, a:modes)
+endfunction
+" }}}
+function! s:_map(cmd, lhs, rhs, opt, modes) " {{{
+    " 'abcd' -> ['a', 'b', 'c', 'd']
+    let l:modes= split(a:modes, '\zs\ze')
+
+    for l:m in l:modes
+        let l:expr= join([l:m . a:cmd, a:opt, a:lhs, a:rhs], ' ')
+
+        execute l:expr
+    endfor
+endfunction
+" }}}
 let s:bundle= neobundle#get('vim-ref')
 function! s:bundle.hooks.on_source(bundle)
     let g:ref_no_default_key_mappings= 1
+    let g:ref_perldoc_complete_head= 1
 
     " 上書き
     nmap <silent><expr> K mapping#ref('normal')
     vmap <silent><expr> K mapping#ref('visual')
+
+    autocmd gyokuro FileType ref-* call s:map('q', ':<C-U>q<CR>', '<buffer><silent>', 'nx')
 endfunction
 unlet s:bundle
 " }}}
@@ -460,23 +498,19 @@ AlterCommand gitd[iff] Gdiff
 AlterCommand gitb[lame] Gblame
 " }}}
 " automatically make directory when write file {{{
-augroup automatically_make_directory
-    autocmd!
-    autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-    function! s:auto_mkdir(dir, force)
-        if !isdirectory(a:dir) && a:force
-            call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-        endif
-    endfunction
-augroup END
+autocmd gyokuro BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+
+function! s:auto_mkdir(dir, force)
+    if !isdirectory(a:dir) && a:force
+        call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+    endif
+endfunction
 " }}}
 " auto open qfix window when make {{{
 command! -nargs=* Make make <args> | cwindow 3
-augroup automatically_open_qfixwindow
-    autocmd!
-    autocmd QuickFixCmdPost [^l]* nested cwindow
-    autocmd QuickFixCmdPost    l* nested lwindow
-augroup END
+
+autocmd gyokuro QuickFixCmdPost [^l]* nested cwindow
+autocmd gyokuro QuickFixCmdPost    l* nested lwindow
 " }}}
 " Ls {{{
 command! -nargs=* Ls !ls <args>
@@ -494,23 +528,21 @@ command!
 \ call s:cmd_capture(<q-args>)
 
 function! s:cmd_capture(q_args)
-    redir => output
-    silent execute a:q_args
-    redir END
-    let output= substitute(output, '^\n\+', '', '')
+    call unite#start([['output', a:q_args]])
+    " redir => output
+    " silent execute a:q_args
+    " redir END
+    " let output= substitute(output, '^\n\+', '', '')
 
-    belowright new
+    " belowright new
 
-    silent file `=printf('[Capture: %s]', a:q_args)`
-    setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
-    call setline(1, split(output, '\n'))
+    " silent file `=printf('[Capture: %s]', a:q_args)`
+    " setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
+    " call setline(1, split(output, '\n'))
 endfunction
 " }}}
 " on save action {{{
-augroup on_save_action
-    au!
-    " autocmd BufWritePre * call s:trim_or_append_empty_line()
-augroup END
+" autocmd BufWritePre * call s:trim_or_append_empty_line()
 
 function! s:trim_or_append_empty_line()
     " 現在のカーソル位置を記憶
@@ -647,27 +679,66 @@ set t_Co=256
 colorscheme hydrangea
 " }}}
 " filetype depended config {{{
-augroup antlr3_filetype_config
-    au!
-    autocmd BufNewFile,BufRead *.g setl filetype=antlr3
-augroup END
-augroup tex_filetype_config
-    au!
-    autocmd BufEnter,BufReadPre *.tex setlocal filetype=tex
-augroup END
-augroup perl_filetype_config
-    au!
-    autocmd BufNewFile *.pl,*.cgi,*.t setlocal fileencoding=utf8
-augroup END
-augroup freemarker_config
-    au!
-    autocmd BufEnter,BufReadPre *.ftl setlocal filetype=ftl
-augroup END
-augroup load_vinarise
-    autocmd!
-    autocmd BufNewFile,BufReadPre * if &binary | NeoBundleSource vinarise
-    autocmd BufNewFile,BufReadPre * endif
-augroup END
+" autocmd gyokuro FileType * call s:switch_filetype(expand('<amatch>'))
+" 
+" function! s:switch_filetype(new_filetype)
+"     if !exists('b:gyokuro_filetype_info')
+"         let b:gyokuro_filetype_info= {
+"         \   'current_filetypes': [], 
+"         \   'sweepers': {}, 
+"         \}
+"     endif
+"     " PP! b:gyokuro_filetype_info
+" 
+"     let l:filetypes= b:gyokuro_filetype_info.current_filetypes
+"     let l:sweepers= b:gyokuro_filetype_info.sweepers
+"     for l:filetype in l:filetypes
+"         for l:sweeper in get(l:sweepers, l:filetype, [])
+"             execute l:sweeper
+"         endfor
+" 
+"         if has_key(b:gyokuro_filetype_info.sweepers, l:filetype)
+"             call remove(b:gyokuro_filetype_info.sweepers, l:filetype)
+"         endif
+"     endfor
+"     unlet l:sweepers
+" 
+"     let l:filetypes= split(a:new_filetype, '\.')
+"     for l:filetype in l:filetypes
+"         let l:func_name= 's:on_enter_' . l:filetype
+" 
+"         if exists('*' . l:func_name)
+"             let l:sweepers= {l:func_name}()
+" 
+"             call extend(b:gyokuro_filetype_info.sweepers, l:sweepers)
+"         endif
+"     endfor
+"     let b:gyokuro_filetype_info.current_filetypes= l:filetypes
+" endfunction
+" 
+" function! s:on_enter_perl()
+"     let l:sweeper= {
+"     \   'perl': [
+"     \       'setlocal fileencoding=' . &l:fileencoding, 
+"     \       'setlocal fileformat=' . &l:fileformat, 
+"     \       'setlocal equalprg=' . &l:equalprg, 
+"     \   ], 
+"     \}
+" 
+"     let &l:fileencoding= 'utf8'
+"     let &l:fileformat=   'unix'
+"     let &l:equalprg=     'perltidy'
+" 
+"     return l:sweeper
+" endfunction
+
+autocmd gyokuro BufNewFile,BufRead *.g setl filetype=antlr3
+autocmd gyokuro BufEnter,BufReadPre *.tex setlocal filetype=tex
+autocmd gyokuro BufNewFile *.pl,*.cgi,*.t setlocal fileencoding=utf8
+autocmd gyokuro BufEnter,BufReadPre *.ftl setlocal filetype=ftl
+autocmd gyokuro BufNewFile,BufReadPre * if &binary | NeoBundleSource vinarise
+autocmd gyokuro BufNewFile,BufReadPre * endif
+autocmd gyokuro FileType help nnoremap <buffer><silent>q <Esc>:<C-U>q<CR>
 " }}}
 " editor {{{
 " 新しい行のインデントを現在行と同じにする
@@ -712,10 +783,8 @@ if has('persistent_undo')
 endif
 " 全角スペースを視覚化
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
-augroup hilighting_special_character
-    autocmd!
-    autocmd BufNewFile,BufRead * match ZenkakuSpace /　/
-augroup END
+
+autocmd gyokuro BufNewFile,BufRead * match ZenkakuSpace /　/
 " 全角文字のずれを修正
 if exists('&ambiwidth')
     set ambiwidth=double
@@ -804,5 +873,15 @@ endif
 
 if filereadable('~/.vimrc.local')
     source ~/.vimrc.local
+endif
+
+if executable('perl') && executable('perldoc')
+    function! PerlModule(module)
+        let l:relative_path= substitute(a:module, '::', '/', 'g')
+        let l:relative_path= substitute(l:relative_path, '$', '.pm', '')
+        let l:search_paths= system("perl -e '$,= q/,/; print @INC;'")
+
+        return globpath(l:search_paths, l:relative_path)
+    endfunction
 endif
 

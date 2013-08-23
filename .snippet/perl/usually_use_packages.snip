@@ -1,11 +1,13 @@
 snippet usually_use_packages
 alias   usually,use
 options head
-	use feature qw/say/;
+	use 5.010;
 	use utf8;
 	use strict;
 	use warnings;
 	use Carp qw/croak cluck/;
 
 	${0}
+
+	1;
 
