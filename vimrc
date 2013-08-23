@@ -1,6 +1,10 @@
 " vim:foldmethod=marker:fen:
 scriptencoding utf-8
 
+if filereadable(expand('~/.vimrc.system'))
+    source ~/.vimrc.system
+endif
+
 " .vimrcで使用する設定値
 let s:gyokuro_constants= {
 \   'temporary_dir':  expand('~/.tmp/vim/'),
@@ -871,7 +875,7 @@ if exists('s:gyokuro_constants') && has_key(s:gyokuro_constants, 'grepprgs')
     unlet s:candidate
 endif
 
-if filereadable('~/.vimrc.local')
+if filereadable(expand('~/.vimrc.local'))
     source ~/.vimrc.local
 endif
 
