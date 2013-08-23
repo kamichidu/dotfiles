@@ -2,6 +2,6 @@
 .netrwhist
 tags
 tags-ja
-.vim/doc/
-.vimrc.local
+vimfiles/doc/
+vimrc.local
 
