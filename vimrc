@@ -516,9 +516,6 @@ command! -nargs=* Make make <args> | cwindow 3
 autocmd gyokuro QuickFixCmdPost [^l]* nested cwindow
 autocmd gyokuro QuickFixCmdPost    l* nested lwindow
 " }}}
-" Ls {{{
-command! -nargs=* Ls !ls <args>
-" }}}
 " AllMaps {{{
 command! 
 \ -nargs=* -complete=command
@@ -566,24 +563,6 @@ function! s:trim_or_append_empty_line()
     " 処理前のカーソル位置に戻す
     call setpos('.', l:store_cursor_pos)
 endfunction
-" }}}
-" yank to remote {{{
-" http://blog.remora.cx/2011/08/yank-to-local-clipboard-from-vim-on-screen.html
-" let g:y2r_config = {
-"             \   'tmp_file': expand('~/.tmp/vim/yank_remote'),
-"             \   'key_file': expand('~/.tmp/vim/.yank_remote.key'),
-"             \   'host': 'lady-grey.tea',
-"             \   'port': 22,
-"             \}
-" function Yank2Remote()
-"     call writefile(split(@*, '\n'), g:y2r_config['tmp_file'], 'b')
-"     let s:params = ['cat %s %s | nc -w1 %s %s']
-"     for s:item in ['key_file', 'tmp_file', 'host', 'port']
-"         let s:params += [shellescape(g:y2r_config[s:item])]
-"     endfor
-"     let s:ret = system(call(function('printf'), s:params))
-" endfunction
-" nnoremap <silent> <unique> <Leader>y :call Yank2Remote()<CR>
 " }}}
 " }}}
 " mapping {{{
