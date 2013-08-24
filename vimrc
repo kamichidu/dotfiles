@@ -773,7 +773,7 @@ if exists('&ambiwidth')
     set ambiwidth=double
 endif
 " ファイル読み込み時のエンコーディング優先順
-set fileencodings=iso-2022-jp,utf-8,cp932,euc-jp,default,latin
+set fileencodings=utf-8,cp932,euc-jp,iso-2022-jp,default,latin
 " 検索時に大文字小文字区別なし
 set ignorecase
 " statuslineを常に表示する
