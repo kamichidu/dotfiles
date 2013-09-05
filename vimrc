@@ -764,10 +764,6 @@ if has('persistent_undo')
 
     call s:make_dirs(&undodir)
 endif
-" 全角スペースを視覚化
-highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#666666
-
-autocmd gyokuro BufNewFile,BufRead * match ZenkakuSpace /　/
 " 全角文字のずれを修正
 if exists('&ambiwidth')
     set ambiwidth=double
@@ -781,6 +777,11 @@ set laststatus=2
 " swapfileを書き出す待ち時間
 set updatetime=500
 set cmdheight=2
+" concealを有効にするのはnormal modeのみ。編集するときには不便。
+if has('conceal')
+    set conceallevel=1
+    set concealcursor=n
+endif
 " }}}
 " indent-expr {{{
 function! GetVimIndent()
