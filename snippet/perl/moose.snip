@@ -38,3 +38,24 @@ abbr        with ...role...;
 options     head
 	with qw(${0});
 
+snippet     build
+options     head
+	sub BUILD
+	{
+		${0}
+	}
+
+snippet     buildargs
+options     head
+	sub BUILDARGS
+	{
+		${0}
+	}
+
+snippet     demolish
+options     head
+	sub DEMOLISH
+	{
+		${0}
+	}
+
