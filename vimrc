@@ -192,6 +192,12 @@ NeoBundle 'kannokanno/previm', {
 NeoBundle 'c9s/perlomni.vim', {
 \}
 NeoBundle 'mattn/msgpack-vim'
+NeoBundle 'osyo-manga/vim-owl', {
+\   'depends': ['osyo-manga/vim-chained', 'osyo-manga/vim-budou'], 
+\}
+NeoBundle 'hokaccha/vim-prove'
+NeoBundle 'yuratomo/w3m.vim'
+NeoBundle 'osyo-manga/vim-hideout'
 
 " 開発用
 execute 'NeoBundleLocal ' . s:gyokuro_constants['dev-plugin-dir']
@@ -488,6 +494,19 @@ let g:context_filetype#filetypes= {
 \       }, 
 \   ], 
 \}
+" }}}
+" precious {{{
+let g:precious_enable_switch_CursorMoved= {
+\   'help': 0, 
+\}
+" }}}
+" javadoc_viewer {{{
+let g:javadocviewer_config= get(g:, 'javadocviewer_config', {})
+let g:javadocviewer_config.uri= [
+\   'http://docs.oracle.com/javase/7/docs/api/', 
+\   'http://poi.apache.org/apidocs/', 
+\   'http://docs.guava-libraries.googlecode.com/git/javadoc/', 
+\]
 " }}}
 " }}}
 " command {{{
