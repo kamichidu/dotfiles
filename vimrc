@@ -7,6 +7,7 @@ endif
 
 " .vimrcで使用する設定値
 let s:gyokuro_constants= {
+\   'vimrc': expand('~/.vimrc'), 
 \   'temporary_dir':  expand('~/.tmp/vim/'),
 \   'dev-plugin-dir': expand('~/sources/vim-plugin/'),
 \   'grepprgs': [
@@ -19,6 +20,7 @@ let s:gyokuro_constants= {
 \           'args': ['-n', '$*', '%'], 
 \       }, 
 \   ], 
+\   'vimrc-edit-support': 1, 
 \}
 augroup gyokuro
     autocmd!
@@ -853,6 +855,11 @@ if exists('s:gyokuro_constants') && has_key(s:gyokuro_constants, 'grepprgs')
         endif
     endfor
     unlet s:candidate
+endif
+
+" to edit .vimrc
+if exists('s:gyokuro_constants') && get(s:gyokuro_constants, 'vimrc-edit-support', 0)
+    command! GyokuroVimrcEdit execute 'edit' s:gyokuro_constants.vimrc
 endif
 
 if filereadable(expand('~/.vimrc.local'))
