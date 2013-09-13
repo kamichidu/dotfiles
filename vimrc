@@ -198,6 +198,7 @@ NeoBundle 'osyo-manga/vim-owl', {
 NeoBundle 'hokaccha/vim-prove'
 NeoBundle 'yuratomo/w3m.vim'
 NeoBundle 'osyo-manga/vim-hideout'
+NeoBundle 'tsukkee/lingr-vim'
 
 " 開発用
 execute 'NeoBundleLocal ' . s:gyokuro_constants['dev-plugin-dir']
