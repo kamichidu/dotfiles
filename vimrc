@@ -682,6 +682,11 @@ smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
 " color {{{
 set t_Co=256
 colorscheme hydrangea
+" reloadすると、csapproxが自動フックしない(できない？)ので、cui用の色設定が失われる
+" なので、手動でやる
+if exists(':CSApprox') == 2
+    CSApprox!
+endif
 " }}}
 " filetype depended config {{{
 " autocmd gyokuro FileType * call s:switch_filetype(expand('<amatch>'))
