@@ -40,6 +40,35 @@ filetype plugin indent off
 
 " neobundleはneobundle管理しないほうがいい
 NeoBundleFetch 'Shougo/neobundle.vim'
+
+" vimをneobundle管理
+NeoBundleFetch 'https://code.google.com/p/vim/', {
+\   'type': 'hg', 
+\   'name': 'vim', 
+\   'build': {
+\       'unix':
+\           './configure' .
+\           '    --prefix=/home/kamichidu/local/' .
+\           '    --enable-fail-if-missing' .
+\           '    --disable-darwin' .
+\           '    --disable-selinux' .
+\           '    --with-compiledby=kamichidu' .
+\           '    --with-x' .
+\           '    --with-features=huge' .
+\           '    --enable-luainterp' .
+\           '    --enable-perlinterp' .
+\           '    --enable-pythoninterp' .
+\           '    --enable-rubyinterp' .
+\           '    --enable-multibyte' .
+\           '    --enable-xim' .
+\           '    --enable-fontset' .
+\           '    --enable-gui=gtk2' .
+\           ';' .
+\           'make -j5;' .
+\           'make install;'
+\   }, 
+\}
+
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
 \   'build': {
