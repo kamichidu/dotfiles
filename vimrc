@@ -199,6 +199,7 @@ NeoBundle 'hokaccha/vim-prove'
 NeoBundle 'yuratomo/w3m.vim'
 NeoBundle 'osyo-manga/vim-hideout'
 NeoBundle 'tsukkee/lingr-vim'
+NeoBundle 'tyru/eskk.vim'
 
 " 開発用
 execute 'NeoBundleLocal ' . s:gyokuro_constants['dev-plugin-dir']
@@ -509,6 +510,22 @@ let g:javadocviewer_config.uri= [
 \   'http://docs.guava-libraries.googlecode.com/git/javadoc/', 
 \]
 " }}}
+" eskk {{{
+let g:eskk#directory= expand('~/.eskk/')
+let g:eskk#dictionary= {
+\   'path':     g:eskk#directory . '/user-dictionary',
+\   'sorted':   0,
+\   'encoding': 'utf-8',
+\}
+let g:eskk#large_dictionary= {
+\   'path':     g:eskk#directory . '/SKK-JISYO.L',
+\   'sorted':   1,
+\   'encoding': 'euc-jp',
+\}
+let g:eskk#auto_save_dictionary_at_exit= 1
+let g:eskk#dictionary_save_count=        3
+let g:eskk#start_completion_length=      1
+" }}}
 " }}}
 " command {{{
 " altercmd {{{
@@ -628,8 +645,8 @@ cnoremap <C-H> <Left>
 cnoremap <C-L> <Right>
 " inoremap <C-D> <Del>
 inoremap <C-H> <Left>
-inoremap <C-J> <Down>
-inoremap <C-K> <Up>
+" inoremap <C-J> <Down>
+" inoremap <C-K> <Up>
 inoremap <C-L> <Right>
 " prefix-tag for insert-mode
 inoremap <SID>[tag] <Nop>
