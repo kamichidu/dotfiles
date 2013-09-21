@@ -202,7 +202,9 @@ NeoBundle 'tsukkee/lingr-vim'
 NeoBundle 'tyru/eskk.vim'
 
 " 開発用
-execute 'NeoBundleLocal ' . s:gyokuro_constants['dev-plugin-dir']
+call neobundle#local(s:gyokuro_constants['dev-plugin-dir'], {
+\   'type': 'nosync', 
+\})
 
 " required!
 filetype plugin indent on
