@@ -682,7 +682,7 @@ nnoremap *                     *zzzv
 nnoremap #                     #zzzv
 nnoremap n                     nzzzv
 nnoremap N                     Nzzzv
-inoremap <C-[>                 <C-[><C-L>
+" inoremap <C-[>                 <C-[><C-L>
 vnoremap <                     <gv
 vnoremap >                     >gv
 vmap     <C-H>                 <Plug>(textmanip-move-left)
