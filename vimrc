@@ -729,6 +729,9 @@ smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
 " }}}
 " color {{{
 set t_Co=256
+" csapprox still not loaded yet
+" force loading
+runtime plugin/CSApprox.vim
 colorscheme hydrangea
 " reloadすると、csapproxが自動フックしない(できない？)ので、cui用の色設定が失われる
 " なので、手動でやる
