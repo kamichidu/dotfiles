@@ -4,4 +4,6 @@ tags
 tags-ja
 vimfiles/doc/
 vimrc.local
+gvimrc.local
+eskk/uim-jisyo.lock
 
