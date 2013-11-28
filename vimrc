@@ -101,11 +101,12 @@ NeoBundle 'mattn/gist-vim', {
 \   }, 
 \}
 NeoBundle 'mattn/webapi-vim'
-NeoBundleLazy 'mattn/zencoding-vim', {
-\   'autoload': {
-\       'filetypes': ['html', 'xml', 'javascript'], 
-\   }, 
-\}
+NeoBundle 'mattn/emmet-vim'
+" NeoBundleLazy 'mattn/zencoding-vim', {
+" \   'autoload': {
+" \       'filetypes': ['html', 'xml', 'javascript'], 
+" \   }, 
+" \}
 NeoBundle 'quickhl.vim'
 NeoBundle 'sudo.vim'
 " NeoBundle 'taglist.vim'
