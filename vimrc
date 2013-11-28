@@ -32,7 +32,7 @@ if has('vim_starting')
     set runtimepath+=~/.bundle/neobundle.vim/
 endif
 call neobundle#rc(expand('~/.bundle/'))
-let g:neobundle#types#git#default_protocol= 'ssh'
+let g:neobundle#types#git#default_protocol= 'https'
 " let NeoBundle manage NeoBundle
 " required!
 filetype off
