@@ -6,6 +6,9 @@ if filereadable(expand('~/.gvimrc.system'))
     source ~/.gvimrc.system
 endif
 
+set guioptions-=m
+set guioptions-=T
+
 colorscheme hydrangea
 
 if filereadable(expand('~/.gvimrc.local'))
