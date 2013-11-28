@@ -7,20 +7,20 @@ endif
 
 " .vimrcで使用する設定値
 let s:gyokuro_constants= {
-\   'vimrc': expand('~/.vimrc'), 
+\   'vimrc': expand('~/.vimrc'),
 \   'temporary_dir':  expand('~/.tmp/vim/'),
 \   'dev-plugin-dir': expand('~/sources/vim-plugin/'),
 \   'grepprgs': [
 \       {
-\           'grepprg': 'ag', 
-\           'args': ['-n', '$*', '%'], 
-\       }, 
+\           'grepprg': 'ag',
+\           'args': ['-n', '$*', '%'],
+\       },
 \       {
-\           'grepprg': 'grep', 
-\           'args': ['-n', '$*', '%'], 
-\       }, 
-\   ], 
-\   'vimrc-edit-support': 1, 
+\           'grepprg': 'grep',
+\           'args': ['-n', '$*', '%'],
+\       },
+\   ],
+\   'vimrc-edit-support': 1,
 \}
 augroup gyokuro
     autocmd!
@@ -43,8 +43,8 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 
 " vimをneobundle管理
 NeoBundleFetch 'https://code.google.com/p/vim/', {
-\   'type': 'hg', 
-\   'name': 'vim-self', 
+\   'type': 'hg',
+\   'name': 'vim-self',
 \   'build': {
 \       'unix':
 \           './configure' .
@@ -66,53 +66,53 @@ NeoBundleFetch 'https://code.google.com/p/vim/', {
 \           ';' .
 \           'make -j5;' .
 \           'make install;'
-\   }, 
+\   },
 \}
 
 " recommended to install
 NeoBundle 'Shougo/vimproc', {
 \   'build': {
-\       'unix': 'make -f make_unix.mak', 
-\   }, 
+\       'unix': 'make -f make_unix.mak',
+\   },
 \}
 " after install, turn shell ~/.bundle/vimproc, (n,g)make -f your_machines_makefile
 NeoBundle 'DrawIt'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/unite.vim', {
-\   'name': 'unite.vim', 
+\   'name': 'unite.vim',
 \}
 NeoBundle 'Shougo/vimshell', {
-\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'],
 \}
 NeoBundle 'Shougo/vimfiler', {
-\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'], 
+\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'],
 \}
 NeoBundle 'Shougo/neosnippet', {
-\   'depends': ['Shougo/neocomplcache'], 
+\   'depends': ['Shougo/neocomplcache'],
 \}
 " 読み込み設定は、-bつきで起動されたときくらい？
 NeoBundleLazy 'Shougo/vinarise'
 NeoBundle 'autodate.vim'
 NeoBundle 'mattn/gist-vim', {
-\   'lazy': 1, 
-\   'depends': ['mattn/webapi-vim'], 
+\   'lazy': 1,
+\   'depends': ['mattn/webapi-vim'],
 \   'autoload': {
-\       'commands': 'Gist', 
-\   }, 
+\       'commands': 'Gist',
+\   },
 \}
 NeoBundle 'mattn/webapi-vim'
 NeoBundle 'mattn/emmet-vim'
 " NeoBundleLazy 'mattn/zencoding-vim', {
 " \   'autoload': {
-" \       'filetypes': ['html', 'xml', 'javascript'], 
-" \   }, 
+" \       'filetypes': ['html', 'xml', 'javascript'],
+" \   },
 " \}
 NeoBundle 'quickhl.vim'
 NeoBundle 'sudo.vim'
 " NeoBundle 'taglist.vim'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'pekepeke/ref-javadoc', {
-\   'depends': ['thinca/vim-ref'], 
+\   'depends': ['thinca/vim-ref'],
 \}
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'thinca/vim-quickrun'
@@ -120,8 +120,8 @@ NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'kana/vim-tabpagecd'
 NeoBundle 'kana/vim-surround'
 NeoBundle 'https://code.google.com/p/vimwiki/', {
-\   'type': 'hg', 
-\   'directory': 'vimwiki/src/', 
+\   'type': 'hg',
+\   'directory': 'vimwiki/src/',
 \}
 NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tyru/vim-altercmd'
@@ -130,66 +130,66 @@ NeoBundle 'koron/nyancat-vim'
 NeoBundle 'h1mesuke/vim-alignta'
 NeoBundleLazy 'jiangmiao/simple-javascript-indenter', {
 \   'autoload': {
-\       'filetypes': ['javascript'], 
-\   }, 
+\       'filetypes': ['javascript'],
+\   },
 \}
 NeoBundleLazy 'jelera/vim-javascript-syntax', {
 \   'autoload': {
-\       'filetypes': ['javascript'], 
-\   }, 
+\       'filetypes': ['javascript'],
+\   },
 \}
 NeoBundleLazy 'teramako/jscomplete-vim', {
 \   'autoload': {
-\       'filetypes': ['javascript'], 
-\   }, 
+\       'filetypes': ['javascript'],
+\   },
 \}
 NeoBundleLazy 'scrooloose/syntastic', {
 \   'autoload': {
-\       'filetypes': ['javascript', 'html', 'xml', 'css', 'perl'], 
-\   }, 
+\       'filetypes': ['javascript', 'html', 'xml', 'css', 'perl'],
+\   },
 \}
 NeoBundleLazy 'kchmck/vim-coffee-script', {
 \   'autoload': {
-\       'filetypes': ['coffee'], 
-\   }, 
+\       'filetypes': ['coffee'],
+\   },
 \}
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 't9md/vim-textmanip'
 NeoBundle 'godlygeek/csapprox'
 NeoBundleLazy 'Rykka/colorv.vim', {
-\   'depends': ['mattn/webapi-vim'], 
+\   'depends': ['mattn/webapi-vim'],
 \   'build': {
-\       'unix': 'make -f autoload/Makefile', 
-\   }, 
+\       'unix': 'make -f autoload/Makefile',
+\   },
 \}
 NeoBundle 'candycode.vim'
 NeoBundleLazy 'Rip-Rip/clang_complete', {
 \   'autoload': {
-\       'filetypes': ['c', 'cpp'], 
-\   }, 
+\       'filetypes': ['c', 'cpp'],
+\   },
 \}
 NeoBundleLazy 'Shougo/neocomplcache-clang_complete', {
 \   'autoload': {
-\       'filetypes': ['c', 'cpp'], 
-\   }, 
+\       'filetypes': ['c', 'cpp'],
+\   },
 \}
 NeoBundle 'javacomplete', {
 \   'build': {
-\       'unix': 'javac autoload/Reflection.java', 
-\   }, 
+\       'unix': 'javac autoload/Reflection.java',
+\   },
 \}
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'kana/vim-submode'
 NeoBundle 'osyo-manga/vim-precious', {
-\   'depends': ['Shougo/context_filetype.vim'], 
+\   'depends': ['Shougo/context_filetype.vim'],
 \}
 NeoBundle 'choplin/unite-vim_hacks', {
-\   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'], 
+\   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'],
 \}
 NeoBundle 'fuenor/qfixhowm', {
 \}
 NeoBundle 'osyo-manga/unite-qfixhowm', {
-\   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'], 
+\   'depends': ['Shougo/unite.vim', 'fuenor/qfixhowm'],
 \}
 NeoBundle 'mattn/qiita-vim'
 NeoBundle 'vim-jp/vital.vim'
@@ -197,33 +197,33 @@ NeoBundle 'vim-jp/vital.vim'
 " for twitter
 NeoBundle 'basyura/TweetVim', {
 \   'depends': [
-\       'tyru/open-browser.vim', 
-\       'basyura/twibill.vim', 
-\       'mattn/webapi-vim', 
-\       'h1mesuke/unite-outline', 
-\       'basyura/bitly.vim', 
-\       'Shougo/unite.vim', 
-\       'mattn/favstar-vim', 
-\   ], 
+\       'tyru/open-browser.vim',
+\       'basyura/twibill.vim',
+\       'mattn/webapi-vim',
+\       'h1mesuke/unite-outline',
+\       'basyura/bitly.vim',
+\       'Shougo/unite.vim',
+\       'mattn/favstar-vim',
+\   ],
 \}
 NeoBundle 'rbtnn/vimconsole.vim', {
-\   'depends': ['thinca/vim-prettyprint'], 
+\   'depends': ['thinca/vim-prettyprint'],
 \}
 NeoBundle 'gregsexton/gitv', {
-\   'depends': ['tpope/vim-fugitive'], 
+\   'depends': ['tpope/vim-fugitive'],
 \}
 NeoBundle 'AnsiEsc.vim'
 NeoBundle 'kannokanno/previm', {
-\   'lazy': 1, 
+\   'lazy': 1,
 \   'autoload': {
-\       'filetypes': ['markdown'], 
-\   }, 
+\       'filetypes': ['markdown'],
+\   },
 \}
 NeoBundle 'c9s/perlomni.vim', {
 \}
 NeoBundle 'mattn/msgpack-vim'
 NeoBundle 'osyo-manga/vim-owl', {
-\   'depends': ['osyo-manga/vim-chained', 'osyo-manga/vim-budou'], 
+\   'depends': ['osyo-manga/vim-chained', 'osyo-manga/vim-budou'],
 \}
 NeoBundle 'hokaccha/vim-prove'
 NeoBundle 'yuratomo/w3m.vim'
@@ -233,7 +233,7 @@ NeoBundle 'tyru/eskk.vim'
 
 " 開発用
 call neobundle#local(s:gyokuro_constants['dev-plugin-dir'], {
-\   'type': 'nosync', 
+\   'type': 'nosync',
 \})
 
 " required!
@@ -254,8 +254,8 @@ let g:QFixHowm_DefaultTag= ''
 " 新規エントリの雛形
 " %TAG% == g:QFixHowm_DefaultTag
 let g:QFixHowm_Template= [
-\   '%TITLE% %TAG%', 
-\   '%DATE%', 
+\   '%TITLE% %TAG%',
+\   '%DATE%',
 \   ''
 \]
 let g:QFixHowm_SaveTime=  1
@@ -296,21 +296,21 @@ let g:quickrun_config['perl6']= {
 \   'command'                  : $HOME.'/perl6.rakudo/rakudo/perl6',
 \}
 let g:quickrun_config['markdown']= {
-\   'type': 'markdown', 
-\   'outputter': 'browser', 
-\   'command': expand('~/local/markdown/1.0.1/Markdown.pl'), 
+\   'type': 'markdown',
+\   'outputter': 'browser',
+\   'command': expand('~/local/markdown/1.0.1/Markdown.pl'),
 \}
 let g:quickrun_config['cpp']= {
-\   'type': 'cpp', 
-\   'outputter': 'buffer', 
-\   'command': expand('~/local/gcc/default/bin/g++'), 
-\   'runner': 'vimproc', 
-\   'cmdopt': '-std=c++11 -Wall', 
+\   'type': 'cpp',
+\   'outputter': 'buffer',
+\   'command': expand('~/local/gcc/default/bin/g++'),
+\   'runner': 'vimproc',
+\   'cmdopt': '-std=c++11 -Wall',
 \}
 let g:quickrun_config['sql/psql']= {
-\   'type': 'sql/psql', 
-\   'command': 'psql', 
-\   'cmdopt': ['--host=localhost', '--port=5432', '--username=postgres', '--dbname=test'], 
+\   'type': 'sql/psql',
+\   'command': 'psql',
+\   'cmdopt': ['--host=localhost', '--port=5432', '--username=postgres', '--dbname=test'],
 \}
 " }}}
 " echodoc {{{
@@ -384,7 +384,7 @@ let g:clang_user_options= '-std=c++11 -fms-extensions --fgnu-runtime'
 " neosnippet {{{
 let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
 let g:neosnippet#disable_runtime_snippets= {
-\   '_': 1, 
+\   '_': 1,
 \}
 " }}}
 " vimwiki {{{
@@ -522,24 +522,24 @@ unlet s:bundle
 let g:context_filetype#filetypes= {
 \   'vim': [
 \       {
-\           'start': '\<perl\>\s\+<<\s*\(\w\+\)$', 
-\           'end': '^\1$', 
-\           'filetype': 'perl', 
-\       }, 
-\   ], 
+\           'start': '\<perl\>\s\+<<\s*\(\w\+\)$',
+\           'end': '^\1$',
+\           'filetype': 'perl',
+\       },
+\   ],
 \}
 " }}}
 " precious {{{
 let g:precious_enable_switch_CursorMoved= {
-\   'help': 0, 
+\   'help': 0,
 \}
 " }}}
 " javadoc_viewer {{{
 let g:javadocviewer_config= get(g:, 'javadocviewer_config', {})
 let g:javadocviewer_config.uri= [
-\   'http://docs.oracle.com/javase/7/docs/api/', 
-\   'http://poi.apache.org/apidocs/', 
-\   'http://docs.guava-libraries.googlecode.com/git/javadoc/', 
+\   'http://docs.oracle.com/javase/7/docs/api/',
+\   'http://poi.apache.org/apidocs/',
+\   'http://docs.guava-libraries.googlecode.com/git/javadoc/',
 \]
 " }}}
 " eskk {{{
@@ -588,7 +588,7 @@ autocmd gyokuro QuickFixCmdPost [^l]* nested cwindow
 autocmd gyokuro QuickFixCmdPost    l* nested lwindow
 " }}}
 " AllMaps {{{
-command! 
+command!
 \ -nargs=* -complete=command
 \ AllMaps
 \ map <args> | map! <args> | lmap <args>
@@ -720,8 +720,8 @@ vmap     <C-J>                 <Plug>(textmanip-move-down)
 vmap     <C-K>                 <Plug>(textmanip-move-up)
 vmap     <C-L>                 <Plug>(textmanip-move-right)
 " super tab emu.
-imap <expr><Tab> neosnippet#expandable_or_jumpable() ? 
-\"\<Plug>(neosnippet_expand_or_jump)" : 
+imap <expr><Tab> neosnippet#expandable_or_jumpable() ?
+\"\<Plug>(neosnippet_expand_or_jump)" :
 \"\<Tab>"
 smap <expr><Tab> neosnippet#expandable_or_jumpable() ?
 \"\<Plug>(neosnippet_expand_or_jump)" :
@@ -742,55 +742,55 @@ endif
 " }}}
 " filetype depended config {{{
 " autocmd gyokuro FileType * call s:switch_filetype(expand('<amatch>'))
-" 
+"
 " function! s:switch_filetype(new_filetype)
 "     if !exists('b:gyokuro_filetype_info')
 "         let b:gyokuro_filetype_info= {
-"         \   'current_filetypes': [], 
-"         \   'sweepers': {}, 
+"         \   'current_filetypes': [],
+"         \   'sweepers': {},
 "         \}
 "     endif
 "     " PP! b:gyokuro_filetype_info
-" 
+"
 "     let l:filetypes= b:gyokuro_filetype_info.current_filetypes
 "     let l:sweepers= b:gyokuro_filetype_info.sweepers
 "     for l:filetype in l:filetypes
 "         for l:sweeper in get(l:sweepers, l:filetype, [])
 "             execute l:sweeper
 "         endfor
-" 
+"
 "         if has_key(b:gyokuro_filetype_info.sweepers, l:filetype)
 "             call remove(b:gyokuro_filetype_info.sweepers, l:filetype)
 "         endif
 "     endfor
 "     unlet l:sweepers
-" 
+"
 "     let l:filetypes= split(a:new_filetype, '\.')
 "     for l:filetype in l:filetypes
 "         let l:func_name= 's:on_enter_' . l:filetype
-" 
+"
 "         if exists('*' . l:func_name)
 "             let l:sweepers= {l:func_name}()
-" 
+"
 "             call extend(b:gyokuro_filetype_info.sweepers, l:sweepers)
 "         endif
 "     endfor
 "     let b:gyokuro_filetype_info.current_filetypes= l:filetypes
 " endfunction
-" 
+"
 " function! s:on_enter_perl()
 "     let l:sweeper= {
 "     \   'perl': [
-"     \       'setlocal fileencoding=' . &l:fileencoding, 
-"     \       'setlocal fileformat=' . &l:fileformat, 
-"     \       'setlocal equalprg=' . &l:equalprg, 
-"     \   ], 
+"     \       'setlocal fileencoding=' . &l:fileencoding,
+"     \       'setlocal fileformat=' . &l:fileformat,
+"     \       'setlocal equalprg=' . &l:equalprg,
+"     \   ],
 "     \}
-" 
+"
 "     let &l:fileencoding= 'utf8'
 "     let &l:fileformat=   'unix'
 "     let &l:equalprg=     'perltidy'
-" 
+"
 "     return l:sweeper
 " endfunction
 
