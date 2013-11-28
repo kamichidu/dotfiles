@@ -44,11 +44,11 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " vimをneobundle管理
 NeoBundleFetch 'https://code.google.com/p/vim/', {
 \   'type': 'hg', 
-\   'name': 'vim', 
+\   'name': 'vim-self', 
 \   'build': {
 \       'unix':
 \           './configure' .
-\           '    --prefix=/home/kamichidu/local/' .
+\           '    --prefix=/home/' . $HOME . 'local/' .
 \           '    --enable-fail-if-missing' .
 \           '    --disable-darwin' .
 \           '    --disable-selinux' .
