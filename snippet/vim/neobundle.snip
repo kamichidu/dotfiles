@@ -12,3 +12,12 @@ abbr NeoBundleLazy ''
 				\   }
 				\}
 
+snippet neobundle#tap
+alias   tap
+options head
+	if neobundle#tap('${1}')
+		${0}
+
+		call neobundle#untap()
+	endif
+
