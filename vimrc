@@ -912,6 +912,8 @@ endif
 " disable tag completion since it's too slow
 set complete=.,w,b,u
 set completeopt=menu
+" no beep
+set visualbell t_vb=
 
 " configuration for 'statusline'
 let &statusline= '>>> %m%r %-f [%{&l:fenc}][%{&l:eol ? "eol" : "noeol"}]%w ||| ft=%{&l:filetype} ||| winnr=%{winnr()} ||| %= ||| col at %c, line at %l of %L (%p%%) <<<'
