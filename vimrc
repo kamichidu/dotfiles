@@ -21,9 +21,48 @@ let s:gyokuro_constants= {
 \   ],
 \   'vimrc-edit-support': 1,
 \}
+
 augroup gyokuro
     autocmd!
 augroup END
+
+let g:gyokuro_pluggable= {
+\   'description': 'pluggable vimrc settings',
+\   'pluggables': [],
+\}
+function! g:gyokuro_pluggable.call_hook(name, ...)
+    for l:pluggable in self.pluggables
+        if has_key(l:pluggable, a:name)
+            call call(l:pluggable[a:name], a:000, l:pluggable)
+        endif
+    endfor
+endfunction
+function! s:meltdown(expr)
+    let l:blast_furnace= {}
+
+    for l:dict in a:expr
+        for l:key in keys(l:dict)
+            let l:blast_furnace[l:key]= l:dict[l:key]
+        endfor
+    endfor
+
+    return l:blast_furnace
+endfunction
+if filereadable(expand('~/.vimrc.local'))
+    source ~/.vimrc.local
+
+    redir => s:scriptnames
+    silent scriptnames
+    redir END
+
+    let s:fname_to_sids= s:meltdown(map(split(s:scriptnames, "\n"), '{fnamemodify(matchstr(v:val, ''\%(:\s\+\)\@<=\f\+$''), ":p"): matchstr(v:val, ''\d\+\%(:\)\@='')}'))
+    let s:sid= get(s:fname_to_sids, fnamemodify('~/.vimrc.local', ':p'), -1)
+    let s:pluggable= <SNR>{s:sid}__pluggable()
+
+    call add(g:gyokuro_pluggable.pluggables, s:pluggable)
+
+    unlet s:scriptnames s:fname_to_sids s:sid s:pluggable
+endif
 
 " plugin {{{
 " neobundle {{{
@@ -39,6 +78,8 @@ let g:neobundle#install_process_timeout= 600
 " required!
 filetype off
 filetype plugin indent off
+
+call g:gyokuro_pluggable.call_hook('on_neobundle_pre')
 
 " XXX: don't manage neobundle.vim by neobundle.vim. this is obsolete.
 NeoBundleFetch 'Shougo/neobundle.vim'
@@ -241,6 +282,8 @@ call s:neobundle('https://code.google.com/p/vimwiki/', {
 call neobundle#local(s:gyokuro_constants['dev-plugin-dir'], {
 \   'type': 'nosync',
 \})
+
+call g:gyokuro_pluggable.call_hook('on_neobundle')
 
 " required!
 filetype plugin indent on
@@ -928,7 +971,4 @@ if exists('s:gyokuro_constants') && has_key(s:gyokuro_constants, 'grepprgs')
     unlet s:candidate
 endif
 
-if filereadable(expand('~/.vimrc.local'))
-    source ~/.vimrc.local
-endif
-
+call g:gyokuro_pluggable.call_hook('on_finish')
