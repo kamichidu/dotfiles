@@ -6,7 +6,10 @@ endif
 
 " constants for using .vimrc
 let s:gyokuro_constants= {
-\   'vimrc': expand('~/.vimrc'),
+\   'vimrc':          $MYVIMRC,
+\   'gvimrc':         $MYGVIMRC,
+\   'vimrc_local':    $MYVIMRC . '.local',
+\   'gvimrc_local':   $MYGVIMRC . '.local',
 \   'temporary_dir':  expand('~/.tmp/vim/'),
 \   'dev-plugin-dir': expand('~/sources/vim-plugin/'),
 \   'grepprgs': [
@@ -48,15 +51,15 @@ function! s:meltdown(expr)
 
     return l:blast_furnace
 endfunction
-if filereadable(expand('~/.vimrc.local'))
-    source ~/.vimrc.local
+if filereadable(s:gyokuro_constants.vimrc_local)
+    execute 'source' s:gyokuro_constants.vimrc_local
 
     redir => s:scriptnames
     silent scriptnames
     redir END
 
     let s:fname_to_sids= s:meltdown(map(split(s:scriptnames, "\n"), '{fnamemodify(matchstr(v:val, ''\%(:\s\+\)\@<=\f\+$''), ":p"): matchstr(v:val, ''\d\+\%(:\)\@='')}'))
-    let s:sid= get(s:fname_to_sids, fnamemodify('~/.vimrc.local', ':p'), -1)
+    let s:sid= get(s:fname_to_sids, fnamemodify(s:gyokuro_constants.vimrc_local, ':p'), -1)
     let s:pluggable= <SNR>{s:sid}__pluggable()
 
     call add(g:gyokuro_pluggable.pluggables, s:pluggable)
@@ -89,26 +92,7 @@ NeoBundleFetch 'https://code.google.com/p/vim/', {
 \   'type': 'hg',
 \   'name': 'vim-self',
 \   'build': {
-\       'unix':
-\           './configure' .
-\           '    --prefix=' . $HOME . '/local/' .
-\           '    --enable-fail-if-missing' .
-\           '    --disable-darwin' .
-\           '    --disable-selinux' .
-\           '    --with-compiledby=kamichidu' .
-\           '    --with-x' .
-\           '    --with-features=huge' .
-\           '    --enable-luainterp' .
-\           '    --enable-perlinterp' .
-\           '    --enable-pythoninterp' .
-\           '    --enable-rubyinterp' .
-\           '    --enable-multibyte' .
-\           '    --enable-xim' .
-\           '    --enable-fontset' .
-\           '    --enable-gui=gtk2' .
-\           ';' .
-\           'make -j5;' .
-\           'make install;'
+\       'unix': expand('~/.vim/bin/build-vim-self.sh'),
 \   },
 \}
 
@@ -176,11 +160,11 @@ call s:neobundle('Shougo/neosnippet', {
 \})
 " 読み込み設定は、-bつきで起動されたときくらい？
 call s:neobundle('Shougo/vinarise')
-call s:neobundle('Shougo/javacomplete', {
-\   'build': {
-\       'unix': 'javac autoload/Reflection.java',
-\   },
-\})
+" call s:neobundle('Shougo/javacomplete', {
+" \   'build': {
+" \       'unix': 'javac autoload/Reflection.java',
+" \   },
+" \})
 call s:neobundle('Shougo/echodoc')
 call s:neobundle('mattn/gist-vim', {
 \   'depends': ['mattn/webapi-vim'],
@@ -193,6 +177,7 @@ call s:neobundle('mattn/msgpack-vim')
 call s:neobundle('kana/vim-tabpagecd')
 call s:neobundle('kana/vim-surround')
 call s:neobundle('kana/vim-submode')
+call s:neobundle('kana/vim-vspec')
 let s:depends= s:neobundle_dependant_on('kana/vim-textobj-user')
 call s:depends.by('kana/vim-textobj-entire')
 call s:depends.by('kana/vim-textobj-function')
@@ -211,6 +196,7 @@ call s:neobundle('tyru/vim-altercmd')
 call s:neobundle('tyru/eskk.vim')
 call s:neobundle('koron/maze3d-vim')
 call s:neobundle('koron/nyancat-vim')
+call s:neobundle('itchyny/thumbnail.vim')
 call s:neobundle('tomtom/tcomment_vim')
 call s:neobundle('osyo-manga/vim-precious', {
 \   'depends': ['Shougo/context_filetype.vim'],
@@ -228,6 +214,7 @@ call s:neobundle('osyo-manga/vim-watchdogs', {
 \   ],
 \})
 call s:neobundle('osyo-manga/vim-snowdrop')
+call s:neobundle('osyo-manga/vim-gyazo')
 call s:neobundle('h1mesuke/vim-alignta')
 call s:neobundle('jiangmiao/simple-javascript-indenter')
 call s:neobundle('jelera/vim-javascript-syntax')
@@ -270,6 +257,14 @@ call s:neobundle('c9s/perlomni.vim')
 call s:neobundle('yuratomo/w3m.vim')
 call s:neobundle('tsukkee/lingr-vim')
 call s:neobundle('tpope/vim-abolish')
+"
+" XXX: lua omni completion trying
+" call s:neobundle('rkowal/Lua-Omni-Vim-Completion')
+" call s:neobundle('xolox/vim-lua-ftplugin', {
+" \   'depends': ['vim-misc'],
+" \})
+"
+"
 call s:neobundle('DrawIt')
 call s:neobundle('autodate.vim')
 call s:neobundle('sudo.vim')
@@ -277,6 +272,8 @@ call s:neobundle('https://code.google.com/p/vimwiki/', {
 \   'type': 'hg',
 \   'directory': 'vimwiki/src/',
 \})
+call s:neobundle('AndrewRadev/linediff.vim')
+call s:neobundle('coderifous/textobj-word-column.vim')
 
 " developing plugins
 call neobundle#local(s:gyokuro_constants['dev-plugin-dir'], {
@@ -344,11 +341,11 @@ if neobundle#tap('vim-watchdogs')
     \   'java': 0,
     \}
     let g:quickrun_config= get(g:, 'quickrun_config', {})
-    let g:quickrun_config['watchdogs_checker/javac']= {
-    \   'command': 'javac',
-    \   'exec':    '%c %o %s',
-    \   'cmdopt':  '-source 1.6 -Xlint:all',
-    \}
+    " let g:quickrun_config['watchdogs_checker/javac']= {
+    " \   'command': 'javac',
+    " \   'exec':    '%c %o %s',
+    " \   'cmdopt':  '-source 1.6 -Xlint:all',
+    " \}
 
     call neobundle#untap()
 endif
@@ -436,7 +433,7 @@ if neobundle#tap('neocomplete')
     endif
     let g:neocomplete#delimiter_patterns['cpp']= ['\.', '->', '::']
     let g:neocomplete#delimiter_patterns['java']= ['\.']
-    let g:neocomplete#delimiter_patterns['perl']= ['::']
+    " let g:neocomplete#delimiter_patterns['perl']= ['::', '->']
 
     " omni complete
     let g:neocomplete#force_overwrite_completefunc= 1
@@ -463,12 +460,12 @@ if neobundle#tap('neocomplete')
     if !exists('g:neocomplete#sources#omni#functions')
         let g:neocomplete#sources#omni#functions= {}
     endif
-    let g:neocomplete#sources#omni#functions['java']= 'javacomplete#Complete'
+    " let g:neocomplete#sources#omni#functions['java']= 'javacomplete#Complete'
     let g:neocomplete#sources#omni#functions['perl']= 'PerlComplete'
     let g:neocomplete#sources#omni#functions['cpp']= 'ClangComplete'
 
     " disable unnecessary sources
-    for s:source_name in ['include', 'syntax']
+    for s:source_name in ['include', 'syntax', 'member']
         call neocomplete#custom#source(s:source_name, 'disabled_filetypes', {'_': 1})
     endfor
     unlet s:source_name
@@ -526,10 +523,10 @@ elseif neobundle#tap('neocomplcache')
     " let g:neocomplcache_force_omni_patterns['cpp']= '[^.[:digit:] *\t]\%(\.\|->\)\|::'
     " let g:neocomplcache_force_omni_patterns['cpp']= '\.\|->\|::'
     let g:neocomplcache_omni_functions= get(g:, 'neocomplcache_omni_functions', {})
-    let g:neocomplcache_omni_functions['java']= 'javacomplete#Complete'
+    " let g:neocomplcache_omni_functions['java']= 'javacomplete#Complete'
     let g:neocomplcache_omni_functions['perl']= 'PerlComplete'
     let g:neocomplcache_vim_completefuncs= get(g:, 'neocomplcache_vim_completefuncs', {})
-    let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
+    " let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
     let g:neocomplcache_vim_completefuncs['perl']= 'PerlComplete'
 
     call neobundle#untap()
@@ -671,6 +668,8 @@ endif
 if neobundle#tap('vimconsole.vim')
     let g:vimconsole#height= 20
 
+    nmap <silent> <Leader>vc :<C-U>VimConsoleToggle<CR>
+
     call neobundle#untap()
 endif
 if neobundle#tap('context_filetype.vim')
@@ -735,6 +734,8 @@ endif
 if neobundle#tap('vim-choosewin')
     nmap <C-W><C-W> <Plug>(choosewin)
 
+    let g:choosewin_overlay_enable= 1
+
     call neobundle#untap()
 endif
 if neobundle#tap('vim-altercmd')
@@ -749,6 +750,28 @@ if neobundle#tap('vim-altercmd')
     AlterCommand gits[tatus] Gstatus
     AlterCommand gitd[iff] Gdiff
     AlterCommand gitb[lame] Gblame
+
+    call neobundle#untap()
+endif
+if neobundle#tap('vim-coffee-script')
+"     autocmd gyokuro QuickFixCmdPost * nested cwindow | redraw!
+"
+"     function! s:compile_coffee()
+"         if !exists('b:coffee_dir')
+"             let b:coffee_dir= input('where is coffee directory? ', '')
+"         endif
+"         if !exists('b:js_dir')
+"             let b:js_dir= input('where is javascript directory? ', '')
+"         endif
+"
+"         if empty(b:coffee_dir) || empty(b:js_dir)
+"             return
+"         endif
+"
+"         execute 'silent make! -o ' . b:js_dir . ' -j app.js -c ' . b:coffee_dir . '/**/*.coffee'
+"     endfunction
+"
+"     autocmd gyokuro BufWritePost *.coffee call s:compile_coffee()
 
     call neobundle#untap()
 endif
@@ -957,6 +980,9 @@ set complete=.,w,b,u
 set completeopt=menu
 " no beep
 set visualbell t_vb=
+set conceallevel=0
+set concealcursor=
+set incsearch
 
 " configuration for 'statusline'
 let &statusline= '>>> %m%r %-f [%{&l:fenc}][%{&l:eol ? "eol" : "noeol"}]%w ||| ft=%{&l:filetype} ||| winnr=%{winnr()} ||| %= ||| col at %c, line at %l of %L (%p%%) <<<'
