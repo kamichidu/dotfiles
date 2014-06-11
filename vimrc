@@ -888,6 +888,8 @@ nnoremap *                     *zzzv
 nnoremap #                     #zzzv
 nnoremap n                     nzzzv
 nnoremap N                     Nzzzv
+nnoremap ]c                    ]czz
+nnoremap [c                    [czz
 " inoremap <C-[>                 <C-[><C-L>
 vnoremap <                     <gv
 vnoremap >                     >gv
