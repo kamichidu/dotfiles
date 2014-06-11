@@ -873,7 +873,7 @@ nnoremap <silent><SID>[tag]uff :Unite file<CR>
 nnoremap <silent><SID>[tag]ufr :Unite file_rec/async<CR>
 nnoremap <silent><SID>[tag]uo  :Unite outline<CR>
 nnoremap <silent><SID>[tag]vfb :VimFiler<CR>
-nnoremap <silent><SID>[tag]vfe :VimFiler -winwidth=50 -explorer<CR>
+nnoremap <silent><SID>[tag]vfe :VimFiler -winwidth=50 -explorer -create<CR>
 nnoremap <expr><SID>[tag]cl    <SID>toggle_cursorline()
 nnoremap <expr><SID>[tag]ve    <SID>toggle_virtualedit()
 nnoremap <silent><SID>[tag]o   :TagbarToggle<CR>
