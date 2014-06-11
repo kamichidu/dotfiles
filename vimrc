@@ -973,6 +973,7 @@ endif
 set fileencodings=utf-8,cp932,euc-jp,iso-2022-jp,default,latin
 " 検索時に大文字小文字区別なし
 set ignorecase
+set smartcase
 " statuslineを常に表示する
 set laststatus=2
 " swapfileを書き出す待ち時間
