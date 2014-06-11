@@ -227,9 +227,6 @@ call s:neobundle('majutsushi/tagbar')
 call s:neobundle('godlygeek/csapprox')
 call s:neobundle('Rykka/colorv.vim', {
 \   'depends': ['mattn/webapi-vim'],
-\   'build': {
-\       'unix': 'make -f autoload/Makefile',
-\   },
 \})
 call s:neobundle('candycode.vim')
 call s:neobundle('Rip-Rip/clang_complete')
