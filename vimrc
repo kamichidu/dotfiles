@@ -186,6 +186,9 @@ call s:depends.by('deris/vim-textobj-enclosedsyntax')
 call s:depends.by('thinca/vim-textobj-between')
 call s:depends.by('thinca/vim-textobj-comment')
 unlet s:depends
+let s:depends= s:neobundle_dependant_on('kana/vim-gf-user')
+call s:depends.by('sgur/vim-gf-autoload')
+unlet s:depends
 call s:neobundle('thinca/vim-ref')
 call s:neobundle('thinca/vim-quickrun')
 call s:neobundle('t9md/vim-textmanip')
