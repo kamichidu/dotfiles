@@ -274,6 +274,8 @@ call s:neobundle('https://code.google.com/p/vimwiki/', {
 \})
 call s:neobundle('AndrewRadev/linediff.vim')
 call s:neobundle('coderifous/textobj-word-column.vim')
+call s:neobundle('ebnf.vim')
+call s:neobundle('blinks/vim-antlr')
 
 " developing plugins
 call neobundle#local(s:gyokuro_constants['dev-plugin-dir'], {
@@ -910,11 +912,15 @@ if exists(':CSApprox') == 2
 endif
 
 autocmd gyokuro BufNewFile,BufRead    *.g            setlocal filetype=antlr3
+autocmd gyokuro BufNewFile,BufRead    *.g4           setlocal filetype=antlr4
 autocmd gyokuro BufEnter,BufReadPre   *.tex          setlocal filetype=tex
 autocmd gyokuro BufNewFile            *.pl,*.cgi,*.t setlocal fileencoding=utf8
 autocmd gyokuro BufEnter,BufReadPre   *.ftl          setlocal filetype=ftl
+autocmd gyokuro BufEnter,BufReadPre   *.ebnf         setlocal filetype=ebnf
+autocmd gyokuro BufEnter,BufReadPre   *.yrl          setlocal filetype=erlang
 autocmd gyokuro FileType help nnoremap <buffer><silent>q <Esc>:<C-U>q<CR>
 autocmd gyokuro FileType java let &l:equalprg= 'uncrustify -c ~/dotfiles/uncrustify.conf/java.conf -l JAVA'
+
 " }}}
 " editor {{{
 " 新しい行のインデントを現在行と同じにする
