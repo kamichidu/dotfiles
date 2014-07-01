@@ -558,7 +558,7 @@ if neobundle#tap('clang_complete')
     " let g:clang_user_options= '-std=c++11 -fms-extensions --fgnu-runtime'
     " one of {alpha, priority, none}
     let g:clang_sort_algo= 'alpha'
-    let g:clang_complete_macros= 0
+    let g:clang_complete_macros= 1
 
     call neobundle#untap()
 endif
