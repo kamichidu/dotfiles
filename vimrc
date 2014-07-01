@@ -275,6 +275,7 @@ call s:neobundle('https://code.google.com/p/vimwiki/', {
 call s:neobundle('AndrewRadev/linediff.vim')
 call s:neobundle('coderifous/textobj-word-column.vim')
 call s:neobundle('ebnf.vim')
+call s:neobundle('bnf.vim')
 call s:neobundle('blinks/vim-antlr')
 call s:neobundle('glidenote/memolist.vim')
 
