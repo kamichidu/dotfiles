@@ -142,9 +142,9 @@ call s:neobundle('Shougo/unite.vim', {
 \   'name': 'unite.vim',
 \})
 let s:depends= s:neobundle_dependant_on('Shougo/unite.vim')
-call s:depends.by('osyo-manga/unite-qfixhowm', {
-\       'depends': ['fuenor/qfixhowm'],
-\})
+" call s:depends.by('osyo-manga/unite-qfixhowm', {
+" \       'depends': ['fuenor/qfixhowm'],
+" \})
 call s:depends.by('choplin/unite-vim_hacks', {
 \       'depends': ['mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'],
 \})
@@ -230,7 +230,7 @@ call s:neobundle('Rykka/colorv.vim', {
 \})
 call s:neobundle('candycode.vim')
 call s:neobundle('Rip-Rip/clang_complete')
-call s:neobundle('fuenor/qfixhowm')
+" call s:neobundle('fuenor/qfixhowm')
 call s:neobundle('vim-jp/vital.vim')
 call s:neobundle('vim-jp/cpp-vim')
 " for twitter
@@ -276,6 +276,7 @@ call s:neobundle('AndrewRadev/linediff.vim')
 call s:neobundle('coderifous/textobj-word-column.vim')
 call s:neobundle('ebnf.vim')
 call s:neobundle('blinks/vim-antlr')
+call s:neobundle('glidenote/memolist.vim')
 
 " developing plugins
 call neobundle#local(s:gyokuro_constants['dev-plugin-dir'], {
@@ -322,6 +323,19 @@ if neobundle#tap('qfixhowm')
     call neobundle#untap()
 endif
 " }}}
+if neobundle#tap('memolist.vim')
+    let g:memolist_path= expand('~/documents/memo/')
+    let g:memolist_memo_suffix= 'mkd'
+    " date format (default %Y-%m-%d %H:%M)
+    let g:memolist_memo_date = "%Y-%m-%d %H:%M:%S"
+    let g:memolist_unite= 1
+    let g:memolist_unite_option= ''
+    " let g:memolist_unite_source= 'file_rec/async'
+
+    nnoremap g,c :<C-U>MemoNew<Space><C-R>=strftime('%H%M%S')<CR><CR>
+    nnoremap g,l :<C-U>MemoList<CR>
+    nnoremap g,g :<C-U>MemoGrep<CR>
+endif
 " open browser {{{
 if neobundle#tap('open-browser.vim')
     let g:netrw_nogx= 1 " disable netrw's gx mapping.
