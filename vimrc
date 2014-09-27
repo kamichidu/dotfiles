@@ -1,316 +1,509 @@
 scriptencoding utf-8
 
-
-if filereadable(expand($MYVIMRC . '.system'))
-    execute 'source' $MYVIMRC . '.system'
-endif
-
 " constants for using .vimrc
 let s:constants= {
+\   'files': {
+\       'vimrc':       $MYVIMRC,
+\       'vimrc_local': $MYVIMRC . '.local',
+\       'bundles':     expand('~/.bundles'),
+\   },
 \   'directories': {
 \       'temporary':   expand('~/.tmp/vim/'),
+\       'backup':      expand('~/.tmp/vim/backup/'),
+\       'swap':        expand('~/.tmp/vim/swap/'),
+\       'undo':        expand('~/.tmp/vim/undo/'),
 \       'development': expand('~/sources/vim-plugin/'),
 \       'bundle':      expand('~/.bundle/'),
 \   },
 \}
 
+function! s:_()
+    for dir in values(s:constants.directories)
+        if !isdirectory(dir)
+            call mkdir(dir, 'p')
+        endif
+    endfor
+endfunction
+call s:_()
+
 augroup gyokuro
     autocmd!
 augroup END
 
-let g:gyokuro_pluggable= {
-\   'description': 'pluggable vimrc settings',
-\   'pluggables': [],
-\}
+let g:gyokuro_extensions= []
 
-function! g:gyokuro_pluggable.call_hook(name, ...)
-    for l:pluggable in self.pluggables
-        if has_key(l:pluggable, a:name)
-            call call(l:pluggable[a:name], a:000, l:pluggable)
+function! s:invoke_extension(type, ...)
+    let context= get(a:000, 0, {})
+
+    for extension in g:gyokuro_extensions
+        if has_key(extension, a:type)
+            call call(extension[a:type], [context])
         endif
     endfor
 endfunction
 
-function! s:meltdown(expr)
-    let l:blast_furnace= {}
-
-    for l:dict in a:expr
-        for l:key in keys(l:dict)
-            let l:blast_furnace[l:key]= l:dict[l:key]
-        endfor
-    endfor
-
-    return l:blast_furnace
-endfunction
-
-function! s:call_sl(path, func_name, ...)
-    if !exists('s:scriptnames')
-        redir => s:scriptnames
-        silent scriptnames
-        redir END
-    endif
-
-    let path2sid= {}
-
-    for line in split(s:scriptnames, "\n")
-        let key= fnamemodify(matchstr(line, '\%(:\s\+\)\@<=\f\+$'), ":p")
-        let value= str2nr(matchstr(line, '\d\+\%(:\)\@='))
-
-        let path2sid[key]= value
-    endfor
-
-    let sid= get(path2sid, fnamemodify(a:path, ':p'), -1)
-
-    if sid == -1
-        throw printf("No such file `%s'", a:path)
-    endif
-
-    return call(printf('<SNR>%d_%s', sid, a:func_name), a:000)
-endfunction
-
-if filereadable($MYVIMRC . '.local')
-    execute 'source' $MYVIMRC . '.local'
-
-    let s:pluggable= s:call_sl($MYVIMRC . '.local', '_pluggable')
-
-    let g:gyokuro_pluggable.pluggables+= [s:pluggable]
-
-    unlet s:pluggable
+if filereadable(s:constants.files.vimrc_local)
+    execute 'source' s:constants.files.vimrc_local
 endif
+
+set number norelativenumber
+set tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
+set autoindent smartindent
+set showmatch
+" set whichwrap=b,s,h,l,<,>,[,]
+set whichwrap=b,s
+set backspace=indent,eol,start
+set nowrapscan
+set nowrap
+set title
+set textwidth=0
+set backup
+set writebackup
+let &backupdir= s:constants.directories.backup . ',.'
+set swapfile
+let &directory= s:constants.directories.swap . ',.'
+if has('persistent_undo')
+    let &undodir= s:constants.directories.undo
+    set undofile
+endif
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
+set fileencodings=utf-8,cp932,euc-jp,iso-2022-jp,default,latin
+set hlsearch
+set incsearch
+set ignorecase smartcase
+set laststatus=2
+set updatetime=500
+set cmdheight=2
+if has('conceal')
+    set conceallevel=0
+    set concealcursor=
+endif
+" disable tag completion since it's too slow
+set complete=.,w,b,u
+set completeopt=menu
+" no beep
+set visualbell t_vb=
+" don't move cursor when <C-D> and <C-U> and...
+set nostartofline
+set wildmode=longest:full,full wildmenu
+set t_Co=256
+set viminfo='20,<100
+set history=50
+set ruler
+
+if executable('ag')
+    let &grepprg= 'ag -n $*'
+elseif executable('jvgrep')
+    let &grepprg= 'jvgrep $*'
+elseif executable('pt')
+    let &grepprg= 'pt'
+endif
+
+call s:invoke_extension('configure_global')
 
 if has('vim_starting')
     let &runtimepath.= ',' . s:constants.directories.bundle . 'neobundle.vim/'
 endif
+
 call neobundle#begin(s:constants.directories.bundle)
 
 let g:neobundle#types#git#default_protocol= 'https'
 let g:neobundle#install_process_timeout= 600
 
-call g:gyokuro_pluggable.call_hook('on_neobundle_pre')
+call s:invoke_extension('neobundle_pre')
 
-" XXX: don't manage neobundle.vim by neobundle.vim. this is obsolete.
-NeoBundleFetch 'Shougo/neobundle.vim'
+function! s:split2(expr, pattern)
+    let bidx= match(a:expr, a:pattern)
+    let eidx= matchend(a:expr, a:pattern)
 
-" manage vim by myself
-NeoBundleFetch 'https://code.google.com/p/vim/', {
-\   'type': 'hg',
-\   'name': 'vim-self',
-\   'build': {
-\       'unix': expand('~/.vim/bin/build-vim-self.sh'),
-\   },
-\}
-
-" switch neocompl{ete,cache}
-let s:which_neocompl= has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
-" for managing evaluation timing
-function! s:neobundle(repository, ...)
-    let config= get(a:000, 0, {})
-
-    let base_command= "NeoBundle '" . a:repository . "'"
-    if empty(config)
-        let command= base_command
-    else
-        let command= base_command . ',' . string(config)
+    if bidx == -1
+        return [a:expr]
     endif
 
-    execute command
+    return [(bidx > 0) ? a:expr[ : bidx - 1] : '', a:expr[eidx : ]]
 endfunction
-" ease to write depends
-function! s:neobundle_dependant_on(repository)
-    let l:obj= {
-    \   'dependant': a:repository,
-    \}
 
-    function! l:obj.by(repository, ...)
-        let l:args= get(a:000, 0, {})
+function! s:read_ltsv(filename, config)
+    let lines= readfile(a:filename)
 
-        if has_key(l:args, 'depends')
-            let l:args.depends= [self.dependant] + l:args.depends
-        else
-            let l:args.depends= [self.dependant]
+    " apply comments
+    let comment_pattern= '^#'
+    call filter(lines, 'v:val !~# comment_pattern')
+
+    let records= []
+    for line in lines
+        let values= map(split(line, '\t'), 's:split2(v:val, "=")')
+        let record= {}
+
+        for value in values
+            let label= value[0]
+            if index(a:config.arrays, label) != -1
+                let record[label]= get(record, label, [])
+                let record[label]+= [value[1]]
+            elseif index(a:config.dicts, label) != -1
+                let record[label]= get(record, label, {})
+                let value2= s:split2(value[1], '=')
+                let record[label][value2[0]]= value2[1]
+            else
+                let record[label]= value[1]
+            endif
+        endfor
+
+        let records+= [record]
+    endfor
+    return records
+endfunction
+
+function! s:load_bundles(filename)
+    let records= s:read_ltsv(a:filename, {
+    \   'arrays': ['depends'],
+    \   'dicts':  ['build'],
+    \})
+    let aliases= {}
+
+    for record in records
+        if has_key(record, 'when')
+            " skip if when expr is false
+            if !eval(record.when)
+                continue
+            endif
         endif
 
-        call s:neobundle(a:repository, l:args)
-    endfunction
+        let command= (has_key(record, 'command')) ? record.command : 'NeoBundle'
+        let config= {}
 
-    return l:obj
+        if has_key(record, 'name')
+            let config.name= record.name
+            let config.regular_name= record.name
+        endif
+        if has_key(record, 'type')
+            let config.type= record.type
+        endif
+        if has_key(record, 'force')
+            let config.force= str2nr(record.force)
+        endif
+        if has_key(record, 'alias')
+            let aliases[record.alias]= record.repo
+        endif
+        if has_key(record, 'rtp')
+            let config.rtp= record.rtp
+        endif
+        if has_key(record, 'build')
+            let config.build= record.build
+        endif
+        if has_key(record, 'depends')
+            let config.depends= []
+            for deps in record.depends
+                if deps =~# '^{{\w\+}}$'
+                    let config.depends+= [aliases[matchstr(deps, '{{\zs\w\+\ze}}')]]
+                else
+                    let config.depends+= [deps]
+                endif
+            endfor
+        endif
+
+        execute command string(record.repo) ',' string(config)
+    endfor
 endfunction
+call s:load_bundles(s:constants.files.bundles)
 
-call s:neobundle(s:which_neocompl)
-call s:neobundle('Shougo/vimproc', {
-\   'build': {
-\       'unix': 'make -f make_unix.mak',
-\   },
-\})
-call s:neobundle('Shougo/unite.vim')
-let s:depends= s:neobundle_dependant_on('Shougo/unite.vim')
-" call s:depends.by('osyo-manga/unite-qfixhowm', {
-" \       'depends': ['fuenor/qfixhowm'],
-" \})
-call s:depends.by('choplin/unite-vim_hacks', {
-\   'depends': ['mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'],
-\})
-unlet s:depends
-call s:neobundle('Shougo/vimshell', {
-\   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'],
-\})
-" call s:neobundle('Shougo/vimfiler', {
-" \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc'],
-" \})
-call s:neobundle('Shougo/neosnippet', {
-\   'depends': [s:which_neocompl],
-\})
-" 読み込み設定は、-bつきで起動されたときくらい？
-call s:neobundle('Shougo/vinarise')
-" call s:neobundle('Shougo/javacomplete', {
+" XXX: don't manage neobundle.vim by neobundle.vim. this is obsolete.
+" NeoBundleFetch 'Shougo/neobundle.vim'
+
+" manage vim by myself
+" NeoBundleFetch 'https://code.google.com/p/vim/', {
+" \   'type': 'hg',
+" \   'name': 'vim-self',
 " \   'build': {
-" \       'unix': 'javac autoload/Reflection.java',
+" \       'unix': expand('~/.vim/bin/build-vim-self.sh'),
 " \   },
-" \})
-call s:neobundle('Shougo/echodoc')
-call s:neobundle('mattn/gist-vim', {
-\   'depends': ['mattn/webapi-vim'],
-\})
-call s:neobundle('mattn/webapi-vim')
-" emmet-vim eq zencoding-vim
-call s:neobundle('mattn/emmet-vim')
-call s:neobundle('mattn/qiita-vim')
-call s:neobundle('mattn/msgpack-vim')
-call s:neobundle('kana/vim-tabpagecd')
-call s:neobundle('kana/vim-surround')
-call s:neobundle('kana/vim-submode')
-call s:neobundle('kana/vim-vspec')
-let s:depends= s:neobundle_dependant_on('kana/vim-textobj-user')
-call s:depends.by('kana/vim-textobj-entire')
-call s:depends.by('kana/vim-textobj-function')
-call s:depends.by('kana/vim-textobj-underscore')
-call s:depends.by('deris/vim-textobj-enclosedsyntax')
-call s:depends.by('thinca/vim-textobj-between')
-call s:depends.by('thinca/vim-textobj-comment')
-unlet s:depends
-let s:depends= s:neobundle_dependant_on('kana/vim-gf-user')
-call s:depends.by('sgur/vim-gf-autoload')
-unlet s:depends
-call s:neobundle('thinca/vim-ref')
-call s:neobundle('thinca/vim-quickrun')
-call s:neobundle('t9md/vim-textmanip')
-call s:neobundle('t9md/vim-choosewin')
-call s:neobundle('t9md/vim-quickhl')
-call s:neobundle('tyru/open-browser.vim')
-call s:neobundle('tyru/vim-altercmd')
-call s:neobundle('tyru/eskk.vim')
-call s:neobundle('koron/maze3d-vim')
-call s:neobundle('koron/nyancat-vim')
-call s:neobundle('itchyny/thumbnail.vim')
-call s:neobundle('itchyny/calendar.vim')
-call s:neobundle('tomtom/tcomment_vim')
-call s:neobundle('osyo-manga/vim-precious', {
-\   'depends': ['Shougo/context_filetype.vim'],
-\})
-call s:neobundle('osyo-manga/vim-owl', {
-\   'depends': ['osyo-manga/vim-chained', 'osyo-manga/vim-budou'],
-\})
-call s:neobundle('osyo-manga/vim-watchdogs', {
-\   'depends': [
-\       'thinca/vim-quickrun',
-\       'Shougo/vimproc',
-\       'osyo-manga/shabadou.vim',
-\       'jceb/vim-hier',
-\       'dannyob/quickfixstatus',
-\   ],
-\})
-call s:neobundle('osyo-manga/vim-snowdrop')
-call s:neobundle('osyo-manga/vim-gyazo')
-call s:neobundle('h1mesuke/vim-alignta')
-call s:neobundle('jiangmiao/simple-javascript-indenter')
-call s:neobundle('jelera/vim-javascript-syntax')
-call s:neobundle('marijnh/tern_for_vim')
-call s:neobundle('kchmck/vim-coffee-script')
-call s:neobundle('majutsushi/tagbar')
-call s:neobundle('godlygeek/csapprox', {
-\   'force': 1,
-\})
-call s:neobundle('Rykka/colorv.vim', {
-\   'depends': ['mattn/webapi-vim'],
-\})
-call s:neobundle('candycode.vim')
-call s:neobundle('Rip-Rip/clang_complete')
-" call s:neobundle('fuenor/qfixhowm')
-call s:neobundle('vim-jp/vital.vim')
-call s:neobundle('vim-jp/cpp-vim')
-" for twitter
-call s:neobundle('basyura/TweetVim', {
-\   'depends': [
-\       'tyru/open-browser.vim',
-\       'basyura/twibill.vim',
-\       'mattn/webapi-vim',
-\       'h1mesuke/unite-outline',
-\       'basyura/bitly.vim',
-\       'Shougo/unite.vim',
-\       'mattn/favstar-vim',
-\   ],
-\})
-call s:neobundle('rbtnn/vimconsole.vim', {
-\   'depends': ['thinca/vim-prettyprint'],
-\})
-call s:neobundle('gregsexton/gitv', {
-\   'depends': ['tpope/vim-fugitive'],
-\})
-call s:neobundle('AnsiEsc.vim')
-call s:neobundle('kannokanno/previm')
-call s:neobundle('c9s/perlomni.vim')
-call s:neobundle('yuratomo/w3m.vim')
-" call s:neobundle('tsukkee/lingr-vim')
-call s:neobundle('kamichidu/j6uil.vim', {
-\   'depends': ['Shougo/vimproc', 'mattn/webapi-vim'],
-\})
-call s:neobundle('tpope/vim-abolish')
+" \}
+
 "
-" XXX: lua omni completion trying
-" call s:neobundle('rkowal/Lua-Omni-Vim-Completion')
-" call s:neobundle('xolox/vim-lua-ftplugin', {
-" \   'depends': ['vim-misc'],
-" \})
+" All NeoBundle commands are with `name' option.
+" I specify normalized-name to `name' option.
 "
+" e.g.
+"   +---------------+-----------------+
+"   | Original Name | Normalized Name |
+"   +---------------+-----------------+
+"   | vim-quickrun  | quickrun        |
+"   | vim-ref       | ref             |
+"   | ref-hoge      | ref-hoge        |
+"   +---------------+-----------------+
 "
-call s:neobundle('DrawIt')
-call s:neobundle('autodate.vim')
-call s:neobundle('sudo.vim')
-call s:neobundle('https://code.google.com/p/vimwiki/', {
-\   'name': 'vimwiki',
-\   'type': 'hg',
-\   'rtp':  'src/',
-\})
-call s:neobundle('AndrewRadev/linediff.vim')
-call s:neobundle('coderifous/textobj-word-column.vim')
-call s:neobundle('ebnf.vim')
-call s:neobundle('bnf.vim')
-call s:neobundle('blinks/vim-antlr')
-call s:neobundle('kamichidu/memolist.vim')
-call s:neobundle('LeafCage/alti.vim')
-call s:neobundle('syngan/vim-vimlint', {
-\   'depends': ['ynkdir/vim-vimlparser'],
-\})
-call s:neobundle('balloon-stat/komadori.vim')
-call s:neobundle('scrooloose/nerdtree')
-call s:neobundle('ctrlpvim/ctrlp.vim')
-call s:neobundle('mattn/ctrlp-gist', {
-\   'depends': ['mattn/gist-vim'],
-\})
+" if has('lua')
+"     NeoBundle 'Shougo/neocomplete.vim', {
+"     \   'name': 'neocomplete',
+"     \}
+" else
+"     NeoBundle 'Shougo/neocomplcache.vim', {
+"     \   'name': 'neocomplcache',
+"     \}
+" endif
+" NeoBundle 'Shougo/vimproc.vim', {
+" \   'name': 'vimproc',
+" \   'build': {
+" \       'unix': 'make -f make_unix.mak',
+" \   },
+" \}
+" NeoBundle 'Shougo/unite.vim', {
+" \   'name': 'unite',
+" \}
+" NeoBundle 'choplin/unite-vim_hacks', {
+" \   'name': 'unite-vim_hacks',
+" \   'depends': ['Shougo/unite.vim', 'mattn/webapi-vim', 'mattn/wwwrenderer-vim', 'thinca/vim-openbuf'],
+" \}
+" NeoBundle 'Shougo/vimshell.vim', {
+" \   'name': 'vimshell',
+" \   'depends': ['Shougo/unite.vim', 'Shougo/vimproc.vim'],
+" \}
+" NeoBundle 'Shougo/neosnippet.vim', {
+" \   'name': 'neosnippet',
+" \   'depends': [has('lua') ? 'Shougo/neocomplete.vim' : 'Shougo/neocomplcache.vim'],
+" \}
+" NeoBundle 'Shougo/vinarise.vim', {
+" \   'name': 'vinarise',
+" \}
+" NeoBundle 'Shougo/echodoc.vim', {
+" \   'name': 'echodoc',
+" \}
+" NeoBundle 'mattn/gist-vim', {
+" \   'name': 'gist',
+" \   'depends': ['mattn/webapi-vim'],
+" \}
+" NeoBundle 'mattn/emmet-vim', {
+" \   'name': 'emmet',
+" \}
+" NeoBundle 'mattn/qiita-vim', {
+" \   'name': 'qiita',
+" \}
+" NeoBundle 'mattn/msgpack-vim', {
+" \   'name': 'msgpack',
+" \}
+" NeoBundle 'kana/vim-tabpagecd', {
+" \   'name': 'tabpagecd',
+" \}
+" NeoBundle 'kana/vim-surround', {
+" \   'name': 'surround',
+" \}
+" NeoBundle 'kana/vim-submode', {
+" \   'name': 'submode',
+" \}
+" NeoBundle 'kana/vim-vspec', {
+" \   'name': 'vspec',
+" \}
+" NeoBundle 'kana/vim-textobj-entire', {
+" \   'name': 'textobj-entire',
+" \   'depends': ['kana/vim-textobj-user'],
+" \}
+" NeoBundle 'kana/vim-textobj-function', {
+" \   'name': 'textobj-function',
+" \   'depends': ['kana/vim-textobj-user'],
+" \}
+" NeoBundle 'kana/vim-textobj-underscore', {
+" \   'name': 'textobj-underscore',
+" \   'depends': ['kana/vim-textobj-user'],
+" \}
+" NeoBundle 'deris/vim-textobj-enclosedsyntax', {
+" \   'name': 'textobj-enclosedsyntax',
+" \   'depends': ['kana/vim-textobj-user'],
+" \}
+" NeoBundle 'thinca/vim-textobj-between', {
+" \   'name': 'textobj-between',
+" \   'depends': ['kana/vim-textobj-user'],
+" \}
+" NeoBundle 'thinca/vim-textobj-comment', {
+" \   'name': 'textobj-comment',
+" \   'depends': ['kana/vim-textobj-user'],
+" \}
+" NeoBundle 'sgur/vim-gf-autoload', {
+" \   'name': 'gf-autoload',
+" \   'depends': ['kana/vim-gf-user'],
+" \}
+" NeoBundle 'thinca/vim-ref', {
+" \   'name': 'ref',
+" \}
+" NeoBundle 'thinca/vim-quickrun', {
+" \   'name': 'quickrun',
+" \}
+" NeoBundle 't9md/vim-textmanip', {
+" \   'name': 'textmanip',
+" \}
+" NeoBundle 't9md/vim-choosewin', {
+" \   'name': 'choosewin',
+" \}
+" NeoBundle 't9md/vim-quickhl', {
+" \   'name': 'quickhl',
+" \}
+" NeoBundle 'tyru/open-browser.vim', {
+" \   'name': 'open-browser',
+" \}
+" NeoBundle 'tyru/vim-altercmd', {
+" \   'name': 'altercmd',
+" \}
+" NeoBundle 'itchyny/calendar.vim', {
+" \   'name': 'calendar',
+" \}
+" NeoBundle 'tomtom/tcomment_vim', {
+" \   'name': 'tcomment',
+" \}
+" NeoBundle 'osyo-manga/vim-watchdogs', {
+" \   'name': 'watchdogs',
+" \   'depends': [
+" \       'thinca/vim-quickrun',
+" \       'Shougo/vimproc.vim',
+" \       'osyo-manga/shabadou.vim',
+" \       'jceb/vim-hier',
+" \       'dannyob/quickfixstatus',
+" \   ],
+" \}
+" NeoBundle 'osyo-manga/vim-snowdrop', {
+" \   'name': 'snowdrop',
+" \}
+" NeoBundle 'osyo-manga/vim-gyazo', {
+" \   'name': 'gyazo',
+" \}
+" NeoBundle 'h1mesuke/vim-alignta', {
+" \   'name': 'alignta',
+" \}
+" NeoBundle 'jiangmiao/simple-javascript-indenter', {
+" \   'name': 'simple-javascript-indenter',
+" \}
+" NeoBundle 'jelera/vim-javascript-syntax', {
+" \   'name': 'javascript-syntax',
+" \}
+" NeoBundle 'marijnh/tern_for_vim', {
+" \   'name': 'tern_for_vim',
+" \}
+" NeoBundle 'kchmck/vim-coffee-script', {
+" \   'name': 'coffee-script',
+" \}
+" NeoBundle 'majutsushi/tagbar', {
+" \   'name': 'tagbar',
+" \}
+" NeoBundle 'godlygeek/csapprox', {
+" \   'name': 'csapprox',
+" \   'force': 1,
+" \}
+" NeoBundle 'Rykka/colorv.vim', {
+" \   'name': 'colorv',
+" \   'depends': ['mattn/webapi-vim'],
+" \}
+" NeoBundle 'Rip-Rip/clang_complete', {
+" \   'name': 'clang_complete',
+" \}
+" NeoBundle 'vim-jp/vital.vim', {
+" \   'name': 'vital',
+" \}
+" NeoBundle 'vim-jp/cpp-vim', {
+" \   'name': 'cpp',
+" \}
+" NeoBundle 'basyura/TweetVim', {
+" \   'name': 'TweetVim',
+" \   'depends': [
+" \       'tyru/open-browser.vim',
+" \       'basyura/twibill.vim',
+" \       'mattn/webapi-vim',
+" \       'h1mesuke/unite-outline',
+" \       'basyura/bitly.vim',
+" \       'Shougo/unite.vim',
+" \       'mattn/favstar-vim',
+" \   ],
+" \}
+" NeoBundle 'rbtnn/vimconsole.vim', {
+" \   'name': 'vimconsole',
+" \   'depends': ['thinca/vim-prettyprint'],
+" \}
+" NeoBundle 'AnsiEsc.vim', {
+" \   'name': 'AnsiEsc',
+" \}
+" NeoBundle 'kannokanno/previm', {
+" \   'name': 'previm',
+" \}
+" NeoBundle 'c9s/perlomni.vim', {
+" \   'name': 'perlomni',
+" \}
+" NeoBundle 'yuratomo/w3m.vim', {
+" \   'name': 'w3m',
+" \}
+" NeoBundle 'basyura/j6uil.vim', {
+" \   'name': 'j6uil',
+" \   'depends': ['Shougo/vimproc.vim'],
+" \}
+" NeoBundle 'tpope/vim-abolish', {
+" \   'name': 'abolish',
+" \}
+" NeoBundle 'DrawIt', {
+" \   'name': 'DrawIt',
+" \}
+" NeoBundle 'autodate.vim', {
+" \   'name': 'autodate',
+" \}
+" NeoBundle 'sudo.vim', {
+" \   'name': 'sudo',
+" \}
+" NeoBundle 'https://code.google.com/p/vimwiki/', {
+" \   'name': 'vimwiki',
+" \   'type': 'hg',
+" \   'rtp':  'src/',
+" \}
+" NeoBundle 'AndrewRadev/linediff.vim', {
+" \   'name': 'linediff',
+" \}
+" NeoBundle 'coderifous/textobj-word-column.vim', {
+" \   'name': 'textobj-word-column',
+" \}
+" NeoBundle 'ebnf.vim', {
+" \   'name': 'ebnf',
+" \}
+" NeoBundle 'bnf.vim', {
+" \   'name': 'bnf',
+" \}
+" NeoBundle 'blinks/vim-antlr', {
+" \   'name': 'antlr',
+" \}
+" NeoBundle 'kamichidu/memolist.vim', {
+" \   'name': 'memolist',
+" \}
+" NeoBundle 'LeafCage/alti.vim', {
+" \   'name': 'alti',
+" \}
+" NeoBundle 'syngan/vim-vimlint', {
+" \   'name': 'vimlint',
+" \   'depends': ['ynkdir/vim-vimlparser'],
+" \}
+" NeoBundle 'balloon-stat/komadori.vim', {
+" \   'name': 'komadori',
+" \}
+" NeoBundle 'scrooloose/nerdtree', {
+" \   'name': 'nerdtree',
+" \}
+" NeoBundle 'ctrlpvim/ctrlp.vim', {
+" \   'name': 'ctrlp',
+" \}
+" NeoBundle 'mattn/ctrlp-gist', {
+" \   'name': 'ctrlp-gist',
+" \   'depends': ['mattn/gist-vim'],
+" \}
 
 " developing plugins
 call neobundle#local(s:constants.directories.development, {
 \   'type': 'nosync',
 \})
 
-call g:gyokuro_pluggable.call_hook('on_neobundle')
+call s:invoke_extension('neobundle')
 
 call neobundle#end()
+
+call s:invoke_extension('neobundle_post')
 
 " required!
 filetype plugin indent on
 
-if neobundle#tap('ref-vim')
+if neobundle#tap('ref')
     let g:ref_use_vimproc= 1
     let g:ref_jscore_path= ''
     let g:ref_jsdom_path=  ''
@@ -318,28 +511,7 @@ if neobundle#tap('ref-vim')
     let g:ref_html5_path=  $HOME . '/documents/vim-ref-doc/www.html5.jp/tag/elements/'
 endif
 
-if neobundle#tap('qfixhowm')
-    let g:QFixHowm_DatePattern= '%Y-%m-%d'
-    let g:QFixHowm_FileType=    'markdown.howm_memo'
-    let g:QFixHowm_Title=       '#'
-    let g:QFixHowm_DefaultTag= ''
-    " 新規エントリの雛形
-    " %TAG% == g:QFixHowm_DefaultTag
-    let g:QFixHowm_Template= [
-    \   '%TITLE% %TAG%',
-    \   '%DATE%',
-    \   ''
-    \]
-    let g:QFixHowm_SaveTime=  1
-    let g:QFixHowm_SplitMode= 1
-    let g:howm_dir=           '~/documents/qfixmemo'
-    let g:howm_fileencoding=  &encoding
-    let g:howm_fileformat=    &fileformat
-    let g:howm_filename=      '%Y/%m/%Y-%m-%d-%H%M%S'
-    let g:calendar_holidayfile= '~/documents/qfixmemo/Sche-Hd-0000-00-00-000000.txt'
-endif
-
-if neobundle#tap('memolist.vim')
+if neobundle#tap('memolist')
     let g:memolist_path= expand('~/documents/memo/')
     let g:memolist_memo_suffix= 'mkd'
     " date format (default %Y-%m-%d %H:%M)
@@ -355,7 +527,7 @@ if neobundle#tap('memolist.vim')
     nnoremap g,g :<C-U>MemoGrep<CR>
 endif
 
-if neobundle#tap('open-browser.vim')
+if neobundle#tap('open-browser')
     let g:netrw_nogx= 1 " disable netrw's gx mapping.
     let g:openbrowser_browser_commands= [
     \   {
@@ -367,7 +539,7 @@ if neobundle#tap('open-browser.vim')
     vmap gx <Plug>(openbrowser-smart-search)
 endif
 
-if neobundle#tap('vim-watchdogs')
+if neobundle#tap('watchdogs')
     let g:watchdogs_check_CursorHold_enables= {
     \   'java': 0,
     \}
@@ -379,7 +551,7 @@ if neobundle#tap('vim-watchdogs')
     " \}
 endif
 
-if neobundle#tap('vim-quickrun')
+if neobundle#tap('quickrun')
     let g:quickrun_config= get(g:, 'quickrun_config', {})
     let g:quickrun_config['_']= {
     \   'runner'                    : 'vimproc',
@@ -561,7 +733,7 @@ if neobundle#tap('clang_complete')
     let g:clang_sort_algo= 'alpha'
     let g:clang_complete_macros= 1
 endif
-if neobundle#tap('vim-snowdrop')
+if neobundle#tap('snowdrop')
     let g:snowdrop#libclang_path= '/usr/lib/'
 endif
 if neobundle#tap('neosnippet')
@@ -579,17 +751,8 @@ if neobundle#tap('vimwiki')
     \}]
 endif
 
-if neobundle#tap('vimfiler')
-    let g:vimfiler_as_default_explorer= 1
-    let g:vimfiler_safe_mode_by_default= 0
-endif
 if neobundle#tap('nerdtree')
-    
 endif
-
-" TODO: what to do?
-let b:match_ignorecase= 1
-let b:match_words=      &matchpairs.",<:>,<if>:<endif>,<function>:<endfunction>"
 
 function! s:map(lhs, rhs, opt, modes) " {{{
     call s:_map('map', a:lhs, a:rhs, a:opt, a:modes)
@@ -610,7 +773,7 @@ function! s:_map(cmd, lhs, rhs, opt, modes) " {{{
     endfor
 endfunction
 
-if neobundle#tap('vim-ref')
+if neobundle#tap('ref')
     let g:ref_no_default_key_mappings= 1
     let g:ref_perldoc_complete_head= 1
 
@@ -626,7 +789,7 @@ if neobundle#tap('tagbar')
     let g:tagbar_show_visibility= 1
 endif
 
-if neobundle#tap('colorv.vim')
+if neobundle#tap('colorv')
     " 2, if +python
     " 3, if +python3
     " 0, if no python
@@ -639,7 +802,7 @@ if neobundle#tap('colorv.vim')
     endif
 endif
 
-if neobundle#tap('vim-submode')
+if neobundle#tap('submode')
     call submode#enter_with('winsize', 'n', '', '<C-W>>', '<C-W>>')
     call submode#enter_with('winsize', 'n', '', '<C-W><', '<C-W><')
     call submode#enter_with('winsize', 'n', '', '<C-W>-', '<C-W>-')
@@ -651,7 +814,7 @@ if neobundle#tap('vim-submode')
     call submode#map('winsize', 'n', '', '+', '<C-W>+')
 endif
 
-if neobundle#tap('unite.vim')
+if neobundle#tap('unite')
     let g:unite_data_directory= s:constants.directories.temporary . '/.unite/'
 
     if executable('ag')
@@ -661,7 +824,7 @@ if neobundle#tap('unite.vim')
     endif
 endif
 
-if neobundle#tap('gist-vim')
+if neobundle#tap('gist')
     " Only :w! updates a gist.
     let g:gist_update_on_write = 2
 endif
@@ -670,7 +833,7 @@ if neobundle#tap('TweetVim')
     let g:tweetvim_tweet_per_page= 200
 endif
 
-if neobundle#tap('vimconsole.vim')
+if neobundle#tap('vimconsole')
     let g:vimconsole#height= 20
     let g:vimconsole#maximum_caching_objects_count= 10000
 
@@ -684,51 +847,7 @@ if neobundle#tap('vimconsole.vim')
     autocmd BufEnter * call s:configure_vimconsole()
 endif
 
-if neobundle#tap('context_filetype.vim')
-    let g:context_filetype#filetypes= {
-    \   'vim': [
-    \       {
-    \           'start': '\<perl\>\s\+<<\s*\(\w\+\)$',
-    \           'end': '^\1$',
-    \           'filetype': 'perl',
-    \       },
-    \   ],
-    \}
-endif
-
-if neobundle#tap('vim-precious')
-    let g:precious_enable_switch_CursorMoved= {
-    \   'help': 0,
-    \}
-endif
-
-if neobundle#tap('unite-javadoc_viewer')
-    let g:javadocviewer_config= get(g:, 'javadocviewer_config', {})
-    let g:javadocviewer_config.uri= [
-    \   'http://docs.oracle.com/javase/7/docs/api/',
-    \   'http://poi.apache.org/apidocs/',
-    \   'http://docs.guava-libraries.googlecode.com/git/javadoc/',
-    \]
-endif
-
-if neobundle#tap('eskk.vim')
-    let g:eskk#directory= expand('~/.eskk/')
-    let g:eskk#dictionary= {
-    \   'path':     g:eskk#directory . '/user-dictionary',
-    \   'sorted':   0,
-    \   'encoding': 'utf-8',
-    \}
-    let g:eskk#large_dictionary= {
-    \   'path':     g:eskk#directory . '/SKK-JISYO.L',
-    \   'sorted':   1,
-    \   'encoding': 'euc-jp',
-    \}
-    let g:eskk#auto_save_dictionary_at_exit= 1
-    let g:eskk#dictionary_save_count=        3
-    let g:eskk#start_completion_length=      1
-endif
-
-if neobundle#tap('vim-textobj-between')
+if neobundle#tap('textobj-between')
     let g:textobj_between_no_default_key_mappings= 1
 
     " http://d.hatena.ne.jp/thinca/20100614/1276448745
@@ -738,17 +857,17 @@ if neobundle#tap('vim-textobj-between')
     vmap aF <Plug>(textobj-between-a)
 endif
 
-if neobundle#tap('vim-choosewin')
+if neobundle#tap('choosewin')
     nmap <C-W><C-W> <Plug>(choosewin)
 
     let g:choosewin_overlay_enable= 1
 endif
 
-if neobundle#tap('vim-quickhl')
+if neobundle#tap('quickhl')
     nmap <Leader>h <Plug>(quickhl-cword-toggle)
 endif
 
-if neobundle#tap('vim-altercmd')
+if neobundle#tap('altercmd')
     call altercmd#load()
 
     AlterCommand perldoc        Ref perldoc
@@ -762,7 +881,7 @@ if neobundle#tap('vim-altercmd')
     AlterCommand gitb[lame] Gblame
 endif
 
-if neobundle#tap('vim-coffee-script')
+if neobundle#tap('coffee-script')
 "     autocmd gyokuro QuickFixCmdPost * nested cwindow | redraw!
 "
 "     function! s:compile_coffee()
@@ -783,19 +902,19 @@ if neobundle#tap('vim-coffee-script')
 "     autocmd gyokuro BufWritePost *.coffee call s:compile_coffee()
 endif
 
-if neobundle#tap('j6uil.vim')
+if neobundle#tap('j6uil')
     let g:J6uil_updatetime=    500
     let g:J6uil_display_icon=  1
     let g:J6uil_echo_presence= 0
 endif
 
-if neobundle#tap('vim-javaclasspath')
+if neobundle#tap('javaclasspath')
     function! neobundle#hooks.on_source(bundle)
         let g:javaclasspath_config.standard.libs+= [{'path': 'lib/tools.jar'}]
     endfunction
 endif
 
-if neobundle#tap('alti.vim')
+if neobundle#tap('alti')
     let g:alti_prompt_mappings= get(g:, 'alti_prompt_mappings', {})
     let g:alti_prompt_mappings['PrtSelectMove("j")']= ['<Tab>']
     let g:alti_prompt_mappings['PrtSelectMove("k")']= ['<S-Tab>']
@@ -803,15 +922,15 @@ if neobundle#tap('alti.vim')
     let g:alti_prompt_mappings['PrtSelectInsert()']=  ['<C-Y>']
 endif
 
-if neobundle#tap('calendar.vim')
+if neobundle#tap('calendar')
     let g:calendar_google_calendar= 1
     let g:calendar_google_task= 1
 endif
 
-if neobundle#tap('komadori.vim')
+if neobundle#tap('komadori')
 endif
 
-if neobundle#tap('ctrlp.vim')
+if neobundle#tap('ctrlp')
     let g:ctrlp_map= ''
     let g:ctrlp_working_path_mode= 'rw'
     let g:ctrlp_use_caching= 1
@@ -868,7 +987,7 @@ if neobundle#tap('ctrlp.vim')
 
     if neobundle#tap('ctrlp-gist')
     endif
-    if neobundle#tap('qiita-vim')
+    if neobundle#tap('qiita')
     endif
 endif
 
@@ -902,6 +1021,8 @@ endif
 "         \]
 "     endfunction
 " endif
+
+call s:invoke_extension('configure_plugin')
 
 " automatically make directory when write file
 autocmd gyokuro BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
@@ -1060,63 +1181,10 @@ autocmd gyokuro BufEnter,BufReadPre   *.yrl          setlocal filetype=erlang
 autocmd gyokuro FileType java let &l:equalprg= 'uncrustify -c ~/dotfiles/uncrustify.conf/java.conf -l JAVA'
 autocmd gyokuro BufNewFile,BufRead *.tsv setfiletype tsv
 
-set number norelativenumber
-set tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
-set autoindent smartindent
-set showmatch
-" set whichwrap=b,s,h,l,<,>,[,]
-set whichwrap=b,s
-set nowrapscan
-set nowrap
-set title
-set textwidth=0
-" .swpとbackupファイルをテンポラリに作成
-set backup
-set writebackup
-" set backupdir=~/.tmp/vim/,.
-let &backupdir= s:constants.directories.temporary . ',.'
-set swapfile
-" set directory=~/.tmp/vim/,.
-let &directory= s:constants.directories.temporary . ',.'
-" swpとbackupファイルの宛先がなければ作成
-call s:make_dirs(join([&backupdir, &directory], ','))
-" 無限undo
-if has('persistent_undo')
-    " set undodir=~/.tmp/vim/undo/
-    let &undodir= s:constants.directories.temporary . '/undo/'
-    set undofile
-
-    call s:make_dirs(&undodir)
-endif
-" 全角文字のずれを修正
-if exists('&ambiwidth')
-    set ambiwidth=double
-endif
-" ファイル読み込み時のエンコーディング優先順
-set fileencodings=utf-8,cp932,euc-jp,iso-2022-jp,default,latin
-" 検索時に大文字小文字区別なし
-set ignorecase smartcase
-" statuslineを常に表示する
-set laststatus=2
-" swapfileを書き出す待ち時間
-set updatetime=500
-set cmdheight=2
-" concealを有効にするのはnormal modeのみ。編集するときには不便。
-if has('conceal')
-    set conceallevel=0
-    set concealcursor=
-endif
-" disable tag completion since it's too slow
-set complete=.,w,b,u
-set completeopt=menu
-" no beep
-set visualbell t_vb=
-set incsearch
-" don't move cursor when <C-D> and <C-U> and...
-set nostartofline
-set wildmode=longest:full,full
-set wildmenu
-set t_Co=256
+" When editing a file, always jump to the last cursor position
+autocmd gyokuro BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$")
+autocmd gyokuro BufReadPost *     exe "normal! g'\""
+autocmd gyokuro BufReadPost * endif
 
 autocmd gyokuro ColorScheme * if !has('gui_running') && exists(':CSApprox')
 autocmd gyokuro ColorScheme *     CSApprox!
@@ -1124,12 +1192,4 @@ autocmd gyokuro ColorScheme * endif
 
 colorscheme hydrangea
 
-if executable('ag')
-    let &grepprg= 'ag -n $*'
-elseif executable('jvgrep')
-    let &grepprg= 'jvgrep $*'
-elseif executable('pt')
-    let &grepprg= 'pt'
-endif
-
-call g:gyokuro_pluggable.call_hook('on_finish')
+syntax on

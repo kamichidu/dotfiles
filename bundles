@@ -1,0 +1,74 @@
+# vim:ft=tsv:ts=40:sw=40:sts=0
+repo=Shougo/neobundle.vim	name=neobundle	command=NeoBundleFetch
+repo=https://code.google.com/p/vim/	name=vim-self	type=hg	command=NeoBundleFetch	build=unix=expand('~/.vim/bin/build-vim-self.sh')
+repo=Shougo/neocomplete.vim	name=neocomplete	when=has('lua')	alias=neco
+repo=Shougo/neocomplcache.vim	name=neocomplcache	when=!has('lua')	alias=neco
+repo=Shougo/vimproc.vim	name=vimproc	build=unix=make -f make_unix.mak
+repo=Shougo/unite.vim	name=unite
+repo=choplin/unite-vim_hacks	name=unite-vim_hacks	depends=Shougo/unite.vim	depends=mattn/webapi-vim	depends=mattn/wwwrenderer-vim	depends=thinca/vim-openbuf
+repo=Shougo/vimshell.vim	name=vimshell	depends=Shougo/unite.vim	depends=Shougo/vimproc.vim
+repo=Shougo/neosnippet.vim	name=neosnippet	depends={{neco}}
+repo=Shougo/vinarise.vim	name=vinarise
+repo=Shougo/echodoc.vim	name=echodoc
+repo=mattn/gist-vim	name=gist	depends=mattn/webapi-vim
+repo=mattn/emmet-vim	name=emmet
+repo=mattn/qiita-vim	name=qiita
+repo=mattn/msgpack-vim	name=msgpack
+repo=kana/vim-tabpagecd	name=tabpagecd
+repo=kana/vim-surround	name=surround
+repo=kana/vim-submode	name=submode
+repo=kana/vim-vspec	name=vspec
+repo=kana/vim-textobj-entire	name=textobj-entire	depends=kana/vim-textobj-user
+repo=kana/vim-textobj-function	name=textobj-function	depends=kana/vim-textobj-user
+repo=kana/vim-textobj-underscore	name=textobj-underscore	depends=kana/vim-textobj-user
+repo=deris/vim-textobj-enclosedsyntax	name=textobj-enclosedsyntax	depends=kana/vim-textobj-user
+repo=thinca/vim-textobj-between	name=textobj-between	depends=kana/vim-textobj-user
+repo=thinca/vim-textobj-comment	name=textobj-comment	depends=kana/vim-textobj-user
+repo=sgur/vim-gf-autoload	name=gf-autoload	depends=kana/vim-gf-user
+repo=thinca/vim-ref	name=ref
+repo=thinca/vim-quickrun	name=quickrun
+repo=t9md/vim-textmanip	name=textmanip
+repo=t9md/vim-choosewin	name=choosewin
+repo=t9md/vim-quickhl	name=quickhl
+repo=tyru/open-browser.vim	name=open-browser
+repo=tyru/vim-altercmd	name=altercmd
+repo=itchyny/calendar.vim	name=calendar
+repo=tomtom/tcomment_vim	name=tcomment
+repo=osyo-manga/vim-watchdogs	name=watchdogs	depends=thinca/vim-quickrun	depends=Shougo/vimproc.vim	depends=osyo-manga/shabadou.vim	depends=jceb/vim-hier	depends=dannyob/quickfixstatus
+repo=osyo-manga/vim-snowdrop	name=snowdrop
+repo=osyo-manga/vim-gyazo	name=gyazo
+repo=h1mesuke/vim-alignta	name=alignta
+repo=jiangmiao/simple-javascript-indenter	name=simple-javascript-indenter
+repo=jelera/vim-javascript-syntax	name=javascript-syntax
+repo=marijnh/tern_for_vim	name=tern_for_vim
+repo=kchmck/vim-coffee-script	name=coffee-script
+repo=majutsushi/tagbar	name=tagbar
+repo=godlygeek/csapprox	name=csapprox	force=1
+repo=Rykka/colorv.vim	name=colorv	depends=mattn/webapi-vim
+repo=Rip-Rip/clang_complete	name=clang_complete
+repo=vim-jp/vital.vim	name=vital
+repo=vim-jp/cpp-vim	name=cpp
+repo=basyura/TweetVim	name=TweetVim	depends=tyru/open-browser.vim	depends=basyura/twibill.vim	depends=mattn/webapi-vim	depends=h1mesuke/unite-outline	depends=basyura/bitly.vim	depends=Shougo/unite.vim	depends=mattn/favstar-vim
+repo=rbtnn/vimconsole.vim	name=vimconsole	depends=thinca/vim-prettyprint
+repo=AnsiEsc.vim	name=AnsiEsc
+repo=kannokanno/previm	name=previm
+repo=c9s/perlomni.vim	name=perlomni
+repo=yuratomo/w3m.vim	name=w3m
+repo=basyura/j6uil.vim	name=j6uil	depends=Shougo/vimproc.vim
+repo=tpope/vim-abolish	name=abolish
+repo=DrawIt	name=DrawIt
+repo=autodate.vim	name=autodate
+repo=sudo.vim	name=sudo
+repo=https://code.google.com/p/vimwiki/	name=vimwiki	type=hg	rtp=src/
+repo=AndrewRadev/linediff.vim	name=linediff
+repo=coderifous/textobj-word-column.vim	name=textobj-word-column
+repo=ebnf.vim	name=ebnf
+repo=bnf.vim	name=bnf
+repo=blinks/vim-antlr	name=antlr
+repo=kamichidu/memolist.vim	name=memolist
+repo=LeafCage/alti.vim	name=alti
+repo=syngan/vim-vimlint	name=vimlint	depends=ynkdir/vim-vimlparser
+repo=balloon-stat/komadori.vim	name=komadori
+repo=scrooloose/nerdtree	name=nerdtree
+repo=ctrlpvim/ctrlp.vim	name=ctrlp
+repo=mattn/ctrlp-gist	name=ctrlp-gist	depends=mattn/gist-vim
