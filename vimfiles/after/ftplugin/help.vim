@@ -1,5 +1,5 @@
 if &l:buftype ==# 'help'
-    nnoremap <silent><buffer><nowait> q :close
+    nnoremap <silent><buffer><nowait> q :<C-U>close<CR>
 else
     " editing help
     let b:undo_ftplugin.= '| setlocal list< listchars< tabstop< shiftwidth< softtabstop< expandtab< textwidth<'
