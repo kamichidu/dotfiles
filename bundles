@@ -1,4 +1,4 @@
-# vim:ft=tsv:ts=40:sw=40:sts=0
+# vim:ft=tsv:ts=45:sw=45:sts=0
 repo=Shougo/neobundle.vim	name=neobundle	command=NeoBundleFetch
 repo=https://code.google.com/p/vim/	name=vim-self	type=hg	command=NeoBundleFetch	build=unix=expand('~/.vim/bin/build-vim-self.sh')
 repo=Shougo/neocomplete.vim	name=neocomplete	when=has('lua')	alias=neco
