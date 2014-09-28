@@ -1144,30 +1144,27 @@ cnoremap <C-H> <Space><BS><Left>
 cnoremap <C-L> <Space><BS><Right>
 cnoremap <C-Y> <Space><BS>
 
-" avoid to open command line window
-nnoremap q: :
-vnoremap q: :
+"
+" :h cmdwin-char
+"
+" :   normal Ex command
+" >   debug mode command |debug-mode|
+" /   forward search string
+" ?   backward search string
+" =   expression for "= |expr-register|
+" @   string for |input()|
+" -   text for |:insert| or |:append|
+"
+autocmd gyokuro CmdwinEnter * call s:quit_cmdwin(expand('<afile>'))
+function! s:quit_cmdwin(mode)
+    call feedkeys("\<C-W>c")
 
-autocmd gyokuro FileType * call s:map_quit()
-
-function! s:map_quit()
-    if  (&l:filetype ==# 'help' && &l:filetype ==# 'help') ||
-    \   (&l:filetype ==# 'quickrun') ||
-    \   (&l:filetype =~# '^ref') ||
-    \   (&l:filetype ==# 'vimconsole')
-        silent! nunmap q
-        silent! vunmap q
-
-        nnoremap <buffer><silent><nowait> q :<C-U>close<CR>
-        vnoremap <buffer><silent><nowait> q :<C-U>close<CR>
-    elseif &l:filetype ==# 'unite'
-        silent! nunmap q
-
-        nmap <buffer><nowait> q <Plug>(unite_exit)
-    elseif &l:filetype ==# 'calendar'
-        silent! nunmap q
-
-        nmap <buffer><nowait> q <Plug>(calendar_exit)
+    if a:mode ==# ':'
+        call feedkeys(':')
+    elseif a:mode ==# '/'
+        call feedkeys('/')
+    elseif a:mode ==# '?'
+        call feedkeys('?')
     endif
 endfunction
 
