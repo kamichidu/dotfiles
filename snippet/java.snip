@@ -1,21 +1,28 @@
 snippet class
 options word
-	class ${1}${2: extends ${3:#:Parent\}}${4: implements ${5:#:Interface\}}
+	class `expand('%:t:r')`
 	{
 		${0:TARGET}
 	}
 
 snippet interface
-	interface ${1}${2: extends ${3:#:Parent\}}
+	interface `expand('%:t:r')`
 	{
 		${0:TARGET}
 	}
 
 snippet method
-	${1:void} ${2:#:method}(${3})${4: throws ${5:Throwable\}}
+	${1:void} ${2:#:method}(${3})
 	{
 		${0:TARGET}
 	}
+
+snippet constructor
+alias   ctor
+    `expand('%:t:r')`
+    {
+        ${0}
+    }
 
 snippet var
 	${1:#:type} ${2:#:var}${3};
@@ -90,7 +97,7 @@ snippet th
 	throw ${0}
 
 snippet package
-	package ${0}
+	package `substitute(substitute(expand('%:h'), '^src/main/java/', '', ''), '/', '.', 'g')`;
 
 snippet test
 	@Test

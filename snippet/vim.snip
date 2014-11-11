@@ -100,3 +100,8 @@ options     head
 		${2::TARGET}
 	redir END
 
+snippet     aufunction
+options     head
+    function! `substitute(tr(expand('%:r'), '\/', '##'), '^autoload#', '', '')`#${1}(${2})
+        ${0}
+    endfunction
