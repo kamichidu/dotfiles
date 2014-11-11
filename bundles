@@ -1,6 +1,6 @@
 # vim:ft=tsv:ts=45:sw=45:sts=0
 repo=Shougo/neobundle.vim	name=neobundle	command=NeoBundleFetch
-repo=https://code.google.com/p/vim/	name=vim-self	type=hg	command=NeoBundleFetch	build=unix=expand('~/.vim/bin/build-vim-self.sh')
+repo=https://code.google.com/p/vim/	name=vim-self	type=hg	command=NeoBundleFetch	build=unix=$HOME/.vim/bin/build-vim-self.sh
 repo=Shougo/neocomplete.vim	name=neocomplete	when=has('lua')	alias=neco
 repo=Shougo/neocomplcache.vim	name=neocomplcache	when=!has('lua')	alias=neco
 repo=Shougo/vimproc.vim	name=vimproc	build=unix=make -f make_unix.mak
@@ -25,6 +25,7 @@ repo=deris/vim-textobj-enclosedsyntax	name=textobj-enclosedsyntax	depends=kana/v
 repo=thinca/vim-textobj-between	name=textobj-between	depends=kana/vim-textobj-user
 repo=thinca/vim-textobj-comment	name=textobj-comment	depends=kana/vim-textobj-user
 repo=sgur/vim-gf-autoload	name=gf-autoload	depends=kana/vim-gf-user
+# repo=rhysd/vim-operator-surround	name=operator-surround	depends=kana/vim-operator-user
 repo=thinca/vim-ref	name=ref
 repo=thinca/vim-quickrun	name=quickrun
 repo=t9md/vim-textmanip	name=textmanip
@@ -49,6 +50,8 @@ repo=Rip-Rip/clang_complete	name=clang_complete
 repo=vim-jp/vital.vim	name=vital
 repo=vim-jp/cpp-vim	name=cpp
 repo=basyura/TweetVim	name=TweetVim	depends=tyru/open-browser.vim	depends=basyura/twibill.vim	depends=mattn/webapi-vim	depends=h1mesuke/unite-outline	depends=basyura/bitly.vim	depends=Shougo/unite.vim	depends=mattn/favstar-vim
+# Graceful for TweetVim
+repo=yomi322/neco-tweetvim	name=neocomplete-tweetvim	depends={{neco}}
 repo=rbtnn/vimconsole.vim	name=vimconsole	depends=thinca/vim-prettyprint
 repo=AnsiEsc.vim	name=AnsiEsc
 repo=kannokanno/previm	name=previm
@@ -64,7 +67,6 @@ repo=AndrewRadev/linediff.vim	name=linediff
 repo=coderifous/textobj-word-column.vim	name=textobj-word-column
 repo=ebnf.vim	name=ebnf
 repo=bnf.vim	name=bnf
-repo=blinks/vim-antlr	name=antlr
 repo=kamichidu/memolist.vim	name=memolist
 repo=LeafCage/alti.vim	name=alti
 repo=syngan/vim-vimlint	name=vimlint	depends=ynkdir/vim-vimlparser
@@ -72,3 +74,6 @@ repo=balloon-stat/komadori.vim	name=komadori
 repo=scrooloose/nerdtree	name=nerdtree
 repo=ctrlpvim/ctrlp.vim	name=ctrlp
 repo=mattn/ctrlp-gist	name=ctrlp-gist	depends=mattn/gist-vim
+repo=neilagabriel/vim-geeknote	name=geeknote
+repo=rbtnn/rabbit-ui.vim	name=rabbit-ui
+repo=cohama/agit.vim	name=agit
