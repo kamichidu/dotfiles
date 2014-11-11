@@ -1,5 +1,8 @@
 scriptencoding utf-8
 
+" XXX: special constants
+let s:debug= get(g:, 'debug', 0)
+
 " constants for using .vimrc
 let s:constants= {
 \   'files': {
@@ -45,6 +48,8 @@ endfunction
 if filereadable(s:constants.files.vimrc_local)
     execute 'source' s:constants.files.vimrc_local
 endif
+
+syntax on
 
 set number norelativenumber
 set tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
@@ -103,11 +108,17 @@ endif
 
 call s:invoke_extension('configure_global')
 
-if has('vim_starting')
-    let &runtimepath.= ',' . s:constants.directories.bundle . 'neobundle.vim/'
-endif
+" prefix-tag for insert-mode
+inoremap <SID>[tag] <Nop>
+imap     <Leader>   <SID>[tag]
+" prefix-tag for normal-mode
+nnoremap <SID>[tag] <Nop>
+nmap     <Leader>   <SID>[tag]
+inoremap <SID>[tag]<Leader>    <Leader>
 
-call neobundle#begin(s:constants.directories.bundle)
+if has('vim_starting')
+    let &runtimepath.= ',' . s:constants.directories.bundle . 'neobundle/'
+endif
 
 let g:neobundle#types#git#default_protocol= 'https'
 let g:neobundle#install_process_timeout= 600
@@ -161,16 +172,18 @@ function! s:load_bundles(filename)
     \   'arrays': ['depends'],
     \   'dicts':  ['build'],
     \})
+
+    " filter if when expr is false
+    call filter(records, 'has_key(v:val, "when") ? eval(v:val.when) : 1')
+
+    " {
+    "     'NeoBundleFetch': {
+    "         'vim-jp/vital.vim': {},
+    "     },
+    " }
+    let commands= {}
     let aliases= {}
-
     for record in records
-        if has_key(record, 'when')
-            " skip if when expr is false
-            if !eval(record.when)
-                continue
-            endif
-        endif
-
         let command= (has_key(record, 'command')) ? record.command : 'NeoBundle'
         let config= {}
 
@@ -187,6 +200,9 @@ function! s:load_bundles(filename)
         if has_key(record, 'alias')
             let aliases[record.alias]= record.repo
         endif
+        if has_key(record, 'name')
+            let aliases[record.repo]= record.name
+        endif
         if has_key(record, 'rtp')
             let config.rtp= record.rtp
         endif
@@ -194,19 +210,48 @@ function! s:load_bundles(filename)
             let config.build= record.build
         endif
         if has_key(record, 'depends')
-            let config.depends= []
-            for deps in record.depends
-                if deps =~# '^{{\w\+}}$'
-                    let config.depends+= [aliases[matchstr(deps, '{{\zs\w\+\ze}}')]]
-                else
-                    let config.depends+= [deps]
-                endif
-            endfor
+            let config.depends= record.depends
         endif
 
-        execute command string(record.repo) ',' string(config)
+        let commands[command]= get(commands, command, {})
+        let commands[command][record.repo]= config
+    endfor
+
+    if s:debug | let g:gyokuro_neobundle= [] | endif
+    for cmd in keys(commands)
+        for repo in keys(commands[cmd])
+            let config= commands[cmd][repo]
+
+            " resolve alias, organize name
+            if has_key(config, 'depends')
+                let [depends, config.depends]= [config.depends, []]
+
+                for dep in depends
+                    while 1
+                        if dep =~# '^{{\w\+}}$'
+                            let dep= matchstr(dep, '{{\zs\w\+\ze}}')
+                        endif
+
+                        if !has_key(aliases, dep)
+                            break
+                        endif
+
+                        let dep= aliases[dep]
+                    endwhile
+
+                    let config.depends+= [dep]
+                endfor
+            endif
+
+            if s:debug | let g:gyokuro_neobundle+= [join([cmd, string(repo), ',', string(config)])] | endif
+            execute cmd string(repo) ',' string(config)
+        endfor
     endfor
 endfunction
+
+" call neobundle#begin(s:constants.directories.bundle)
+silent call neobundle#rc(s:constants.directories.bundle)
+
 call s:load_bundles(s:constants.files.bundles)
 
 " developing plugins
@@ -216,7 +261,7 @@ call neobundle#local(s:constants.directories.development, {
 
 call s:invoke_extension('neobundle')
 
-call neobundle#end()
+" call neobundle#end()
 
 call s:invoke_extension('neobundle_post')
 
@@ -257,18 +302,6 @@ if neobundle#tap('open-browser')
     \]
     nmap gx <Plug>(openbrowser-smart-search)
     vmap gx <Plug>(openbrowser-smart-search)
-endif
-
-if neobundle#tap('watchdogs')
-    let g:watchdogs_check_CursorHold_enables= {
-    \   'java': 0,
-    \}
-    let g:quickrun_config= get(g:, 'quickrun_config', {})
-    " let g:quickrun_config['watchdogs_checker/javac']= {
-    " \   'command': 'javac',
-    " \   'exec':    '%c %o %s',
-    " \   'cmdopt':  '-source 1.6 -Xlint:all',
-    " \}
 endif
 
 if neobundle#tap('quickrun')
@@ -313,9 +346,31 @@ if neobundle#tap('quickrun')
     \   'command': 'psql',
     \   'cmdopt': ['--host=localhost', '--port=5432', '--username=postgres', '--dbname=test'],
     \}
-    let g:quickrun_config['java/watchdogs_checker']= {
-    \   'type': 'watchdogs_checker/javac',
-    \}
+
+    if neobundle#tap('watchdogs')
+        let g:watchdogs_check_CursorHold_enables= {
+        \   'java': 0,
+        \}
+        let g:watchdogs_check_BufWritePost_enables= {
+        \   'java': 1,
+        \}
+
+        let g:quickrun_config['java/watchdogs_checker']= {'type': 'watchdogs_checker/javac'}
+        let g:quickrun_config['watchdogs_checker/javac']= {
+        \   'command': '$JAVA_HOME/bin/javac',
+        \   'cmdopt': join([
+        \       '-Xlint:all',
+        \       '-d $TEMP',
+        \       '-sourcepath "%{javaclasspath#source_path()}"',
+        \       '-classpath "%{javaclasspath#classpath()}"',
+        \       '-deprecation',
+        \   ]),
+        \   'exec': '%c %o %S',
+        \   'errorformat': '%tarning: %m,%-G%*\d error,%-G%*\d warnings,%f:%l: %trror: %m,%f:%l: %tarning: %m,%+G%.%#',
+        \}
+        " :help errorformat-javac
+        " \   'errorformat': '%A%f:%l: %m,%-Z%p^,%+C%.%#,%-G%.%#',
+    endif
 endif
 
 if neobundle#tap('echodoc')
@@ -383,6 +438,8 @@ if neobundle#tap('neocomplete')
         call neocomplete#custom#source(s:source_name, 'disabled_filetypes', {'_': 1})
     endfor
     unlet s:source_name
+
+    call neocomplete#custom#source('file', 'rank', 999)
 elseif neobundle#tap('neocomplcache')
     let g:neocomplcache_enable_at_startup= 1
     let g:neocomplcache_enable_auto_close_preview= 0
@@ -472,6 +529,7 @@ if neobundle#tap('vimwiki')
 endif
 
 if neobundle#tap('nerdtree')
+    nnoremap <silent> <SID>[tag]nt :<C-U>NERDTreeToggle<CR>
 endif
 
 function! s:map(lhs, rhs, opt, modes) " {{{
@@ -500,6 +558,11 @@ if neobundle#tap('ref')
     " overwrite
     nmap <silent><expr> K mapping#ref('normal')
     vmap <silent><expr> K mapping#ref('visual')
+
+    autocmd gyokuro FileType ref call s:init_ref_buf()
+    function! s:init_ref_buf()
+        nnoremap <buffer><nowait> q <C-W>c
+    endfunction
 endif
 
 if neobundle#tap('tagbar')
@@ -701,14 +764,33 @@ if neobundle#tap('ctrlp')
     \}
 
     " mapping for standard extensions
-    nnoremap <silent> <Leader>pp :<C-U>CtrlP<CR>
-    nnoremap <silent> <Leader>pb :<C-U>CtrlPBuffer<CR>
-    nnoremap <silent> <Leader>pm :<C-U>CtrlPMRU<CR>
+    nnoremap <silent> <Leader>pp  :<C-U>CtrlP<CR>
+    nnoremap <silent> <Leader>pbu :<C-U>CtrlPBuffer<CR>
+    nnoremap <silent> <Leader>pbt :<C-U>CtrlPBufTag<CR>
+    nnoremap <silent> <Leader>pm  :<C-U>CtrlPMRU<CR>
 
     if neobundle#tap('ctrlp-gist')
     endif
     if neobundle#tap('qiita')
     endif
+endif
+
+if neobundle#tap('geeknote')
+    let g:GeeknoteFormat= 'markdown'
+    let g:GeeknoteExplorerWidth= float2nr(&columns * 0.2)
+endif
+
+if neobundle#tap('previm')
+    let g:previm_enable_realtime= 1
+endif
+
+if neobundle#tap('operator-surround')
+    nmap Ra <Plug>(operator-surround-append)
+    xmap Ra <Plug>(operator-surround-append)
+    nmap Rr <Plug>(operator-surround-replace)
+    xmap Rr <Plug>(operator-surround-replace)
+    nmap Rd <Plug>(operator-surround-delete)
+    xmap Rd <Plug>(operator-surround-delete)
 endif
 
 " if neobundle#tap('unite-javaimport')
@@ -754,10 +836,10 @@ function! s:auto_mkdir(dir, force)
 endfunction
 
 " auto open qfix window when make
-command! -nargs=* Make make <args> | cwindow 3
-
-autocmd gyokuro QuickFixCmdPost [^l]* nested cwindow
-autocmd gyokuro QuickFixCmdPost    l* nested lwindow
+" command! -nargs=* Make make <args> | cwindow 3
+"
+" autocmd gyokuro QuickFixCmdPost [^l]* nested cwindow
+" autocmd gyokuro QuickFixCmdPost    l* nested lwindow
 
 command!
 \ -nargs=* -complete=command
@@ -782,6 +864,15 @@ function! s:cmd_capture(q_args)
     " setlocal buftype=nofile bufhidden=unload noswapfile nobuflisted
     " call setline(1, split(output, '\n'))
 endfunction
+
+if has('perl')
+    function! PerlModuleOf(module)
+        let incpath= system('perl -e "$,= q/,/; print @INC"')
+        let relpath= substitute(a:module, '::', '/', 'g') . '.pm'
+
+        return globpath(incpath, relpath)
+    endfunction
+endif
 
 function! s:toggle_virtualedit()
     if &virtualedit =~# 'all'
@@ -815,13 +906,6 @@ function! s:make_dirs(dir_list)
     endif
 endfunction
 
-" prefix-tag for insert-mode
-inoremap <SID>[tag] <Nop>
-imap     <Leader>   <SID>[tag]
-" prefix-tag for normal-mode
-nnoremap <SID>[tag] <Nop>
-nmap     <Leader>   <SID>[tag]
-inoremap <SID>[tag]<Leader>    <Leader>
 inoremap <SID>[tag]H           <Home>
 inoremap <SID>[tag]e           <End>
 inoremap <SID>[tag]h           <Esc>I
@@ -831,8 +915,6 @@ nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
 nnoremap <silent><SID>[tag]uff :Unite file<CR>
 nnoremap <silent><SID>[tag]ufr :Unite file_rec/async<CR>
 nnoremap <silent><SID>[tag]uo  :Unite outline<CR>
-nnoremap <silent><SID>[tag]vfb :VimFiler<CR>
-nnoremap <silent><SID>[tag]vfe :VimFiler -winwidth=50 -explorer -create<CR>
 nnoremap <expr><SID>[tag]cl    <SID>toggle_cursorline()
 nnoremap <expr><SID>[tag]ve    <SID>toggle_virtualedit()
 nnoremap <silent><SID>[tag]o   :TagbarToggle<CR>
@@ -903,10 +985,8 @@ autocmd gyokuro BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$")
 autocmd gyokuro BufReadPost *     exe "normal! g'\""
 autocmd gyokuro BufReadPost * endif
 
-autocmd gyokuro ColorScheme * if !has('gui_running') && exists(':CSApprox')
-autocmd gyokuro ColorScheme *     CSApprox!
-autocmd gyokuro ColorScheme * endif
-
 colorscheme hydrangea
-
-syntax on
+if neobundle#tap('csapprox')
+    " autocmd gyokuro VimEnter * echomsg 'CSApprox!'
+    " autocmd gyokuro VimEnter * CSApprox!
+endif
