@@ -3,8 +3,13 @@ scriptencoding utf-8
 " XXX: special constants
 let s:debug= get(g:, 'debug', 0)
 
+" disable mswin.vim
+let g:skip_loading_mswin= 1
+
 " constants for using .vimrc
 let s:constants= {
+\   'is_win':  has('win64') || has('win32') || has('win16') || has('win95'),
+\   'is_unix': has('unix'),
 \   'files': {
 \       'vimrc':       $MYVIMRC,
 \       'vimrc_local': $MYVIMRC . '.local',
@@ -51,6 +56,14 @@ endif
 
 syntax on
 
+if s:constants.is_win
+    set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
+elseif s:constants.is_unix
+    set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
+endif
+if exists('+shellslash')
+    set shellslash
+endif
 set number norelativenumber
 set tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
 set autoindent smartindent
@@ -97,6 +110,9 @@ set t_Co=256
 set viminfo='20,<100
 set history=50
 set ruler
+" auot-read file when it's modified by outside
+set autoread
+autocmd gyokuro WinEnter * checktime
 
 if executable('ag')
     let &grepprg= 'ag -n $*'
