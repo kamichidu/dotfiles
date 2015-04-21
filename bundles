@@ -1,83 +1,329 @@
-# vim:ft=tsv:ts=45:sw=45:sts=0
-repo=Shougo/neobundle.vim	name=neobundle	command=NeoBundleFetch
-repo=https://code.google.com/p/vim/	name=vim-self	type=hg	command=NeoBundleFetch	build=unix=$HOME/.vim/bin/build-vim-self.sh
-repo=Shougo/neocomplete.vim	name=neocomplete	when=has('lua')	alias=neco
-repo=Shougo/neocomplcache.vim	name=neocomplcache	when=!has('lua')	alias=neco
-repo=Shougo/vimproc.vim	name=vimproc	build=unix=make -f make_unix.mak
-repo=Shougo/unite.vim	name=unite
-repo=choplin/unite-vim_hacks	name=unite-vim_hacks	depends=Shougo/unite.vim	depends=mattn/webapi-vim	depends=mattn/wwwrenderer-vim	depends=thinca/vim-openbuf
-repo=Shougo/vimshell.vim	name=vimshell	depends=Shougo/unite.vim	depends=Shougo/vimproc.vim
-repo=Shougo/neosnippet.vim	name=neosnippet	depends={{neco}}
-repo=Shougo/vinarise.vim	name=vinarise
-repo=Shougo/echodoc.vim	name=echodoc
-repo=mattn/gist-vim	name=gist	depends=mattn/webapi-vim
-repo=mattn/emmet-vim	name=emmet
-repo=mattn/qiita-vim	name=qiita
-repo=mattn/msgpack-vim	name=msgpack
-repo=kana/vim-tabpagecd	name=tabpagecd
-repo=kana/vim-surround	name=surround
-repo=kana/vim-submode	name=submode
-repo=kana/vim-vspec	name=vspec
-repo=kana/vim-textobj-entire	name=textobj-entire	depends=kana/vim-textobj-user
-repo=kana/vim-textobj-function	name=textobj-function	depends=kana/vim-textobj-user
-repo=kana/vim-textobj-underscore	name=textobj-underscore	depends=kana/vim-textobj-user
-repo=deris/vim-textobj-enclosedsyntax	name=textobj-enclosedsyntax	depends=kana/vim-textobj-user
-repo=thinca/vim-textobj-between	name=textobj-between	depends=kana/vim-textobj-user
-repo=thinca/vim-textobj-comment	name=textobj-comment	depends=kana/vim-textobj-user
-repo=sgur/vim-gf-autoload	name=gf-autoload	depends=kana/vim-gf-user
-repo=kana/vim-operator-replace	name=operator-replace	depends=kana/vim-operator-user
+# use https://code.google.com/p/vim/
+#     as vim-self
+#      {'unix': '$HOME/.vim/bin/build-vim-self.sh'}
+
+use Shougo/neocomplete.vim
+    as neco, neocomplete
+    enable_if "has('lua')"
+
+use Shougo/neocomplcache.vim
+    as neco, neocomplcache
+    enable_if "!has('lua')"
+
+use Shougo/vimproc.vim
+    as vimproc
+    build {
+        on windows
+            - mingw32-make -f make_mingw64.mak
+        on mac
+            - make -f make_mac.mak
+        on unix
+            - make -f make_unix.mak
+    }
+
+use Shougo/unite.vim
+    as unite
+
+use choplin/unite-vim_hacks
+    as unite-vim_hacks
+    depends (
+         Shougo/unite.vim
+         mattn/webapi-vim
+         mattn/wwwrenderer-vim
+         thinca/vim-openbuf
+    )
+
+use Shougo/vimshell.vim
+    as vimshell
+    depends (
+         Shougo/unite.vim
+         Shougo/vimproc.vim
+    )
+
+use Shougo/neosnippet.vim
+    as neosnippet
+    depends (
+         neco
+    )
+
+use Shougo/vinarise.vim
+    as vinarise
+
+use Shougo/echodoc.vim
+    as echodoc
+
+use mattn/gist-vim
+    as gist
+    depends (
+         mattn/webapi-vim
+    )
+
+use mattn/emmet-vim
+    as emmet
+
+use mattn/qiita-vim
+    as qiita
+
+use mattn/msgpack-vim
+    as msgpack
+
+use kana/vim-tabpagecd
+    as tabpagecd
+
+use kana/vim-surround
+    as surround
+
+use kana/vim-submode
+    as submode
+
+use kana/vim-vspec
+    as vspec
+
+use kana/vim-textobj-entire
+    as textobj-entire
+    depends (
+         kana/vim-textobj-user
+    )
+
+use kana/vim-textobj-function
+    as textobj-function
+    depends (
+         kana/vim-textobj-user
+    )
+
+use kana/vim-textobj-underscore
+    as textobj-underscore
+    depends (
+         kana/vim-textobj-user
+    )
+
+use deris/vim-textobj-enclosedsyntax
+    as textobj-enclosedsyntax
+    depends (
+         kana/vim-textobj-user
+    )
+
+use thinca/vim-textobj-between
+    as textobj-between
+    depends (
+         kana/vim-textobj-user
+    )
+
+use thinca/vim-textobj-comment
+    as textobj-comment
+    depends (
+         kana/vim-textobj-user
+    )
+
+use sgur/vim-gf-autoload
+    as gf-autoload
+    depends (
+         kana/vim-gf-user
+    )
+
+use kana/vim-operator-replace
+    as operator-replace
+    depends (
+         kana/vim-operator-user
+    )
+
 # repo=rhysd/vim-operator-surround	name=operator-surround	depends=kana/vim-operator-user
-repo=thinca/vim-ref	name=ref
-repo=thinca/vim-quickrun	name=quickrun
-repo=t9md/vim-textmanip	name=textmanip
-repo=t9md/vim-choosewin	name=choosewin
-repo=t9md/vim-quickhl	name=quickhl
-repo=tyru/open-browser.vim	name=open-browser
-repo=tyru/vim-altercmd	name=altercmd
-repo=itchyny/calendar.vim	name=calendar
-repo=tomtom/tcomment_vim	name=tcomment
-repo=osyo-manga/vim-watchdogs	name=watchdogs	depends=thinca/vim-quickrun	depends=Shougo/vimproc.vim	depends=osyo-manga/shabadou.vim	depends=jceb/vim-hier	depends=dannyob/quickfixstatus
-repo=osyo-manga/vim-snowdrop	name=snowdrop
-repo=osyo-manga/vim-gyazo	name=gyazo
-repo=h1mesuke/vim-alignta	name=alignta
-repo=jiangmiao/simple-javascript-indenter	name=simple-javascript-indenter
-repo=jelera/vim-javascript-syntax	name=javascript-syntax
-repo=marijnh/tern_for_vim	name=tern_for_vim
-repo=kchmck/vim-coffee-script	name=coffee-script
-repo=majutsushi/tagbar	name=tagbar
-repo=godlygeek/csapprox	name=csapprox	force=1
-repo=Rykka/colorv.vim	name=colorv	depends=mattn/webapi-vim
-repo=Rip-Rip/clang_complete	name=clang_complete
-repo=vim-jp/vital.vim	name=vital
-repo=vim-jp/cpp-vim	name=cpp
-repo=basyura/TweetVim	name=TweetVim	depends=tyru/open-browser.vim	depends=basyura/twibill.vim	depends=mattn/webapi-vim	depends=h1mesuke/unite-outline	depends=basyura/bitly.vim	depends=Shougo/unite.vim	depends=mattn/favstar-vim
+
+use thinca/vim-ref
+    as ref
+
+use thinca/vim-quickrun
+    as quickrun
+
+use t9md/vim-textmanip
+    as textmanip
+
+use t9md/vim-choosewin
+    as choosewin
+
+use t9md/vim-quickhl
+    as quickhl
+
+use tyru/open-browser.vim
+    as open-browser
+
+use tyru/vim-altercmd
+    as altercmd
+
+use itchyny/calendar.vim
+    as calendar
+
+use tomtom/tcomment_vim
+    as tcomment
+
+use osyo-manga/vim-watchdogs
+    as watchdogs
+    depends (
+         thinca/vim-quickrun
+         Shougo/vimproc.vim
+         osyo-manga/shabadou.vim
+         jceb/vim-hier
+         dannyob/quickfixstatus
+    )
+
+use osyo-manga/vim-snowdrop
+    as snowdrop
+
+use osyo-manga/vim-gyazo
+    as gyazo
+
+use h1mesuke/vim-alignta
+    as alignta
+
+use jiangmiao/simple-javascript-indenter
+    as simple-javascript-indenter
+
+use jelera/vim-javascript-syntax
+    as javascript-syntax
+
+use marijnh/tern_for_vim
+    as tern_for_vim
+
+use kchmck/vim-coffee-script
+    as coffee-script
+
+use majutsushi/tagbar
+    as tagbar
+
+use godlygeek/csapprox
+    as csapprox
+
+use Rykka/colorv.vim
+    as colorv
+    depends (
+         mattn/webapi-vim
+    )
+
+use Rip-Rip/clang_complete
+    as clang_complete
+
+use vim-jp/vital.vim
+    as vital
+
+use vim-jp/cpp-vim
+    as cpp
+
+use basyura/TweetVim
+    as TweetVim
+    depends (
+         tyru/open-browser.vim
+         basyura/twibill.vim
+         mattn/webapi-vim
+         h1mesuke/unite-outline
+         basyura/bitly.vim
+         Shougo/unite.vim
+         mattn/favstar-vim
+    )
+
 # Graceful for TweetVim
-repo=yomi322/neco-tweetvim	name=neocomplete-tweetvim	depends={{neco}}
-repo=rbtnn/vimconsole.vim	name=vimconsole	depends=thinca/vim-prettyprint
-repo=AnsiEsc.vim	name=AnsiEsc
-repo=kannokanno/previm	name=previm
-repo=c9s/perlomni.vim	name=perlomni
-repo=yuratomo/w3m.vim	name=w3m
-repo=basyura/j6uil.vim	name=j6uil	depends=Shougo/vimproc.vim
-repo=tpope/vim-abolish	name=abolish
-repo=DrawIt	name=DrawIt
-repo=autodate.vim	name=autodate
-repo=sudo.vim	name=sudo
-repo=https://code.google.com/p/vimwiki/	name=vimwiki	type=hg	rtp=src/
-repo=AndrewRadev/linediff.vim	name=linediff
-repo=coderifous/textobj-word-column.vim	name=textobj-word-column
-repo=ebnf.vim	name=ebnf
-repo=bnf.vim	name=bnf
-repo=kamichidu/memolist.vim	name=memolist
-repo=LeafCage/alti.vim	name=alti
-repo=syngan/vim-vimlint	name=vimlint	depends=ynkdir/vim-vimlparser
-repo=balloon-stat/komadori.vim	name=komadori
-repo=scrooloose/nerdtree	name=nerdtree
-repo=ctrlpvim/ctrlp.vim	name=ctrlp
-repo=mattn/ctrlp-gist	name=ctrlp-gist	depends=mattn/gist-vim
-repo=neilagabriel/vim-geeknote	name=geeknote
-repo=rbtnn/rabbit-ui.vim	name=rabbit-ui
-repo=cohama/agit.vim	name=agit
-repo=rhysd/committia.vim	name=committia
-repo=haya14busa/incsearch.vim	name=incsearch
-repo=eyapp	name=eyapp
+use yomi322/neco-tweetvim
+    as neocomplete-tweetvim
+    depends (
+         neco
+    )
+
+use rbtnn/vimconsole.vim
+    as vimconsole
+    depends (
+         thinca/vim-prettyprint
+    )
+
+use AnsiEsc.vim
+    as AnsiEsc
+
+use kannokanno/previm
+    as previm
+
+use c9s/perlomni.vim
+    as perlomni
+
+use yuratomo/w3m.vim
+    as w3m
+
+use basyura/j6uil.vim
+    as j6uil
+    depends (
+         Shougo/vimproc.vim
+    )
+
+use tpope/vim-abolish
+    as abolish
+
+use DrawIt
+    as DrawIt
+
+use autodate.vim
+    as autodate
+
+use sudo.vim
+    as sudo
+
+# use https://code.google.com/p/vimwiki/
+#     as vimwiki
+
+use AndrewRadev/linediff.vim
+    as linediff
+
+use coderifous/textobj-word-column.vim
+    as textobj-word-column
+
+use ebnf.vim
+    as ebnf
+
+use bnf.vim
+    as bnf
+
+use kamichidu/memolist.vim
+    as memolist
+
+use LeafCage/alti.vim
+    as alti
+
+use syngan/vim-vimlint
+    as vimlint
+    depends (
+         ynkdir/vim-vimlparser
+    )
+
+use balloon-stat/komadori.vim
+    as komadori
+
+use scrooloose/nerdtree
+    as nerdtree
+
+use ctrlpvim/ctrlp.vim
+    as ctrlp
+
+use mattn/ctrlp-gist
+    as ctrlp-gist
+    depends (
+         mattn/gist-vim
+    )
+
+use neilagabriel/vim-geeknote
+    as geeknote
+
+use rbtnn/rabbit-ui.vim
+    as rabbit-ui
+
+use cohama/agit.vim
+    as agit
+
+use rhysd/committia.vim
+    as committia
+
+use haya14busa/incsearch.vim
+    as incsearch
+
+use eyapp
+    as eyapp
+
+use local ~/sources/vim-plugin/
+    excludes (
+        _*
+    )

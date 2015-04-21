@@ -1,0 +1,3 @@
+[submodule "hariti"]
+	path = hariti
+	url = https://github.com/kamichidu/vim-hariti
