@@ -41,7 +41,7 @@ snippet     function
 abbr        func endfunc
 alias       func
 options     head
-    function! ${1:#:func_name}(${2})
+    function! ${1:#:func_name}(${2}) abort
         ${0:TARGET}
     endfunction
 
@@ -81,7 +81,7 @@ options     head
 snippet     customlist
 abbr        customlist complete function
 options     head
-    function! ${1:#:func_name}(arglead, cmdline, cursorpos)
+    function! ${1:#:func_name}(arglead, cmdline, cursorpos) abort
         return filter(${2:#:list}, 'stridx(v:val, a:arglead) == 0')
     endfunction
 
@@ -102,6 +102,6 @@ options     head
 
 snippet     aufunction
 options     head
-    function! `substitute(tr(expand('%:r'), '\/', '##'), '^autoload#', '', '')`#${1}(${2})
+    function! `substitute(tr(expand('%:r'), '\/', '##'), '^autoload#', '', '')`#${1}(${2}) abort
         ${0}
     endfunction

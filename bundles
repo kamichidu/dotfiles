@@ -25,6 +25,7 @@ repo=deris/vim-textobj-enclosedsyntax	name=textobj-enclosedsyntax	depends=kana/v
 repo=thinca/vim-textobj-between	name=textobj-between	depends=kana/vim-textobj-user
 repo=thinca/vim-textobj-comment	name=textobj-comment	depends=kana/vim-textobj-user
 repo=sgur/vim-gf-autoload	name=gf-autoload	depends=kana/vim-gf-user
+repo=kana/vim-operator-replace	name=operator-replace	depends=kana/vim-operator-user
 # repo=rhysd/vim-operator-surround	name=operator-surround	depends=kana/vim-operator-user
 repo=thinca/vim-ref	name=ref
 repo=thinca/vim-quickrun	name=quickrun
@@ -77,3 +78,6 @@ repo=mattn/ctrlp-gist	name=ctrlp-gist	depends=mattn/gist-vim
 repo=neilagabriel/vim-geeknote	name=geeknote
 repo=rbtnn/rabbit-ui.vim	name=rabbit-ui
 repo=cohama/agit.vim	name=agit
+repo=rhysd/committia.vim	name=committia
+repo=haya14busa/incsearch.vim	name=incsearch
+repo=eyapp	name=eyapp

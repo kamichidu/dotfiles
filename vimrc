@@ -1,5 +1,7 @@
 scriptencoding utf-8
 
+let g:loaded_javacomplete= 1
+
 " XXX: special constants
 let s:debug= get(g:, 'debug', 0)
 
@@ -113,6 +115,8 @@ set ruler
 " auot-read file when it's modified by outside
 set autoread
 autocmd gyokuro WinEnter * checktime
+set list
+set listchars=tab:^I,trail:.
 
 if executable('ag')
     let &grepprg= 'ag -n $*'
@@ -548,6 +552,10 @@ if neobundle#tap('nerdtree')
     nnoremap <silent> <SID>[tag]nt :<C-U>NERDTreeToggle<CR>
 endif
 
+if neobundle#tap('dirvish')
+    let g:dirvish_hijack_netrw= 1
+endif
+
 function! s:map(lhs, rhs, opt, modes) " {{{
     call s:_map('map', a:lhs, a:rhs, a:opt, a:modes)
 endfunction
@@ -643,7 +651,7 @@ if neobundle#tap('vimconsole')
         nmap <buffer> <Del> <Plug>(vimconsole_clear)
     endfunction
 
-    autocmd BufEnter * call s:configure_vimconsole()
+    autocmd gyokuro BufEnter * call s:configure_vimconsole()
 endif
 
 if neobundle#tap('textobj-between')
@@ -705,12 +713,15 @@ if neobundle#tap('j6uil')
     let g:J6uil_updatetime=    500
     let g:J6uil_display_icon=  1
     let g:J6uil_echo_presence= 0
+
+    nnoremap <silent> <Leader>l :<C-U>call ctrlp#init(ctrlp#j6uil#rooms#id())<CR>
 endif
 
 if neobundle#tap('javaclasspath')
-    function! neobundle#hooks.on_source(bundle)
-        let g:javaclasspath_config.standard.libs+= [{'path': 'lib/tools.jar'}]
-    endfunction
+    let g:javaclasspath_config= get(g:, 'javaclasspath_config', {})
+    let g:javaclasspath_config.standard= get(g:javaclasspath_config, 'standard', {})
+    let g:javaclasspath_config.standard.libs= get(g:javaclasspath_config.standard, 'libs', []) + [{'path': 'lib/tools.jar'}]
+    let g:javaclasspath_enable_auto_analyze= 1
 endif
 
 if neobundle#tap('alti')
@@ -809,6 +820,22 @@ if neobundle#tap('operator-surround')
     xmap Rd <Plug>(operator-surround-delete)
 endif
 
+if neobundle#tap('operator-replace')
+    map _ <Plug>(operator-replace)
+endif
+
+if neobundle#tap('committia')
+    let g:committia_open_only_vim_starting= 0
+
+    autocmd gyokuro BufReadPost COMMIT_EDITMSG call committia#open('git')
+endif
+
+if neobundle#tap('incsearch')
+    map /  <Plug>(incsearch-forward)
+    map ?  <Plug>(incsearch-backward)
+    map g/ <Plug>(incsearch-stay)
+endif
+
 " if neobundle#tap('unite-javaimport')
 "     function! neobundle#hooks.on_source(bundle)
 "         let g:javaimport_config.exclude_packages= [
@@ -890,6 +917,10 @@ if has('perl')
     endfunction
 endif
 
+command!
+\   MakeTags
+\   silent execute '!ctags -R &' | redraw!
+
 function! s:toggle_virtualedit()
     if &virtualedit =~# 'all'
         setlocal virtualedit=
@@ -922,10 +953,35 @@ function! s:make_dirs(dir_list)
     endif
 endfunction
 
+function! s:tabselect(tabnr)
+    if !(a:tabnr >= 0 && a:tabnr < tabpagenr())
+        echohl Error
+        echo 'No such tabnr.'
+        echohl NONE
+        return
+    endif
+
+    if a:tabnr > 0
+        execute 'tabnext' a:tabnr
+    else
+        tabfirst
+    endif
+endfunction
+
 inoremap <SID>[tag]H           <Home>
 inoremap <SID>[tag]e           <End>
 inoremap <SID>[tag]h           <Esc>I
-nnoremap <silent><SID>[tag]tt  :tabnew<CR>
+nnoremap <silent><SID>[tag]tt  :<C-U>tabnew<CR>
+nnoremap <silent><SID>[tag]t0  :<C-U>call s:tabselect(0)<CR>
+nnoremap <silent><SID>[tag]t1  :<C-U>call s:tabselect(1)<CR>
+nnoremap <silent><SID>[tag]t2  :<C-U>call s:tabselect(2)<CR>
+nnoremap <silent><SID>[tag]t3  :<C-U>call s:tabselect(3)<CR>
+nnoremap <silent><SID>[tag]t4  :<C-U>call s:tabselect(4)<CR>
+nnoremap <silent><SID>[tag]t5  :<C-U>call s:tabselect(5)<CR>
+nnoremap <silent><SID>[tag]t6  :<C-U>call s:tabselect(6)<CR>
+nnoremap <silent><SID>[tag]t7  :<C-U>call s:tabselect(7)<CR>
+nnoremap <silent><SID>[tag]t8  :<C-U>call s:tabselect(8)<CR>
+nnoremap <silent><SID>[tag]t9  :<C-U>call s:tabselect(9)<CR>
 nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
 nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
 nnoremap <silent><SID>[tag]uff :Unite file<CR>
@@ -957,6 +1013,21 @@ vmap <C-L> <Plug>(textmanip-move-right)
 " super tab emu.
 imap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
 smap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
+
+function! s:toggle_qfixwin()
+    for bufnr in tabpagebuflist()
+        if getbufvar(bufnr, '&filetype') ==# 'qf'
+            " close
+            cclose
+            return
+        endif
+    endfor
+
+    copen
+    wincmd p
+endfunction
+
+nnoremap <silent> <C-W>, :<C-U>call <SID>toggle_qfixwin()<CR>
 
 cnoremap <C-H> <Space><BS><Left>
 cnoremap <C-L> <Space><BS><Right>
