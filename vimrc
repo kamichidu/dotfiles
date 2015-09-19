@@ -102,7 +102,7 @@ if has('conceal')
 endif
 " disable tag completion since it's too slow
 set complete=.,w,b,u
-set completeopt=menu
+set completeopt=menuone
 " no beep
 set visualbell t_vb=
 " don't move cursor when <C-D> and <C-U> and...
@@ -893,6 +893,35 @@ nnoremap <silent> <C-W>, :<C-U>call <SID>toggle_qfixwin()<CR>
 cnoremap <C-H> <Space><BS><Left>
 cnoremap <C-L> <Space><BS><Right>
 cnoremap <C-Y> <Space><BS>
+
+function! s:invoke_complete() abort
+    if &l:filetype ==# 'vim'
+        return "\<C-X>\<C-V>\<C-P>"
+    else
+        return "\<C-X>\<C-U>\<C-P>"
+    endif
+endfunction
+
+function! GyokuroCompletefunc(findstart, base) abort
+    if &omnifunc ==# ''
+        return -1
+    endif
+
+    if a:findstart
+        return call(&omnifunc, [a:findstart, a:base])
+    else
+        let candidates= call(&omnifunc, [a:findstart, a:base])
+        for candidate in candidates
+            let candidate.icase= &ignorecase
+        endfor
+        return candidates
+    endif
+endfunction
+
+set completefunc=GyokuroCompletefunc
+
+inoremap <expr> <C-L> <SID>invoke_complete()
+inoremap <C-F> <C-X><C-F>
 
 "
 " :h cmdwin-char
