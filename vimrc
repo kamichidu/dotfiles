@@ -149,7 +149,7 @@ call s:invoke_extension('neobundle')
 call s:invoke_extension('neobundle_post')
 filetype plugin indent on
 
-if hariti#enabled('ref')
+if get(g:hariti_bundles, 'ref', 0)
     let g:ref_use_vimproc= 1
     let g:ref_jscore_path= ''
     let g:ref_jsdom_path=  ''
@@ -157,7 +157,7 @@ if hariti#enabled('ref')
     let g:ref_html5_path=  $HOME . '/documents/vim-ref-doc/www.html5.jp/tag/elements/'
 endif
 
-if hariti#enabled('memolist')
+if get(g:hariti_bundles, 'memolist', 0)
     let g:memolist_path= expand('~/documents/memo/')
     let g:memolist_memo_suffix= 'mkd'
     " date format (default %Y-%m-%d %H:%M)
@@ -173,7 +173,7 @@ if hariti#enabled('memolist')
     nnoremap g,g :<C-U>MemoGrep<CR>
 endif
 
-if hariti#enabled('open-browser')
+if get(g:hariti_bundles, 'open-browser', 0)
     let g:netrw_nogx= 1 " disable netrw's gx mapping.
     let g:openbrowser_browser_commands= [
     \   {
@@ -185,7 +185,7 @@ if hariti#enabled('open-browser')
     vmap gx <Plug>(openbrowser-smart-search)
 endif
 
-if hariti#enabled('quickrun')
+if get(g:hariti_bundles, 'quickrun', 0)
     let g:quickrun_config= get(g:, 'quickrun_config', {})
     let g:quickrun_config['_']= {
     \   'runner'                    : 'vimproc',
@@ -228,7 +228,7 @@ if hariti#enabled('quickrun')
     \   'cmdopt': ['--host=localhost', '--port=5432', '--username=postgres', '--dbname=test'],
     \}
 
-    if hariti#enabled('watchdogs')
+    if get(g:hariti_bundles, 'watchdogs', 0)
         let g:watchdogs_check_CursorHold_enables= {
         \   'java': 0,
         \}
@@ -254,11 +254,11 @@ if hariti#enabled('quickrun')
     endif
 endif
 
-if hariti#enabled('echodoc')
+if get(g:hariti_bundles, 'echodoc', 0)
     let g:echodoc_enable_at_startup= 1
 endif
 
-if hariti#enabled('neocomplete')
+if get(g:hariti_bundles, 'neocomplete', 0)
     let g:neocomplete#enable_at_startup= 1
     let g:neocomplete#use_vimproc= 1
     " 表示する候補数
@@ -321,7 +321,7 @@ if hariti#enabled('neocomplete')
     unlet s:source_name
 
     call neocomplete#custom#source('file', 'rank', 999)
-elseif hariti#enabled('neocomplcache')
+elseif get(g:hariti_bundles, 'neocomplcache', 0)
     let g:neocomplcache_enable_at_startup= 1
     let g:neocomplcache_enable_auto_close_preview= 0
     let g:neocomplcache_use_vimproc=       1
@@ -379,7 +379,7 @@ elseif hariti#enabled('neocomplcache')
     " let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
     let g:neocomplcache_vim_completefuncs['perl']= 'PerlComplete'
 endif
-if hariti#enabled('clang_complete')
+if get(g:hariti_bundles, 'clang_complete', 0)
     " let g:clang_exec= $HOME . '/local/bin/clang++'
     let g:clang_complete_auto= 0
     let g:clang_auto_select= 0
@@ -391,16 +391,16 @@ if hariti#enabled('clang_complete')
     let g:clang_sort_algo= 'alpha'
     let g:clang_complete_macros= 1
 endif
-if hariti#enabled('snowdrop')
+if get(g:hariti_bundles, 'snowdrop', 0)
     let g:snowdrop#libclang_path= '/usr/lib/'
 endif
-if hariti#enabled('neosnippet')
+if get(g:hariti_bundles, 'neosnippet', 0)
     let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
     let g:neosnippet#disable_runtime_snippets= {
     \   '_': 1,
     \}
 endif
-if hariti#enabled('vimwiki')
+if get(g:hariti_bundles, 'vimwiki', 0)
     let g:vimwiki_list= [{
     \   'path'      : '~/documents/site/vimwiki/wiki/',
     \   'path_html' : '~/documents/site/vimwiki/html/',
@@ -409,11 +409,11 @@ if hariti#enabled('vimwiki')
     \}]
 endif
 
-if hariti#enabled('nerdtree')
+if get(g:hariti_bundles, 'nerdtree', 0)
     nnoremap <silent> <SID>[tag]nt :<C-U>NERDTreeToggle<CR>
 endif
 
-if hariti#enabled('dirvish')
+if get(g:hariti_bundles, 'dirvish', 0)
     let g:dirvish_hijack_netrw= 1
 endif
 
@@ -436,7 +436,7 @@ function! s:_map(cmd, lhs, rhs, opt, modes) " {{{
     endfor
 endfunction
 
-if hariti#enabled('ref')
+if get(g:hariti_bundles, 'ref', 0)
     let g:ref_no_default_key_mappings= 1
     let g:ref_perldoc_complete_head= 1
 
@@ -450,14 +450,14 @@ if hariti#enabled('ref')
     endfunction
 endif
 
-if hariti#enabled('tagbar')
+if get(g:hariti_bundles, 'tagbar', 0)
     let g:tagbar_left= 1
     let g:tagbar_autoclose= 1
     let g:tagbar_autofocus= 1
     let g:tagbar_show_visibility= 1
 endif
 
-if hariti#enabled('colorv')
+if get(g:hariti_bundles, 'colorv', 0)
     " 2, if +python
     " 3, if +python3
     " 0, if no python
@@ -470,7 +470,7 @@ if hariti#enabled('colorv')
     endif
 endif
 
-if hariti#enabled('submode')
+if get(g:hariti_bundles, 'submode', 0)
     call submode#enter_with('winsize', 'n', '', '<C-W>>', '<C-W>>')
     call submode#enter_with('winsize', 'n', '', '<C-W><', '<C-W><')
     call submode#enter_with('winsize', 'n', '', '<C-W>-', '<C-W>-')
@@ -482,7 +482,7 @@ if hariti#enabled('submode')
     call submode#map('winsize', 'n', '', '+', '<C-W>+')
 endif
 
-if hariti#enabled('unite')
+if get(g:hariti_bundles, 'unite', 0)
     let g:unite_data_directory= s:constants.directories.temporary . '/.unite/'
 
     if executable('ag')
@@ -492,16 +492,16 @@ if hariti#enabled('unite')
     endif
 endif
 
-if hariti#enabled('gist')
+if get(g:hariti_bundles, 'gist', 0)
     " Only :w! updates a gist.
     let g:gist_update_on_write = 2
 endif
 
-if hariti#enabled('TweetVim')
+if get(g:hariti_bundles, 'TweetVim', 0)
     let g:tweetvim_tweet_per_page= 200
 endif
 
-if hariti#enabled('vimconsole')
+if get(g:hariti_bundles, 'vimconsole', 0)
     let g:vimconsole#height= 20
     let g:vimconsole#maximum_caching_objects_count= 10000
 
@@ -515,7 +515,7 @@ if hariti#enabled('vimconsole')
     autocmd gyokuro BufEnter * call s:configure_vimconsole()
 endif
 
-if hariti#enabled('textobj-between')
+if get(g:hariti_bundles, 'textobj-between', 0)
     let g:textobj_between_no_default_key_mappings= 1
 
     " http://d.hatena.ne.jp/thinca/20100614/1276448745
@@ -525,17 +525,17 @@ if hariti#enabled('textobj-between')
     vmap aF <Plug>(textobj-between-a)
 endif
 
-if hariti#enabled('choosewin')
+if get(g:hariti_bundles, 'choosewin', 0)
     nmap <C-W><C-W> <Plug>(choosewin)
 
     let g:choosewin_overlay_enable= 1
 endif
 
-if hariti#enabled('quickhl')
+if get(g:hariti_bundles, 'quickhl', 0)
     nmap <Leader>h <Plug>(quickhl-cword-toggle)
 endif
 
-if hariti#enabled('altercmd')
+if get(g:hariti_bundles, 'altercmd', 0)
     call altercmd#load()
 
     AlterCommand perldoc        Ref perldoc
@@ -549,7 +549,7 @@ if hariti#enabled('altercmd')
     AlterCommand gitb[lame] Gblame
 endif
 
-if hariti#enabled('coffee-script')
+if get(g:hariti_bundles, 'coffee-script', 0)
 "     autocmd gyokuro QuickFixCmdPost * nested cwindow | redraw!
 "
 "     function! s:compile_coffee()
@@ -570,7 +570,7 @@ if hariti#enabled('coffee-script')
 "     autocmd gyokuro BufWritePost *.coffee call s:compile_coffee()
 endif
 
-if hariti#enabled('j6uil')
+if get(g:hariti_bundles, 'j6uil', 0)
     let g:J6uil_updatetime=    500
     let g:J6uil_display_icon=  1
     let g:J6uil_echo_presence= 0
@@ -578,14 +578,14 @@ if hariti#enabled('j6uil')
     nnoremap <silent> <Leader>l :<C-U>call ctrlp#init(ctrlp#j6uil#rooms#id())<CR>
 endif
 
-if hariti#enabled('javaclasspath')
+if get(g:hariti_bundles, 'javaclasspath', 0)
     let g:javaclasspath_config= get(g:, 'javaclasspath_config', {})
     let g:javaclasspath_config.standard= get(g:javaclasspath_config, 'standard', {})
     let g:javaclasspath_config.standard.libs= get(g:javaclasspath_config.standard, 'libs', []) + [{'path': 'lib/tools.jar'}]
     let g:javaclasspath_enable_auto_analyze= 1
 endif
 
-if hariti#enabled('alti')
+if get(g:hariti_bundles, 'alti', 0)
     let g:alti_prompt_mappings= get(g:, 'alti_prompt_mappings', {})
     let g:alti_prompt_mappings['PrtSelectMove("j")']= ['<Tab>']
     let g:alti_prompt_mappings['PrtSelectMove("k")']= ['<S-Tab>']
@@ -593,15 +593,15 @@ if hariti#enabled('alti')
     let g:alti_prompt_mappings['PrtSelectInsert()']=  ['<C-Y>']
 endif
 
-if hariti#enabled('calendar')
+if get(g:hariti_bundles, 'calendar', 0)
     let g:calendar_google_calendar= 1
     let g:calendar_google_task= 1
 endif
 
-if hariti#enabled('komadori')
+if get(g:hariti_bundles, 'komadori', 0)
 endif
 
-if hariti#enabled('ctrlp')
+if get(g:hariti_bundles, 'ctrlp', 0)
     let g:ctrlp_map= ''
     let g:ctrlp_working_path_mode= 'rw'
     let g:ctrlp_use_caching= 1
@@ -657,22 +657,22 @@ if hariti#enabled('ctrlp')
     nnoremap <silent> <Leader>pbt :<C-U>CtrlPBufTag<CR>
     nnoremap <silent> <Leader>pm  :<C-U>CtrlPMRU<CR>
 
-    if hariti#enabled('ctrlp-gist')
+    if get(g:hariti_bundles, 'ctrlp-gist', 0)
     endif
-    if hariti#enabled('qiita')
+    if get(g:hariti_bundles, 'qiita', 0)
     endif
 endif
 
-if hariti#enabled('geeknote')
+if get(g:hariti_bundles, 'geeknote', 0)
     let g:GeeknoteFormat= 'markdown'
     let g:GeeknoteExplorerWidth= float2nr(&columns * 0.2)
 endif
 
-if hariti#enabled('previm')
+if get(g:hariti_bundles, 'previm', 0)
     let g:previm_enable_realtime= 1
 endif
 
-if hariti#enabled('operator-surround')
+if get(g:hariti_bundles, 'operator-surround', 0)
     nmap Ra <Plug>(operator-surround-append)
     xmap Ra <Plug>(operator-surround-append)
     nmap Rr <Plug>(operator-surround-replace)
@@ -681,23 +681,21 @@ if hariti#enabled('operator-surround')
     xmap Rd <Plug>(operator-surround-delete)
 endif
 
-if hariti#enabled('operator-replace')
+if get(g:hariti_bundles, 'operator-replace', 0)
     map _ <Plug>(operator-replace)
 endif
 
-if hariti#enabled('committia')
+if get(g:hariti_bundles, 'committia', 0)
     let g:committia_open_only_vim_starting= 0
-
-    autocmd gyokuro BufReadPost COMMIT_EDITMSG call committia#open('git')
 endif
 
-if hariti#enabled('incsearch')
+if get(g:hariti_bundles, 'incsearch', 0)
     map /  <Plug>(incsearch-forward)
     map ?  <Plug>(incsearch-backward)
     map g/ <Plug>(incsearch-stay)
 endif
 
-" if hariti#enabled('unite-javaimport')
+" if get(g:hariti_bundles, 'unite-javaimport', 0)
 "     function! neobundle#hooks.on_source(bundle)
 "         let g:javaimport_config.exclude_packages= [
 "         \   'java.lang',
@@ -963,7 +961,7 @@ autocmd gyokuro BufReadPost *     exe "normal! g'\""
 autocmd gyokuro BufReadPost * endif
 
 colorscheme hydrangea
-if hariti#enabled('csapprox')
+if get(g:hariti_bundles, 'csapprox', 0)
     " autocmd gyokuro VimEnter * echomsg 'CSApprox!'
     " autocmd gyokuro VimEnter * CSApprox!
 endif
