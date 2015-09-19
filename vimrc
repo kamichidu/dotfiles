@@ -698,6 +698,15 @@ if get(g:hariti_bundles, 'incsearch', 0)
     map g/ <Plug>(incsearch-stay)
 endif
 
+if get(g:hariti_bundles, 'jedi', 0)
+    autocmd gyokuro FileType python let b:did_ftplugin= 1
+    let g:jedi#auto_initialization= 1
+    let g:jedi#popup_select_first= 0
+    let g:jedi#popup_on_dot= 0
+    let g:jedi#rename_command= "<C-K>R"
+    let g:jedi#show_call_signatures= 2
+endif
+
 " if get(g:hariti_bundles, 'unite-javaimport', 0)
 "     function! neobundle#hooks.on_source(bundle)
 "         let g:javaimport_config.exclude_packages= [
