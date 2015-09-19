@@ -973,6 +973,9 @@ autocmd gyokuro BufReadPost * endif
 
 colorscheme hydrangea
 if get(g:hariti_bundles, 'csapprox', 0)
-    " autocmd gyokuro VimEnter * echomsg 'CSApprox!'
-    " autocmd gyokuro VimEnter * CSApprox!
+    if has('vim_starting')
+        autocmd gyokuro VimEnter * CSApprox!
+    else
+        CSApprox!
+    endif
 endif
