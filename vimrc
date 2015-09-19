@@ -928,6 +928,8 @@ endfunction
 set completefunc=GyokuroCompletefunc
 
 inoremap <expr> <C-L> <SID>invoke_complete()
+" avoid typo
+inoremap <C-@> <Space>
 inoremap <C-F> <C-X><C-F>
 
 "
