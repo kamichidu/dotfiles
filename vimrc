@@ -399,6 +399,9 @@ if get(g:hariti_bundles, 'neosnippet', 0)
     let g:neosnippet#disable_runtime_snippets= {
     \   '_': 1,
     \}
+    " super tab emu.
+    imap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
+    smap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
 endif
 if get(g:hariti_bundles, 'vimwiki', 0)
     let g:vimwiki_list= [{
@@ -869,9 +872,6 @@ vmap <C-H> <Plug>(textmanip-move-left)
 vmap <C-J> <Plug>(textmanip-move-down)
 vmap <C-K> <Plug>(textmanip-move-up)
 vmap <C-L> <Plug>(textmanip-move-right)
-" super tab emu.
-imap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
-smap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
 
 function! s:toggle_qfixwin()
     for bufnr in tabpagebuflist()
