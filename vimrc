@@ -968,7 +968,7 @@ autocmd gyokuro BufNewFile,BufRead *.tsv setfiletype tsv
 
 " When editing a file, always jump to the last cursor position
 autocmd gyokuro BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$")
-autocmd gyokuro BufReadPost *     exe "normal! g'\""
+autocmd gyokuro BufReadPost *     exe "normal! g'\"zz"
 autocmd gyokuro BufReadPost * endif
 
 colorscheme hydrangea
