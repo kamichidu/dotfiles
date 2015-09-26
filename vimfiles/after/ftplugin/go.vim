@@ -21,22 +21,6 @@ if s:gocode_path !=# ''
     let s:undo+= ['setlocal omnifunc<']
 endif
 
-if executable('gofmt')
-    function! s:exec_gofmt() abort
-        if &l:filetype !=# 'go'
-            return
-        endif
-
-        let save_pos= getpos('.')
-        try
-            %!gofmt
-        finally
-            call setpos('.', save_pos)
-        endtry
-    endfunction
-    autocmd gyokuro-ft-go BufWritePre * call s:exec_gofmt()
-endif
-
 if !exists('b:undo_ftplugin')
     let b:undo_ftplugin= ''
 else
