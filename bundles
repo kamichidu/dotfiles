@@ -2,14 +2,6 @@
 #     as vim-self
 #      {'unix': '$HOME/.vim/bin/build-vim-self.sh'}
 
-use Shougo/neocomplete.vim
-    as neco, neocomplete
-    enable_if "has('lua')"
-
-use Shougo/neocomplcache.vim
-    as neco, neocomplcache
-    enable_if "!has('lua')"
-
 use Shougo/vimproc.vim
     as vimproc
     build {
@@ -24,33 +16,11 @@ use Shougo/vimproc.vim
 use Shougo/unite.vim
     as unite
 
-use choplin/unite-vim_hacks
-    as unite-vim_hacks
-    depends (
-         Shougo/unite.vim
-         mattn/webapi-vim
-         mattn/wwwrenderer-vim
-         thinca/vim-openbuf
-    )
-
-use Shougo/vimshell.vim
-    as vimshell
-    depends (
-         Shougo/unite.vim
-         Shougo/vimproc.vim
-    )
-
 use Shougo/neosnippet.vim
     as neosnippet
-    depends (
-         neco
-    )
 
 use Shougo/vinarise.vim
     as vinarise
-
-use Shougo/echodoc.vim
-    as echodoc
 
 use mattn/gist-vim
     as gist
@@ -75,9 +45,6 @@ use kana/vim-surround
 
 use kana/vim-submode
     as submode
-
-use kana/vim-vspec
-    as vspec
 
 use kana/vim-textobj-entire
     as textobj-entire
@@ -127,8 +94,6 @@ use kana/vim-operator-replace
          kana/vim-operator-user
     )
 
-# repo=rhysd/vim-operator-surround	name=operator-surround	depends=kana/vim-operator-user
-
 use thinca/vim-ref
     as ref
 
@@ -166,23 +131,21 @@ use osyo-manga/vim-watchdogs
          dannyob/quickfixstatus
     )
 
-use osyo-manga/vim-snowdrop
-    as snowdrop
-
 use osyo-manga/vim-gyazo
     as gyazo
 
 use h1mesuke/vim-alignta
     as alignta
 
-use jiangmiao/simple-javascript-indenter
-    as simple-javascript-indenter
-
 use jelera/vim-javascript-syntax
     as javascript-syntax
 
 use marijnh/tern_for_vim
     as tern_for_vim
+    build {
+        on *
+            - npm install
+    }
 
 use kchmck/vim-coffee-script
     as coffee-script
@@ -192,18 +155,10 @@ use majutsushi/tagbar
 
 use godlygeek/csapprox
     as csapprox
-
-use Rykka/colorv.vim
-    as colorv
-    depends (
-         mattn/webapi-vim
-    )
+    enable_if "!has('gui_running')"
 
 use Rip-Rip/clang_complete
     as clang_complete
-
-use vim-jp/vital.vim
-    as vital
 
 use vim-jp/cpp-vim
     as cpp
@@ -214,18 +169,18 @@ use basyura/TweetVim
          tyru/open-browser.vim
          basyura/twibill.vim
          mattn/webapi-vim
-         h1mesuke/unite-outline
+#          h1mesuke/unite-outline
          basyura/bitly.vim
          Shougo/unite.vim
          mattn/favstar-vim
     )
 
 # Graceful for TweetVim
-use yomi322/neco-tweetvim
-    as neocomplete-tweetvim
-    depends (
-         neco
-    )
+# use yomi322/neco-tweetvim
+#     as neocomplete-tweetvim
+#     depends (
+#          neco
+#     )
 
 use rbtnn/vimconsole.vim
     as vimconsole
@@ -244,6 +199,7 @@ use c9s/perlomni.vim
 
 use yuratomo/w3m.vim
     as w3m
+    enable_if "executable('w3m')"
 
 use basyura/j6uil.vim
     as j6uil
@@ -253,9 +209,6 @@ use basyura/j6uil.vim
 
 use tpope/vim-abolish
     as abolish
-
-use DrawIt
-    as DrawIt
 
 use autodate.vim
     as autodate
@@ -283,12 +236,6 @@ use kamichidu/memolist.vim
 
 use LeafCage/alti.vim
     as alti
-
-use syngan/vim-vimlint
-    as vimlint
-    depends (
-         ynkdir/vim-vimlparser
-    )
 
 use balloon-stat/komadori.vim
     as komadori
@@ -322,6 +269,12 @@ use haya14busa/incsearch.vim
 
 use eyapp
     as eyapp
+
+use vim-jp/vim-go-extra
+    as go-extra
+
+use davidhalter/jedi-vim
+    as jedi
 
 use local ~/sources/vim-plugin/
     excludes (

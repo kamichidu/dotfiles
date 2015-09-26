@@ -1,6 +1,10 @@
 scriptencoding utf-8
 
-let g:loaded_javacomplete= 1
+"
+" Concepts:
+"   - Can use this for windows, mac, linux
+"   - Speed is most important
+"
 
 " XXX: special constants
 let s:debug= get(g:, 'debug', 0)
@@ -9,31 +13,10 @@ let s:debug= get(g:, 'debug', 0)
 let g:skip_loading_mswin= 1
 
 " constants for using .vimrc
-let s:constants= {
-\   'is_win':  has('win64') || has('win32') || has('win16') || has('win95'),
-\   'is_unix': has('unix'),
-\   'files': {
-\       'vimrc':       $MYVIMRC,
-\       'vimrc_local': $MYVIMRC . '.local',
-\   },
-\   'directories': {
-\       'temporary':   expand('~/.tmp/vim/'),
-\       'backup':      expand('~/.tmp/vim/backup/'),
-\       'swap':        expand('~/.tmp/vim/swap/'),
-\       'undo':        expand('~/.tmp/vim/undo/'),
-\       'development': expand('~/sources/vim-plugin/'),
-\       'bundle':      expand('~/.bundle/'),
-\   },
-\}
-
-function! s:_()
-    for dir in values(s:constants.directories)
-        if !isdirectory(dir)
-            call mkdir(dir, 'p')
-        endif
-    endfor
-endfunction
-call s:_()
+let s:systype= has('win64') || has('win32') || has('win16') || has('win95')
+\   ? 'windows'
+\   : 'linux'
+let s:tmpdir= expand('~/.tmp/vim/')
 
 augroup gyokuro
     autocmd!
@@ -41,9 +24,9 @@ augroup END
 
 syntax on
 
-if s:constants.is_win
+if s:systype ==# 'windows'
     set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
-elseif s:constants.is_unix
+else
     set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
 endif
 if exists('+shellslash')
@@ -62,11 +45,11 @@ set title
 set textwidth=0
 set backup
 set writebackup
-let &backupdir= s:constants.directories.backup . ',.'
+let &backupdir= s:tmpdir . 'backup/,.'
 set swapfile
-let &directory= s:constants.directories.swap . ',.'
+let &directory= s:tmpdir . 'swap/,.'
 if has('persistent_undo')
-    let &undodir= s:constants.directories.undo
+    let &undodir= s:tmpdir . 'undo/'
     set undofile
 endif
 if exists('&ambiwidth')
@@ -98,8 +81,7 @@ set ruler
 " auot-read file when it's modified by outside
 set autoread
 autocmd gyokuro WinEnter * checktime
-set list
-set listchars=tab:^I,trail:.
+set list listchars=tab:^I,trail:.
 
 if executable('ag')
     let &grepprg= 'ag -n $*'
@@ -108,14 +90,6 @@ elseif executable('jvgrep')
 elseif executable('pt')
     let &grepprg= 'pt'
 endif
-
-" prefix-tag for insert-mode
-inoremap <SID>[tag] <Nop>
-imap     <Leader>   <SID>[tag]
-" prefix-tag for normal-mode
-nnoremap <SID>[tag] <Nop>
-nmap     <Leader>   <SID>[tag]
-inoremap <SID>[tag]<Leader>    <Leader>
 
 if has('vim_starting')
     set runtimepath+=$HOME/dotfiles/hariti/
@@ -207,7 +181,7 @@ if get(g:hariti_bundles, 'quickrun', 0)
         \   'java': 0,
         \}
         let g:watchdogs_check_BufWritePost_enables= {
-        \   'java': 1,
+        \   'java': 0,
         \}
 
         let g:quickrun_config['java/watchdogs_checker']= {'type': 'watchdogs_checker/javac'}
@@ -228,131 +202,6 @@ if get(g:hariti_bundles, 'quickrun', 0)
     endif
 endif
 
-if get(g:hariti_bundles, 'echodoc', 0)
-    let g:echodoc_enable_at_startup= 1
-endif
-
-if get(g:hariti_bundles, 'neocomplete', 0)
-    let g:neocomplete#enable_at_startup= 1
-    let g:neocomplete#use_vimproc= 1
-    " 表示する候補数
-    let g:neocomplete#max_list= 100000
-    let g:neocomplete#auto_completion_start_length= 2
-    let g:neocomplete#min_keyword_length= 2
-    let g:neocomplete#enable_ignore_case= 1
-    let g:neocomplete#enable_smart_case= 1
-    " i hate fuzzy completion
-    let g:neocomplete#enable_fuzzy_completion= 0
-
-    " キャッシュ置き場
-    if has('unix')
-        let g:neocomplete#data_directory= s:constants.directories.temporary . '/.neocomplete/'
-    elseif has('win64') || has('win32') || has('win16')
-        let g:neocomplete#data_directory= s:constants.directories.temporary . '/.neocomplete/'
-    endif
-
-    " 関数補完時の区切り文字
-    if !exists('g:neocomplete#delimiter_patterns')
-        let g:neocomplete#delimiter_patterns= {}
-    endif
-    let g:neocomplete#delimiter_patterns['cpp']= ['\.', '->', '::']
-    let g:neocomplete#delimiter_patterns['java']= ['\.']
-    " let g:neocomplete#delimiter_patterns['perl']= ['::', '->']
-
-    " omni complete
-    let g:neocomplete#force_overwrite_completefunc= 1
-    if !exists('g:neocomplete#sources#omni#input_patterns')
-        let g:neocomplete#sources#omni#input_patterns= {}
-    endif
-    let g:neocomplete#sources#omni#input_patterns['perl']= join([
-    \       '[^. \t]->\%(\h\w*\)\?',
-    \       '\h\w*::\%(\h\w*\)\?',
-    \       '\$\%(\w*\)\?',
-    \       '%\%(\w*\)\?',
-    \       '@\%(\w*\)\?',
-    \       '\*\%(\w*\)\?',
-    \   ],
-    \   '\|'
-    \)
-    let g:neocomplete#sources#omni#input_patterns['cpp']= join([
-    \       '[^.[:digit:] *\t]\%(\.\|->\)\w*',
-    \       '.*::\w*',
-    \   ],
-    \   '\|'
-    \)
-
-    if !exists('g:neocomplete#sources#omni#functions')
-        let g:neocomplete#sources#omni#functions= {}
-    endif
-    " let g:neocomplete#sources#omni#functions['java']= 'javacomplete#Complete'
-    let g:neocomplete#sources#omni#functions['perl']= 'PerlComplete'
-    let g:neocomplete#sources#omni#functions['cpp']= 'ClangComplete'
-
-    " disable unnecessary sources
-    for s:source_name in ['include', 'syntax', 'member']
-        call neocomplete#custom#source(s:source_name, 'disabled_filetypes', {'_': 1})
-    endfor
-    unlet s:source_name
-
-    call neocomplete#custom#source('file', 'rank', 999)
-elseif get(g:hariti_bundles, 'neocomplcache', 0)
-    let g:neocomplcache_enable_at_startup= 1
-    let g:neocomplcache_enable_auto_close_preview= 0
-    let g:neocomplcache_use_vimproc=       1
-    let g:neocomplcache_enable_wildcard=   1
-    let g:neocomplcache_enable_camel_case_completion= 1
-    let g:neocomplcache_enable_underbar_completion=   1
-    let g:neocomplcache_enable_ignore_case= 1
-    let g:neocomplcache_enable_smart_case=  1
-    " 表示する候補数
-    let g:neocomplcache_max_list= 100000
-    " キャッシュ置き場
-    if has('unix')
-        let g:neocomplcache_temporary_dir= s:constants.directories.temporary . '/.neocomplcache/'
-    elseif has('win64') || has('win32') || has('win16')
-        let g:neocomplcache_temporary_dir= s:constants.directories.temporary . '/.neocomplcache/'
-    endif
-    " シンタックス補完はうざいのでいらない
-    let g:neocomplcache_disabled_sources_list= get(g:, 'neocomplcache_disabled_sources_list', {})
-    let g:neocomplcache_disabled_sources_list['_']= ['syntax_complete']
-    " 関数補完時の区切り文字
-    let g:neocomplcache_delimiter_patterns= get(g:, 'neocomplcache_delimiter_patterns', {})
-    let g:neocomplcache_delimiter_patterns['cpp']= ['\.', '->', '::']
-    let g:neocomplcache_delimiter_patterns['java']= ['\.']
-    " インクルード補完用
-    let g:neocomplcache_include_paths= get(g:, 'neocomplcache_include_paths', {})
-    let g:neocomplcache_include_paths['java']= '~/local/java/default/src/'
-    let g:neocomplcache_include_paths['cpp']=  '.,'.&path
-    let g:neocomplcache_include_exprs= get(g:, 'neocomplcache_include_exprs', {})
-    let g:neocomplcache_include_exprs['perl']= 'substitute(v:fname, "::", "/", "g")'
-    let g:neocomplcache_include_exprs['cpp']=  'substitute(v:fname, "<\\|>\\|\"", "", "g")'
-    let g:neocomplcache_include_exprs['java']= 'substitute(substitute(v:fname, "\\.", "/", "g"), "$", ".java", "")'
-    let g:neocomplcache_include_patterns= get(g:, 'neocomplcache_include_patterns', {})
-    let g:neocomplcache_include_patterns['cpp']= '\<\(include\)\>'
-    let g:neocomplcache_include_patterns['java']= '\<\(import\)\>'
-    let g:neocomplcache_include_suffixes= get(g:, 'neocomplcache_include_suffixes', {})
-    let g:neocomplcache_include_suffixes['cpp']= ['', '.h', '.hpp', '.hxx']
-    let g:neocomplcache_include_suffixes['java']= ['.java']
-    let g:neocomplcache_include_suffixes['perl']= ['.pm', '.pl']
-
-    let g:neocomplcache_ctags_program= 'ctags'
-    let g:neocomplcache_ctags_arguments_list= get(g:, 'neocomplcache_ctags_arguments_list', {})
-    let g:neocomplcache_ctags_arguments_list['java']= '--java-kinds=cefgilmp'
-
-    " clang_complete
-    let g:neocomplcache_force_overwrite_completefunc= 1
-    let g:neocomplcache_force_omni_patterns= get(g:, 'neocomplcache_force_omni_patterns', {})
-    let g:neocomplcache_force_omni_patterns['java']= '\.'
-    let g:neocomplcache_force_omni_patterns['perl']= '::\|->\|\$\|@\|%'
-    " let g:neocomplcache_force_omni_patterns['cpp']= '[^.[:digit:] *\t]\%(\.\|->\)\|::'
-    " let g:neocomplcache_force_omni_patterns['cpp']= '\.\|->\|::'
-    let g:neocomplcache_omni_functions= get(g:, 'neocomplcache_omni_functions', {})
-    " let g:neocomplcache_omni_functions['java']= 'javacomplete#Complete'
-    let g:neocomplcache_omni_functions['perl']= 'PerlComplete'
-    let g:neocomplcache_vim_completefuncs= get(g:, 'neocomplcache_vim_completefuncs', {})
-    " let g:neocomplcache_vim_completefuncs['java']= 'javacomplete#CompleteParamsInfo'
-    let g:neocomplcache_vim_completefuncs['perl']= 'PerlComplete'
-endif
 if get(g:hariti_bundles, 'clang_complete', 0)
     " let g:clang_exec= $HOME . '/local/bin/clang++'
     let g:clang_complete_auto= 0
@@ -365,9 +214,7 @@ if get(g:hariti_bundles, 'clang_complete', 0)
     let g:clang_sort_algo= 'alpha'
     let g:clang_complete_macros= 1
 endif
-if get(g:hariti_bundles, 'snowdrop', 0)
-    let g:snowdrop#libclang_path= '/usr/lib/'
-endif
+
 if get(g:hariti_bundles, 'neosnippet', 0)
     let g:neosnippet#snippets_directory= $HOME.'/.snippet/'
     let g:neosnippet#disable_runtime_snippets= {
@@ -377,41 +224,10 @@ if get(g:hariti_bundles, 'neosnippet', 0)
     imap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
     smap <expr><Tab> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<Tab>"
 endif
-if get(g:hariti_bundles, 'vimwiki', 0)
-    let g:vimwiki_list= [{
-    \   'path'      : '~/documents/site/vimwiki/wiki/',
-    \   'path_html' : '~/documents/site/vimwiki/html/',
-    \   'syntax'    : 'markdown',
-    \   'ext'       : '.vimwiki',
-    \}]
-endif
 
 if get(g:hariti_bundles, 'nerdtree', 0)
     nnoremap <silent> <SID>[tag]nt :<C-U>NERDTreeToggle<CR>
 endif
-
-if get(g:hariti_bundles, 'dirvish', 0)
-    let g:dirvish_hijack_netrw= 1
-endif
-
-function! s:map(lhs, rhs, opt, modes) " {{{
-    call s:_map('map', a:lhs, a:rhs, a:opt, a:modes)
-endfunction
-
-function! s:noremap(lhs, rhs, opt, modes) " {{{
-    call s:_map('noremap', a:lhs, a:rhs, a:opt, a:modes)
-endfunction
-
-function! s:_map(cmd, lhs, rhs, opt, modes) " {{{
-    " 'abcd' -> ['a', 'b', 'c', 'd']
-    let l:modes= split(a:modes, '\zs\ze')
-
-    for l:m in l:modes
-        let l:expr= join([l:m . a:cmd, a:opt, a:lhs, a:rhs], ' ')
-
-        execute l:expr
-    endfor
-endfunction
 
 if get(g:hariti_bundles, 'ref', 0)
     let g:ref_no_default_key_mappings= 1
@@ -434,19 +250,6 @@ if get(g:hariti_bundles, 'tagbar', 0)
     let g:tagbar_show_visibility= 1
 endif
 
-if get(g:hariti_bundles, 'colorv', 0)
-    " 2, if +python
-    " 3, if +python3
-    " 0, if no python
-    if has('python') || has('python/dyn')
-        let g:colorv_has_python= 2
-    elseif has('python3') || has('python3/dyn')
-        let g:colorv_has_python= 3
-    else
-        let g:colorv_has_python= 0
-    endif
-endif
-
 if get(g:hariti_bundles, 'submode', 0)
     call submode#enter_with('winsize', 'n', '', '<C-W>>', '<C-W>>')
     call submode#enter_with('winsize', 'n', '', '<C-W><', '<C-W><')
@@ -459,8 +262,9 @@ if get(g:hariti_bundles, 'submode', 0)
     call submode#map('winsize', 'n', '', '+', '<C-W>+')
 endif
 
+" TODO: Purge unite
 if get(g:hariti_bundles, 'unite', 0)
-    let g:unite_data_directory= s:constants.directories.temporary . '/.unite/'
+    let g:unite_data_directory= s:tmpdir . '/unite/'
 
     if executable('ag')
         let g:unite_source_grep_command=       'ag'
@@ -518,33 +322,11 @@ if get(g:hariti_bundles, 'altercmd', 0)
     AlterCommand perldoc        Ref perldoc
     AlterCommand unite          Unite
     AlterCommand ref            Unite ref
-    AlterCommand vimwi[ki2html] !~/documents/sources/perl/tools/markdown/vimwikiall2html.sh
     AlterCommand man            Ref man
     " git-statusのように区切り文字入れたい
     AlterCommand gits[tatus] Gstatus
     AlterCommand gitd[iff] Gdiff
     AlterCommand gitb[lame] Gblame
-endif
-
-if get(g:hariti_bundles, 'coffee-script', 0)
-"     autocmd gyokuro QuickFixCmdPost * nested cwindow | redraw!
-"
-"     function! s:compile_coffee()
-"         if !exists('b:coffee_dir')
-"             let b:coffee_dir= input('where is coffee directory? ', '')
-"         endif
-"         if !exists('b:js_dir')
-"             let b:js_dir= input('where is javascript directory? ', '')
-"         endif
-"
-"         if empty(b:coffee_dir) || empty(b:js_dir)
-"             return
-"         endif
-"
-"         execute 'silent make! -o ' . b:js_dir . ' -j app.js -c ' . b:coffee_dir . '/**/*.coffee'
-"     endfunction
-"
-"     autocmd gyokuro BufWritePost *.coffee call s:compile_coffee()
 endif
 
 if get(g:hariti_bundles, 'j6uil', 0)
@@ -649,15 +431,6 @@ if get(g:hariti_bundles, 'previm', 0)
     let g:previm_enable_realtime= 1
 endif
 
-if get(g:hariti_bundles, 'operator-surround', 0)
-    nmap Ra <Plug>(operator-surround-append)
-    xmap Ra <Plug>(operator-surround-append)
-    nmap Rr <Plug>(operator-surround-replace)
-    xmap Rr <Plug>(operator-surround-replace)
-    nmap Rd <Plug>(operator-surround-delete)
-    xmap Rd <Plug>(operator-surround-delete)
-endif
-
 if get(g:hariti_bundles, 'operator-replace', 0)
     map _ <Plug>(operator-replace)
 endif
@@ -711,6 +484,13 @@ endif
 "         \]
 "     endfunction
 " endif
+
+if get(g:hariti_bundles, 'textmanip', 0)
+    vmap <C-H> <Plug>(textmanip-move-left)
+    vmap <C-J> <Plug>(textmanip-move-down)
+    vmap <C-K> <Plug>(textmanip-move-up)
+    vmap <C-L> <Plug>(textmanip-move-right)
+endif
 
 " automatically make directory when write file
 autocmd gyokuro BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
@@ -772,6 +552,7 @@ function! s:toggle_virtualedit()
     endif
     return "\<C-L>"
 endfunction
+
 function! s:toggle_cursorline()
     if &cursorline
         setlocal nocursorline
@@ -779,21 +560,6 @@ function! s:toggle_cursorline()
         setlocal cursorline
     endif
     return "\<C-L>"
-endfunction
-
-" mkdir by dir list comma separated form
-function! s:make_dirs(dir_list)
-    if exists('*mkdir')
-        let l:tmpdirs= split(a:dir_list, ',', 0)
-
-        for l:tmpdir in l:tmpdirs
-            if !isdirectory(l:tmpdir)
-                call mkdir(iconv(l:tmpdir, &encoding, &termencoding), 'p')
-            endif
-        endfor
-    else
-        echoerr "doesn't exists mkdir function!"
-    endif
 endfunction
 
 function! s:tabselect(tabnr)
@@ -811,34 +577,35 @@ function! s:tabselect(tabnr)
     endif
 endfunction
 
-inoremap <SID>[tag]H           <Home>
-inoremap <SID>[tag]e           <End>
-inoremap <SID>[tag]h           <Esc>I
-nnoremap <silent><SID>[tag]tt  :<C-U>tabnew<CR>
-nnoremap <silent><SID>[tag]t0  :<C-U>call s:tabselect(0)<CR>
-nnoremap <silent><SID>[tag]t1  :<C-U>call s:tabselect(1)<CR>
-nnoremap <silent><SID>[tag]t2  :<C-U>call s:tabselect(2)<CR>
-nnoremap <silent><SID>[tag]t3  :<C-U>call s:tabselect(3)<CR>
-nnoremap <silent><SID>[tag]t4  :<C-U>call s:tabselect(4)<CR>
-nnoremap <silent><SID>[tag]t5  :<C-U>call s:tabselect(5)<CR>
-nnoremap <silent><SID>[tag]t6  :<C-U>call s:tabselect(6)<CR>
-nnoremap <silent><SID>[tag]t7  :<C-U>call s:tabselect(7)<CR>
-nnoremap <silent><SID>[tag]t8  :<C-U>call s:tabselect(8)<CR>
-nnoremap <silent><SID>[tag]t9  :<C-U>call s:tabselect(9)<CR>
-nnoremap <silent><SID>[tag]ubo :Unite bookmark<CR>
-nnoremap <silent><SID>[tag]ubu :Unite buffer<CR>
-nnoremap <silent><SID>[tag]uff :Unite file<CR>
-nnoremap <silent><SID>[tag]ufr :Unite file_rec/async<CR>
-nnoremap <silent><SID>[tag]uo  :Unite outline<CR>
-nnoremap <expr><SID>[tag]cl    <SID>toggle_cursorline()
-nnoremap <expr><SID>[tag]ve    <SID>toggle_virtualedit()
-nnoremap <silent><SID>[tag]o   :TagbarToggle<CR>
-nnoremap <silent><C-H>         :nohlsearch<CR>
-nnoremap <silent><C-N>         :tabn<CR>
-nnoremap <silent><C-P>         :tabN<CR>
+inoremap <Leader><Leader> <Leader>
+inoremap <Leader>H        <Home>
+inoremap <Leader>e        <End>
+inoremap <Leader>h        <Esc>I
+
+" convinient tab window
+nnoremap <silent> <Leader>tt :<C-U>tabnew<CR>
+nnoremap <silent> <Leader>t0 :<C-U>call s:tabselect(0)<CR>
+nnoremap <silent> <Leader>t1 :<C-U>call s:tabselect(1)<CR>
+nnoremap <silent> <Leader>t2 :<C-U>call s:tabselect(2)<CR>
+nnoremap <silent> <Leader>t3 :<C-U>call s:tabselect(3)<CR>
+nnoremap <silent> <Leader>t4 :<C-U>call s:tabselect(4)<CR>
+nnoremap <silent> <Leader>t5 :<C-U>call s:tabselect(5)<CR>
+nnoremap <silent> <Leader>t6 :<C-U>call s:tabselect(6)<CR>
+nnoremap <silent> <Leader>t7 :<C-U>call s:tabselect(7)<CR>
+nnoremap <silent> <Leader>t8 :<C-U>call s:tabselect(8)<CR>
+nnoremap <silent> <Leader>t9 :<C-U>call s:tabselect(9)<CR>
+nnoremap <silent> <C-N>      :<C-U>tabn<CR>
+nnoremap <silent> <C-P>      :<C-U>tabN<CR>
+
+" misc
+nnoremap <expr> <Leader>cl  <SID>toggle_cursorline()
+nnoremap <expr> <Leader>ve  <SID>toggle_virtualedit()
+nnoremap <silent> <Leader>o :<C-U>TagbarToggle<CR>
+nnoremap <silent> <C-H>     :<C-U>nohlsearch<CR>
+nnoremap <silent> <C-L>     :<C-U>redraw<CR>
+
 nnoremap zl                    zL
 nnoremap zh                    zH
-nnoremap <silent><C-L>         :<C-U>redraw<CR>
 " keep center
 nnoremap *                     *zzzv
 nnoremap #                     #zzzv
@@ -846,13 +613,6 @@ nnoremap n                     nzzzv
 nnoremap N                     Nzzzv
 nnoremap ]c                    ]czz
 nnoremap [c                    [czz
-" inoremap <C-[>                 <C-[><C-L>
-vnoremap <                     <gv
-vnoremap >                     >gv
-vmap <C-H> <Plug>(textmanip-move-left)
-vmap <C-J> <Plug>(textmanip-move-down)
-vmap <C-K> <Plug>(textmanip-move-up)
-vmap <C-L> <Plug>(textmanip-move-right)
 
 function! s:toggle_qfixwin()
     for bufnr in tabpagebuflist()
@@ -866,7 +626,6 @@ function! s:toggle_qfixwin()
     copen
     wincmd p
 endfunction
-
 nnoremap <silent> <C-W>, :<C-U>call <SID>toggle_qfixwin()<CR>
 
 cnoremap <C-H> <Space><BS><Left>
@@ -935,7 +694,8 @@ autocmd gyokuro BufNewFile            *.pl,*.cgi,*.t setlocal fileencoding=utf8
 autocmd gyokuro BufEnter,BufReadPre   *.ftl          setlocal filetype=ftl
 autocmd gyokuro BufEnter,BufReadPre   *.ebnf         setlocal filetype=ebnf
 autocmd gyokuro BufEnter,BufReadPre   *.yrl          setlocal filetype=erlang
-autocmd gyokuro FileType java let &l:equalprg= 'uncrustify -c ~/dotfiles/uncrustify.conf/java.conf -l JAVA'
+" TODO: make manager plugin for uncrustify
+" autocmd gyokuro FileType java let &l:equalprg= 'uncrustify -c ~/dotfiles/uncrustify.conf/java.conf -l JAVA'
 autocmd gyokuro BufNewFile,BufRead *.tsv setfiletype tsv
 
 " When editing a file, always jump to the last cursor position
@@ -952,6 +712,7 @@ if get(g:hariti_bundles, 'csapprox', 0)
     endif
 endif
 
-if filereadable(s:constants.files.vimrc_local)
-    execute 'source' s:constants.files.vimrc_local
+let s:local_vimrc_filename= $MYVIMRC . '.local'
+if filereadable(s:local_vimrc_filename)
+    execute 'source' s:local_vimrc_filename
 endif
