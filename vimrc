@@ -15,7 +15,6 @@ let s:constants= {
 \   'files': {
 \       'vimrc':       $MYVIMRC,
 \       'vimrc_local': $MYVIMRC . '.local',
-\       'bundles':     expand('~/.bundles'),
 \   },
 \   'directories': {
 \       'temporary':   expand('~/.tmp/vim/'),
@@ -39,22 +38,6 @@ call s:_()
 augroup gyokuro
     autocmd!
 augroup END
-
-let g:gyokuro_extensions= []
-
-function! s:invoke_extension(type, ...)
-    let context= get(a:000, 0, {})
-
-    for extension in g:gyokuro_extensions
-        if has_key(extension, a:type)
-            call call(extension[a:type], [context])
-        endif
-    endfor
-endfunction
-
-if filereadable(s:constants.files.vimrc_local)
-    execute 'source' s:constants.files.vimrc_local
-endif
 
 syntax on
 
@@ -126,8 +109,6 @@ elseif executable('pt')
     let &grepprg= 'pt'
 endif
 
-call s:invoke_extension('configure_global')
-
 " prefix-tag for insert-mode
 inoremap <SID>[tag] <Nop>
 imap     <Leader>   <SID>[tag]
@@ -136,18 +117,11 @@ nnoremap <SID>[tag] <Nop>
 nmap     <Leader>   <SID>[tag]
 inoremap <SID>[tag]<Leader>    <Leader>
 
-call s:invoke_extension('neobundle_pre')
-
 if has('vim_starting')
     set runtimepath+=$HOME/dotfiles/hariti/
     runtime plugin/hariti.vim
 endif
-
-filetype off
-HaritiApply
-call s:invoke_extension('neobundle')
-call s:invoke_extension('neobundle_post')
-filetype plugin indent on
+HaritiSetup
 
 if get(g:hariti_bundles, 'ref', 0)
     let g:ref_use_vimproc= 1
@@ -738,8 +712,6 @@ endif
 "     endfunction
 " endif
 
-call s:invoke_extension('configure_plugin')
-
 " automatically make directory when write file
 autocmd gyokuro BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
 
@@ -978,4 +950,8 @@ if get(g:hariti_bundles, 'csapprox', 0)
     else
         CSApprox!
     endif
+endif
+
+if filereadable(s:constants.files.vimrc_local)
+    execute 'source' s:constants.files.vimrc_local
 endif
