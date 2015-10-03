@@ -226,7 +226,7 @@ if get(g:hariti_bundles, 'neosnippet', 0)
 endif
 
 if get(g:hariti_bundles, 'nerdtree', 0)
-    nnoremap <silent> <SID>[tag]nt :<C-U>NERDTreeToggle<CR>
+    nnoremap <silent> <Leader>nt :<C-U>NERDTreeToggle<CR>
 endif
 
 if get(g:hariti_bundles, 'ref', 0)
