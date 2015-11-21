@@ -9,6 +9,8 @@ endif
 set guioptions-=m
 set guioptions-=T
 
+set guifont=ゆたぽん（コーディング）Backsl:h12
+
 set t_vb=
 
 colorscheme hydrangea

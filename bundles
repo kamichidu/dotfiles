@@ -4,6 +4,7 @@
 
 use Shougo/vimproc.vim
     as vimproc
+    enable_if "!(has('win16') || has('win32') || has('win64') || has('win95'))"
     build {
         on windows
             - mingw32-make -f make_mingw64.mak
@@ -254,6 +255,7 @@ use mattn/ctrlp-gist
 
 use neilagabriel/vim-geeknote
     as geeknote
+    enable_if "has('python')"
 
 use rbtnn/rabbit-ui.vim
     as rabbit-ui

@@ -5,6 +5,16 @@ scriptencoding utf-8
 "   - Can use this for windows, mac, linux
 "   - Speed is most important
 "
+if has('win64') || has('win32') || has('win16') || has('win95')
+    set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
+elseif has('unix')
+    set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
+endif
+if exists('+shellslash')
+    set shellslash
+endif
+
+let g:loaded_javacomplete= 1
 
 " XXX: special constants
 let s:debug= get(g:, 'debug', 0)
@@ -24,14 +34,6 @@ augroup END
 
 syntax on
 
-if s:systype ==# 'windows'
-    set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
-else
-    set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
-endif
-if exists('+shellslash')
-    set shellslash
-endif
 set number norelativenumber
 set tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
 set autoindent smartindent
@@ -68,6 +70,7 @@ if has('conceal')
 endif
 " disable tag completion since it's too slow
 set complete=.,w,b,u
+" set completeopt=menu
 set completeopt=menuone
 " no beep
 set visualbell t_vb=
@@ -627,6 +630,18 @@ function! s:toggle_qfixwin()
     wincmd p
 endfunction
 nnoremap <silent> <C-W>, :<C-U>call <SID>toggle_qfixwin()<CR>
+
+function! s:invoke_completefunc() abort
+    if &l:filetype ==# 'vim'
+        return "\<C-X>\<C-V>\<C-P>"
+    else
+        return "\<C-X>\<C-O>\<C-P>"
+    endif
+endfunction
+
+" inoremap <C-F> <C-R>=pumvisible() ? "\<lt>C-Y>\<lt>C-X>\<lt>C-F>" : "\<lt>C-X>\<lt>C-F>"<CR>
+inoremap <C-F> <C-X><C-F>
+inoremap <expr> <C-L> <SID>invoke_completefunc()
 
 cnoremap <C-H> <Space><BS><Left>
 cnoremap <C-L> <Space><BS><Right>
