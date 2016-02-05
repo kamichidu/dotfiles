@@ -1,0 +1,35 @@
+# Maintainer: kamichidu <c.kamunagi(at)gmail.com>
+
+## arg 1:  the new package version
+pre_install() {
+    /usr/bin/true
+}
+
+## arg 1:  the new package version
+post_install() {
+    /usr/bin/true
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+pre_upgrade() {
+    /usr/bin/true
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+post_upgrade() {
+    /usr/bin/true
+}
+
+## arg 1:  the old package version
+pre_remove() {
+    /usr/bin/true
+}
+
+## arg 1:  the old package version
+post_remove() {
+    /usr/bin/true
+}
+
+# vim: ft=sh

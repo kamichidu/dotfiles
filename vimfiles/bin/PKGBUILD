@@ -1,0 +1,44 @@
+# Maintainer: kamichidu <c.kamunagi(at)gmail.com>
+pkgname=vim-latest
+pkgver=7.4.1194
+pkgrel=0
+pkgdesc='Vim latest version'
+url='https://github.com/vim/vim'
+arch=('x86_64' 'i686')
+license=('VIM')
+depends=()
+# optdepends=('java-runtime')
+# makedepends=()
+# backup=()
+install='vim-latest.install'
+source=("https://github.com/vim/vim/archive/v${pkgver}.tar.gz")
+md5sums=('f9f39cbbb8fbf1f106528f7654b3ca0e')
+
+build() {
+  cd "${srcdir}/vim-${pkgver}"
+  ./configure \
+    --prefix=$HOME/local/ \
+    --enable-fail-if-missing \
+    --disable-darwin \
+    --disable-selinux \
+    --with-compiledby=kamichidu \
+    --with-x \
+    --with-features=huge \
+    --enable-luainterp=yes --with-luajit \
+    --enable-perlinterp=yes \
+    --enable-pythoninterp=yes \
+    --enable-rubyinterp=yes \
+    --enable-multibyte \
+    --enable-xim \
+    --enable-fontset \
+    --enable-gui=gtk2
+  make -j5
+}
+
+package() {
+  cd "${srcdir}/vim-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+  # install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+}
+
+# vim:set ts=2 sw=2 et:
