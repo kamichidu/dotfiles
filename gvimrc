@@ -60,20 +60,8 @@ nmap <C-Left>  <Plug>(decrement-columns)
 nmap <C-Up>    <Plug>(increment-lines)
 nmap <C-Down>  <Plug>(decrement-lines)
 
-" if neobundle#tap('vim-submode')
-"     call submode#enter_with('gvimsize', 'n', '', '<M-W>h', '<Plug>(decrement-columns)')
-"     call submode#enter_with('gvimsize', 'n', '', '<M-W>l', '<Plug>(increment-columns)')
-"     call submode#enter_with('gvimsize', 'n', '', '<M-W>j', '<Plug>(decrement-lines)')
-"     call submode#enter_with('gvimsize', 'n', '', '<M-W>k', '<Plug>(increment-lines)')
-"
-"     call submode#map('gvimsize', 'n', '', 'h', '<Plug>(decrement-columns)')
-"     call submode#map('gvimsize', 'n', '', 'l', '<Plug>(increment-columns)')
-"     call submode#map('gvimsize', 'n', '', 'j', '<Plug>(decrement-lines)')
-"     call submode#map('gvimsize', 'n', '', 'k', '<Plug>(increment-lines)')
-"
-"     call neobundle#untap()
-" endif
+" Maximize gvim window
+autocmd gyokuro GUIEnter * simalt ~x
 
 let &cpo= s:save_cpo
 " vim:ft=vim foldmethod=marker:fen:
-
