@@ -9,7 +9,8 @@ endif
 set guioptions-=m
 set guioptions-=T
 
-set guifont=ゆたぽん（コーディング）Backsl:h12
+" Font families will alter by system's locale
+set guifont=ゆたぽん（コーディング）Backsl:h12,Yutapon\ coding\ RegularBackslash:h12
 
 set t_vb=
 
