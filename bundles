@@ -253,10 +253,6 @@ use mattn/ctrlp-gist
          mattn/gist-vim
     )
 
-use neilagabriel/vim-geeknote
-    as geeknote
-    enable_if "has('python')"
-
 use rbtnn/rabbit-ui.vim
     as rabbit-ui
 
