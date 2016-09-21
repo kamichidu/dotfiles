@@ -28,6 +28,14 @@ let s:systype= has('win64') || has('win32') || has('win16') || has('win95')
 \   : 'linux'
 let s:tmpdir= expand('~/.tmp/vim/')
 
+" Utility functions
+function! s:mkdir(path)
+    if !isdirectory(a:path)
+        call mkdir(a:path, 'p')
+    endif
+    return a:path
+endfunction
+
 augroup gyokuro
     autocmd!
 augroup END
@@ -47,11 +55,11 @@ set title
 set textwidth=0
 set backup
 set writebackup
-let &backupdir= s:tmpdir . 'backup/,.'
+let &backupdir= s:mkdir(s:tmpdir . 'backup/') . ',.'
 set swapfile
-let &directory= s:tmpdir . 'swap/,.'
+let &directory= s:mkdir(s:tmpdir . 'swap/') . ',.'
 if has('persistent_undo')
-    let &undodir= s:tmpdir . 'undo/'
+    let &undodir= s:mkdir(s:tmpdir . 'undo/')
     set undofile
 endif
 if exists('&ambiwidth')
@@ -267,7 +275,7 @@ endif
 
 " TODO: Purge unite
 if get(g:hariti_bundles, 'unite', 0)
-    let g:unite_data_directory= s:tmpdir . '/unite/'
+    let g:unite_data_directory= s:mkdir(s:tmpdir . '/unite/')
 
     if executable('ag')
         let g:unite_source_grep_command=       'ag'
