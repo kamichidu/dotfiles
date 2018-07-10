@@ -2,27 +2,6 @@
 #     as vim-self
 #      {'unix': '$HOME/.vim/bin/build-vim-self.sh'}
 
-use Shougo/vimproc.vim
-    as vimproc
-    enable_if "!(has('win16') || has('win32') || has('win64') || has('win95'))"
-    build {
-        on windows
-            - mingw32-make -f make_mingw64.mak
-        on mac
-            - make -f make_mac.mak
-        on unix
-            - make -f make_unix.mak
-    }
-
-use Shougo/unite.vim
-    as unite
-
-use Shougo/neosnippet.vim
-    as neosnippet
-
-use Shougo/vinarise.vim
-    as vinarise
-
 use mattn/gist-vim
     as gist
     depends (
@@ -122,19 +101,6 @@ use itchyny/calendar.vim
 use tomtom/tcomment_vim
     as tcomment
 
-use osyo-manga/vim-watchdogs
-    as watchdogs
-    depends (
-         thinca/vim-quickrun
-         Shougo/vimproc.vim
-         osyo-manga/shabadou.vim
-         jceb/vim-hier
-         dannyob/quickfixstatus
-    )
-
-use osyo-manga/vim-gyazo
-    as gyazo
-
 use h1mesuke/vim-alignta
     as alignta
 
@@ -143,6 +109,7 @@ use jelera/vim-javascript-syntax
 
 use marijnh/tern_for_vim
     as tern_for_vim
+    enable_if "!has('win32') && has('python')"
     build {
         on *
             - npm install
@@ -151,37 +118,15 @@ use marijnh/tern_for_vim
 use kchmck/vim-coffee-script
     as coffee-script
 
-use majutsushi/tagbar
-    as tagbar
-
 use godlygeek/csapprox
     as csapprox
-    enable_if "!has('gui_running')"
+    enable_if "!has('gui_running') && &t_Co > 16"
 
 use Rip-Rip/clang_complete
     as clang_complete
 
 use vim-jp/cpp-vim
     as cpp
-
-use basyura/TweetVim
-    as TweetVim
-    depends (
-         tyru/open-browser.vim
-         basyura/twibill.vim
-         mattn/webapi-vim
-#          h1mesuke/unite-outline
-         basyura/bitly.vim
-         Shougo/unite.vim
-         mattn/favstar-vim
-    )
-
-# Graceful for TweetVim
-# use yomi322/neco-tweetvim
-#     as neocomplete-tweetvim
-#     depends (
-#          neco
-#     )
 
 use rbtnn/vimconsole.vim
     as vimconsole
@@ -202,12 +147,6 @@ use yuratomo/w3m.vim
     as w3m
     enable_if "executable('w3m')"
 
-use basyura/j6uil.vim
-    as j6uil
-    depends (
-         Shougo/vimproc.vim
-    )
-
 use tpope/vim-abolish
     as abolish
 
@@ -216,9 +155,6 @@ use autodate.vim
 
 use sudo.vim
     as sudo
-
-# use https://code.google.com/p/vimwiki/
-#     as vimwiki
 
 use AndrewRadev/linediff.vim
     as linediff
@@ -231,15 +167,6 @@ use ebnf.vim
 
 use bnf.vim
     as bnf
-
-use kamichidu/memolist.vim
-    as memolist
-
-use LeafCage/alti.vim
-    as alti
-
-use balloon-stat/komadori.vim
-    as komadori
 
 use scrooloose/nerdtree
     as nerdtree
@@ -268,13 +195,27 @@ use haya14busa/incsearch.vim
 use eyapp
     as eyapp
 
-use vim-jp/vim-go-extra
-    as go-extra
+use fatih/vim-go
+    as go
+
+# use vim-jp/vim-go-extra
+#     as go-extra
 
 use davidhalter/jedi-vim
     as jedi
+    enable_if "has('python')"
 
-use local ~/sources/vim-plugin/
+use posva/vim-vue
+    as vue
+
+use leafgarland/typescript-vim
+
+use Quramy/tsuquyomi
+
+use PProvost/vim-ps1
+    as ps1
+
+use local ~/sources/vim-plugins/
     excludes (
         _*
     )

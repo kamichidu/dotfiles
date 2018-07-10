@@ -7,6 +7,8 @@ scriptencoding utf-8
 "
 if has('win64') || has('win32') || has('win16') || has('win95')
     set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
+elseif has('win32unix') " mintty
+    set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
 elseif has('unix')
     set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
 endif
@@ -85,7 +87,8 @@ set visualbell t_vb=
 " don't move cursor when <C-D> and <C-U> and...
 set nostartofline
 set wildmode=longest:full,full wildmenu
-set t_Co=256
+" XXX: windows cmd/powershell is 16 colors
+" set t_Co=256
 set viminfo='20,<100
 set history=50
 set ruler
@@ -116,14 +119,11 @@ if get(g:hariti_bundles, 'ref', 0)
     let g:ref_html5_path=  $HOME . '/documents/vim-ref-doc/www.html5.jp/tag/elements/'
 endif
 
-if get(g:hariti_bundles, 'memolist', 0)
+if get(g:hariti_bundles, 'memolist', 0) || isdirectory(expand('~/sources/github.com/kamichidu/memolist.vim/'))
     let g:memolist_path= expand('~/documents/memo/')
     let g:memolist_memo_suffix= 'mkd'
     " date format (default %Y-%m-%d %H:%M)
     let g:memolist_memo_date = "%Y-%m-%d %H:%M:%S"
-    let g:memolist_unite= 1
-    let g:memolist_unite_option= ''
-    " let g:memolist_unite_source= 'file_rec/async'
     let g:memolist_template_content= []
 
     nnoremap <silent> g,c :<C-U>MemoNew<Space><C-R>=strftime('%H%M%S')<CR><CR>
@@ -135,6 +135,10 @@ endif
 if get(g:hariti_bundles, 'open-browser', 0)
     let g:netrw_nogx= 1 " disable netrw's gx mapping.
     let g:openbrowser_browser_commands= [
+    \   {
+    \       'name': 'chrome',
+    \       'args': ['{browser}', '{uri}'],
+    \   },
     \   {
     \       'name': 'firefox',
     \       'args': ['{browser}', '{uri}'],
@@ -324,7 +328,8 @@ if get(g:hariti_bundles, 'choosewin', 0)
 endif
 
 if get(g:hariti_bundles, 'quickhl', 0)
-    nmap <Leader>h <Plug>(quickhl-cword-toggle)
+    nmap <Leader>h <Plug>(quickhl-manual-this)
+    vmap <Leader>h <Plug>(quickhl-manual-this)
 endif
 
 if get(g:hariti_bundles, 'altercmd', 0)
@@ -440,6 +445,12 @@ endif
 
 if get(g:hariti_bundles, 'previm', 0)
     let g:previm_enable_realtime= 1
+    " XXX: unable to open preview in browser if vimproc disabled
+    let g:previm_disable_vimproc= 0
+    let g:previm_disable_filetypes= ['rst']
+    if s:systype ==# 'windows'
+        let g:previm_open_cmd= 'chrome --incognito'
+    endif
 endif
 
 if get(g:hariti_bundles, 'operator-replace', 0)
@@ -503,6 +514,15 @@ if get(g:hariti_bundles, 'textmanip', 0)
     vmap <C-L> <Plug>(textmanip-move-right)
 endif
 
+if get(g:hariti_bundles, 'tsuquyomi', 0)
+    let g:tsuquyomi_completion_detail= 1
+endif
+
+if get(g:hariti_bundles, 'go', 0)
+    " stop modification for $GOPATH arbitrarily
+    let g:go_autodetect_gopath= 0
+endif
+
 " automatically make directory when write file
 autocmd gyokuro BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
 
@@ -555,6 +575,10 @@ command!
 \   MakeTags
 \   silent execute '!ctags -R &' | redraw!
 
+if executable('isort')
+    command! GyokuroISort %!isort -
+endif
+
 function! s:toggle_virtualedit()
     if &virtualedit =~# 'all'
         setlocal virtualedit=
@@ -588,6 +612,7 @@ function! s:tabselect(tabnr)
     endif
 endfunction
 
+inoremap <C-\>            <Leader>
 inoremap <Leader><Leader> <Leader>
 inoremap <Leader>H        <Home>
 inoremap <Leader>e        <End>
@@ -607,6 +632,7 @@ nnoremap <silent> <Leader>t8 :<C-U>call s:tabselect(8)<CR>
 nnoremap <silent> <Leader>t9 :<C-U>call s:tabselect(9)<CR>
 nnoremap <silent> <C-N>      :<C-U>tabn<CR>
 nnoremap <silent> <C-P>      :<C-U>tabN<CR>
+nnoremap <silent> <C-W>C     :<C-U>tabclose<CR>
 
 " misc
 nnoremap <expr> <Leader>cl  <SID>toggle_cursorline()
@@ -616,7 +642,9 @@ nnoremap <silent> <C-H>     :<C-U>nohlsearch<CR>
 nnoremap <silent> <C-L>     :<C-U>redraw<CR>
 
 nnoremap zl                    zL
+nnoremap zL                    zl
 nnoremap zh                    zH
+nnoremap zH                    zh
 " keep center
 nnoremap *                     *zzzv
 nnoremap #                     #zzzv
@@ -651,8 +679,9 @@ endfunction
 inoremap <C-F> <C-X><C-F>
 inoremap <expr> <C-L> <SID>invoke_completefunc()
 
-cnoremap <C-H> <Space><BS><Left>
-cnoremap <C-L> <Space><BS><Right>
+" avoiding powershell <BS> moving cursor to left
+" cnoremap <C-H> <Space><BS><Left>
+" cnoremap <C-L> <Space><BS><Right>
 cnoremap <C-Y> <Space><BS>
 
 function! s:invoke_complete() abort
@@ -672,9 +701,11 @@ function! GyokuroCompletefunc(findstart, base) abort
         return call(&omnifunc, [a:findstart, a:base])
     else
         let candidates= call(&omnifunc, [a:findstart, a:base])
-        for candidate in candidates
-            let candidate.icase= &ignorecase
-        endfor
+        if type(candidates) == type([])
+            for candidate in candidates
+                let candidate.icase= &ignorecase
+            endfor
+        endif
         return candidates
     endif
 endfunction
@@ -720,6 +751,7 @@ autocmd gyokuro BufEnter,BufReadPre   *.yrl          setlocal filetype=erlang
 " TODO: make manager plugin for uncrustify
 " autocmd gyokuro FileType java let &l:equalprg= 'uncrustify -c ~/dotfiles/uncrustify.conf/java.conf -l JAVA'
 autocmd gyokuro BufNewFile,BufRead *.tsv setfiletype tsv
+autocmd gyokuro BufNewFile,BufRead *.tgo setfiletype gotexttmpl
 
 " When editing a file, always jump to the last cursor position
 autocmd gyokuro BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$")
