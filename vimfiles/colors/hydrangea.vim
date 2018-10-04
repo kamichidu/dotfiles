@@ -1,6 +1,6 @@
 " Vim color file -- hydrangea
 " Maintainer:   kamichidu <c.kamunagi@gmail.com>
-" Last Change:  09-Jul-2018.
+" Last Change:  26-Jul-2018.
 
 set background=dark
 hi clear
@@ -46,7 +46,7 @@ let s:nr16_white = 15
 
 " colors from https://irocore.com/read-list/
 " 藍色
-let s:aiiro = '#105779'
+let s:aiiro = ['#105779', s:nr16_darkblue]
 " 藍色鳩羽
 let s:aiirohatoba = '#756d91'
 " 藍媚茶
@@ -256,7 +256,7 @@ let s:omeshionando = '#4c6473'
 " 御召茶
 let s:omeshicha = '#43676b'
 " 織部
-let s:oribe = '#125115'
+let s:oribe = ['#125115', s:nr16_darkgreen]
 " 柿色
 let s:kakiiro = '#de6a1c'
 " 柿渋色
@@ -314,7 +314,7 @@ let s:kishucha = '#856859'
 " 狐色
 let s:kitsuneiro = '#d9972f'
 " 黄橡
-let s:kitsurubami = '#a27033'
+let s:kitsurubami = ['#a27033', s:nr16_darkyellow]
 " 生成色
 let s:kinariiro = ['#f7efe3', s:nr16_white]
 " 黄蘗
@@ -354,7 +354,7 @@ let s:kuriiro = ['#433634', s:nr16_darkgray]
 " 栗色
 let s:kuriiro = ['#762f07', s:nr16_darkmagenta]
 " 栗梅
-let s:kiriume = '#6c1912'
+let s:kiriume = ['#6c1912', s:nr16_darkmagenta]
 " 栗皮色
 let s:kurikawairo = '#6a4028'
 " 栗皮茶
@@ -486,7 +486,7 @@ let s:shigokuiro = '#2d0425'
 " 宍色
 let s:shishiiro = '#efab93'
 " 紫檀色
-let s:shitaniro = '#6a1435'
+let s:shitaniro = ['#6a1435', s:nr16_darkmagenta]
 " 漆黒
 let s:sikkoku = '#080000'
 " 東雲色
@@ -602,7 +602,7 @@ let s:tanbairo = '#007d7a'
 " 蒲公英色
 let s:tanpopoiro = '#ffe200'
 " 橙色
-let s:daidaiiro = '#ee7800'
+let s:daidaiiro = ['#ee7800', s:nr16_yellow]
 " 団十郎茶
 let s:danjurocha = '#9f563a'
 " 千草色
@@ -768,7 +768,7 @@ let s:fukagawanezumi = '#85a1a0'
 " 深藍色
 let s:fukakiaiiro = '#006a66'
 " 深緑
-let s:fukamidori = '#004025'
+let s:fukamidori = ['#004025', s:nr16_darkgreen]
 " 柴色
 let s:fushiiro = '#998c78'
 " 柴染
@@ -950,7 +950,7 @@ let s:wakanairo = '#ccde68'
 " 若苗色
 let s:wakanaeiro = '#c7dc68'
 " 若葉色
-let s:wakabairo = '#a4ca68'
+let s:wakabairo = ['#a4ca68', s:nr16_green]
 " 若緑
 let s:wakamidori = '#a5cd89'
 " 若紫
@@ -994,10 +994,10 @@ let s:highlights = [
 \   ['hi', 'SpellCap'] + s:args(s:NONE, s:NONE, s:undercurl),
 \   ['hi', 'SpellLocal'] + s:args(s:NONE, s:NONE, s:undercurl),
 \   ['hi', 'SpellRare'] + s:args(s:NONE, s:NONE, s:undercurl),
-\   ['hi', 'DiffAdd'] + s:args(s:kinariiro, s:nurebairo, s:NONE),
-\   ['hi', 'DiffChange'] + s:args(s:nurebairo, s:nurebairo, s:NONE),
-\   ['hi', 'DiffDelete'] + s:args(s:nurebairo, s:nurebairo, s:NONE),
-\   ['hi', 'DiffText'] + s:args(s:kinariiro, s:nurebairo, s:NONE),
+\   ['hi', 'DiffAdd'] + s:args(s:NONE, s:fukamidori, s:NONE),
+\   ['hi', 'DiffChange'] + s:args(s:NONE, s:aiiro, s:NONE),
+\   ['hi', 'DiffDelete'] + s:args(s:NONE, s:kiriume, s:NONE),
+\   ['hi', 'DiffText'] + s:args(s:NONE, s:shitaniro, s:NONE),
 \   ['hi', 'FoldColumn'] + s:args(s:kinariiro, s:nurebairo, s:NONE),
 \   ['hi', 'SignColumn'] + s:args(s:kinariiro, s:nurebairo, s:NONE),
 \   ['hi', 'Pmenu'] + s:args(s:nurebairo, s:kuchinashiiro, s:NONE),
