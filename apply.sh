@@ -20,9 +20,9 @@ function apply()
     local srcpath="$1"
     local destpath="$2"
 
-    if [[ -x "$destpath" ]]; then
+    if [[ -e "$destpath" ]]; then
         echo "[skip] $srcpath ===> $destpath" 1>&2
-	return 0
+        return 0
     fi
 
     # mkdir for parent dir
@@ -42,3 +42,4 @@ apply "$dotfilesdir/vimrc" "$basedir/.vimrc"
 apply "$dotfilesdir/gvimrc" "$basedir/.gvimrc"
 apply "$dotfilesdir/vimfiles" "$basedir/.vim"
 apply "$dotfilesdir/bundles" "$basedir/.hariti/bundles"
+apply "$dotfilesdir/screenrc" "$basedir/.screenrc"
