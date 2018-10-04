@@ -1,24 +1,30 @@
 <#
-    The powershell script module for golang.
+    The powershell script module for java.
 #>
 
 $ModuleRootDir = Split-Path -Parent $PSScriptRoot
 $ScriptsDir = Join-Path $ModuleRootDir 'scripts'
 Get-ChildItem -Include '*.ps1' -Recurse $ScriptsDir | % { . $_.PSPath }
 
-$BaseDir = Join-Path $env:AppData 'go'
+# $BaseDir = Join-Path $env:AppData 'java'
+$BaseDir = 'C:\Program Files\Java'
 
 <#
     .Synopsis
-    Initialize go environment for the current powershell session.
+    Initialize java environment for the current powershell session.
 #>
-function Go-Activate {
+function Java-Activate {
     param (
         [string] $Version = 'latest',
         [switch] $ListVersions
     )
     process {
-        $Versions = @(Get-ChildItem -Directory -Name -Path $BaseDir | Sort-Object -Descending { [System.Version] $_ })
+        $Versions = @(Get-ChildItem -Directory -Name -Path $BaseDir | % {
+            $_ = $_ -replace 'jdk',''
+            $_ = $_ -replace 'jre',''
+            $_ = $_ -replace '_','.'
+            return $_
+        } | Sort-Object -Descending { [System.Version] $_ })
         if ($ListVersions) {
             Write-Host 'available versions:'
             $Versions | ForEach-Object {
@@ -48,7 +54,7 @@ function Go-Activate {
     }
 }
 
-function Go-Install {
+function Java-Install {
     param (
         [Parameter(Mandatory=$true)]
         [string] $Version,
