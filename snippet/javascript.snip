@@ -59,3 +59,23 @@ snippet timeout
 options head
   setTimeout(function() {${0}}${2:}, ${1:10});
 
+snippet define
+options head
+	(function(root, factory){
+	    if(typeof exports === 'object' && typeof module !== 'undefined')
+	    {
+	        module.exports= factory();
+	    }
+	    else if(typeof define === 'function' && define.amd)
+	    {
+	        define([], factory);
+	    }
+	    else
+	    {
+	        root.App= factory();
+	    }
+	}(this, function(template, Backbone, $, _){
+	    'use strict';
+	
+	    ${0}
+	}));

@@ -1,7 +1,7 @@
 let s:save_cpo= &cpo
 set cpo&vim
 
-let s:V= vital#of('vital')
+let s:V= vital#vital#new()
 let s:P= s:V.import('Process')
 unlet s:V
 

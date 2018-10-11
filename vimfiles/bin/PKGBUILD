@@ -1,6 +1,6 @@
 # Maintainer: kamichidu <c.kamunagi(at)gmail.com>
 pkgname=vim-latest
-pkgver=7.4.1194
+pkgver=7.4.2344
 pkgrel=0
 pkgdesc='Vim latest version'
 url='https://github.com/vim/vim'
@@ -12,7 +12,7 @@ depends=()
 # backup=()
 install='vim-latest.install'
 source=("https://github.com/vim/vim/archive/v${pkgver}.tar.gz")
-md5sums=('f9f39cbbb8fbf1f106528f7654b3ca0e')
+md5sums=('58958ac07de96016653bca82cfebaf70')
 
 build() {
   cd "${srcdir}/vim-${pkgver}"
@@ -20,14 +20,18 @@ build() {
     --prefix=$HOME/local/ \
     --enable-fail-if-missing \
     --disable-darwin \
+    --disable-smack \
     --disable-selinux \
+    --disable-xsmp \
+    --disable-xsmp-interact \
     --with-compiledby=kamichidu \
     --with-x \
     --with-features=huge \
-    --enable-luainterp=yes --with-luajit \
-    --enable-perlinterp=yes \
-    --enable-pythoninterp=yes \
-    --enable-rubyinterp=yes \
+    --enable-luainterp=dynamic --with-luajit \
+    --enable-perlinterp=dynamic \
+    --enable-pythoninterp=dynamic \
+    --enable-python3interp=dynamic \
+    --enable-rubyinterp=dynamic \
     --enable-multibyte \
     --enable-xim \
     --enable-fontset \

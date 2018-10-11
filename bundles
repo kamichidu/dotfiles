@@ -215,7 +215,18 @@ use Quramy/tsuquyomi
 use PProvost/vim-ps1
     as ps1
 
-use local ~/sources/vim-plugins/
+use leafgarland/typescript-vim
+    as typescript
+
+use posva/vim-vue
+    as vue
+
+use slim-template/vim-slim
+    as slim
+
+use Quramy/tsuquyomi
+
+use local ~/sources/vim-plugin/
     excludes (
         _*
     )

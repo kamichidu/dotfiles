@@ -620,16 +620,16 @@ inoremap <Leader>h        <Esc>I
 
 " convinient tab window
 nnoremap <silent> <Leader>tt :<C-U>tabnew<CR>
-nnoremap <silent> <Leader>t0 :<C-U>call s:tabselect(0)<CR>
-nnoremap <silent> <Leader>t1 :<C-U>call s:tabselect(1)<CR>
-nnoremap <silent> <Leader>t2 :<C-U>call s:tabselect(2)<CR>
-nnoremap <silent> <Leader>t3 :<C-U>call s:tabselect(3)<CR>
-nnoremap <silent> <Leader>t4 :<C-U>call s:tabselect(4)<CR>
-nnoremap <silent> <Leader>t5 :<C-U>call s:tabselect(5)<CR>
-nnoremap <silent> <Leader>t6 :<C-U>call s:tabselect(6)<CR>
-nnoremap <silent> <Leader>t7 :<C-U>call s:tabselect(7)<CR>
-nnoremap <silent> <Leader>t8 :<C-U>call s:tabselect(8)<CR>
-nnoremap <silent> <Leader>t9 :<C-U>call s:tabselect(9)<CR>
+nnoremap <silent> <Leader>t0 :<C-U>call <SID>tabselect(0)<CR>
+nnoremap <silent> <Leader>t1 :<C-U>call <SID>tabselect(1)<CR>
+nnoremap <silent> <Leader>t2 :<C-U>call <SID>tabselect(2)<CR>
+nnoremap <silent> <Leader>t3 :<C-U>call <SID>tabselect(3)<CR>
+nnoremap <silent> <Leader>t4 :<C-U>call <SID>tabselect(4)<CR>
+nnoremap <silent> <Leader>t5 :<C-U>call <SID>tabselect(5)<CR>
+nnoremap <silent> <Leader>t6 :<C-U>call <SID>tabselect(6)<CR>
+nnoremap <silent> <Leader>t7 :<C-U>call <SID>tabselect(7)<CR>
+nnoremap <silent> <Leader>t8 :<C-U>call <SID>tabselect(8)<CR>
+nnoremap <silent> <Leader>t9 :<C-U>call <SID>tabselect(9)<CR>
 nnoremap <silent> <C-N>      :<C-U>tabn<CR>
 nnoremap <silent> <C-P>      :<C-U>tabN<CR>
 nnoremap <silent> <C-W>C     :<C-U>tabclose<CR>
