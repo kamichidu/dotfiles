@@ -11,7 +11,8 @@ try {
         @{Src='gvimrc';        Dest=[System.IO.Path]::Combine($TargetDir, '_gvimrc')},
         @{Src='vimfiles';      Dest=[System.IO.Path]::Combine($TargetDir, 'vimfiles')},
         @{Src='bundles';       Dest=[System.IO.Path]::Combine($TargetDir, '.hariti', 'bundles')},
-        @{Src='scripts.ps1';   Dest=[System.IO.Path]::Combine($TargetDir, 'Documents', 'WindowsPowerShell', 'Modules')}
+        @{Src='scripts.ps1';   Dest=[System.IO.Path]::Combine($TargetDir, 'Documents', 'WindowsPowerShell', 'Modules')},
+        @{Src='profile.ps1';   Dest=[System.IO.Path]::Combine($TargetDir, 'Documents', 'WindowsPowerShell', 'profile.ps1')}
     )
 
     Write-Host "Applying to $TargetDir"
