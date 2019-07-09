@@ -111,4 +111,4 @@ function Go-Install {
     }
 }
 
-Export-ModuleMember -Function *
+Export-ModuleMember -Function Go-*

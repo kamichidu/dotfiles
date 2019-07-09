@@ -110,4 +110,4 @@ function Java-Install {
     }
 }
 
-Export-ModuleMember -Function *
+Export-ModuleMember -Function Java-*
