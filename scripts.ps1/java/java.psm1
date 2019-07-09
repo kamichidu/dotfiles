@@ -24,7 +24,14 @@ function Java-Activate {
             $_ = $_ -replace 'jre',''
             $_ = $_ -replace '_','.'
             return $_
-        } | Sort-Object -Descending { [System.Version] $_ })
+        } | Sort-Object -Descending {
+            try {
+                [System.Version] $_
+            }
+            catch {
+                [System.Version]::new()
+            }
+        })
         if ($ListVersions) {
             Write-Host 'available versions:'
             $Versions | ForEach-Object {

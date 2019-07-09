@@ -18,7 +18,7 @@ function Go-Activate {
         [switch] $ListVersions
     )
     process {
-        $Versions = @(Get-ChildItem -Directory -Name -Path $BaseDir | Sort-Object -Descending { [System.Version] $_ })
+        $Versions = Go-Versions
         if ($ListVersions) {
             Write-Host 'available versions:'
             $Versions | ForEach-Object {
@@ -45,6 +45,20 @@ function Go-Activate {
 
         $env:Path = Path-Prepend $env:Path (Join-Path $GoRoot 'bin')
         $env:GOROOT = $GoRoot
+    }
+}
+
+<#
+    .Synopsis
+    List installed go versions.
+#>
+function Go-Versions {
+    param (
+    )
+    process {
+        Get-ChildItem -Directory -Name -Path $BaseDir |
+        Where-Object { try { [System.Version] $_; $true } catch { $false } } |
+        Sort-Object -Descending { [System.Version] $_ }
     }
 }
 
