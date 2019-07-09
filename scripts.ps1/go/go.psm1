@@ -18,7 +18,7 @@ function Go-Activate {
         [switch] $ListVersions
     )
     process {
-        $Versions = Go-Versions
+        $Versions = @(Go-Versions)
         if ($ListVersions) {
             Write-Host 'available versions:'
             $Versions | ForEach-Object {
