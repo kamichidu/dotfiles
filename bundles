@@ -226,6 +226,12 @@ use slim-template/vim-slim
 
 use Quramy/tsuquyomi
 
+use prabirshrestha/vim-lsp
+    as lsp
+    depends (
+        prabirshrestha/async.vim
+    )
+
 use local ~/sources/vim-plugin/
     excludes (
         _*

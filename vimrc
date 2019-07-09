@@ -8,7 +8,7 @@ scriptencoding utf-8
 if has('win64') || has('win32') || has('win16') || has('win95')
     set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
 elseif has('win32unix') " mintty
-    set encoding=utf8 termencoding=cp932 fileformats=unix,dos,mac
+    set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
 elseif has('unix')
     set encoding=utf8 termencoding=utf8 fileformats=unix,dos,mac
 endif
@@ -521,6 +521,29 @@ endif
 if get(g:hariti_bundles, 'go', 0)
     " stop modification for $GOPATH arbitrarily
     let g:go_autodetect_gopath= 0
+    if executable('gopls')
+        let g:go_def_mode = 'gopls'
+    endif
+endif
+
+if get(g:hariti_bundles, 'lsp', 0)
+    " let g:lsp_log_verbose = 1
+    " let g:lsp_log_file = expand('~/vim-lsp.log')
+    " https://mattn.kaoriya.net/software/lang/go/20181217000056.htm
+    if executable('gopls')
+        command! GyokuroLspStopServer call lsp#stop_server(&l:filetype)
+        augroup gyokuro
+            autocmd User lsp_setup call lsp#register_server({
+            \   'name': 'go',
+            \   'cmd': {server_info -> ['gopls']},
+            \   'whitelist': ['go'],
+            \})
+            autocmd FileType go setlocal omnifunc=lsp#complete
+            autocmd FileType go nmap <buffer> gd <plug>(lsp-definition)
+            autocmd FileType go nmap <buffer> K <plug>(lsp-document-diagnostics)
+            "autocmd CompleteDone * LspHover
+        augroup END
+    endif
 endif
 
 " automatically make directory when write file
