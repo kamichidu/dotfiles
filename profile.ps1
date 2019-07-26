@@ -45,3 +45,38 @@ function Prompt {
         $global:LastExitCode = $LastExitCode
     }
 }
+
+Set-PSReadlineOption -HistoryNoDuplicates:$true
+
+# PSReadline module v2 breaks compatibility
+$fgcolor = 'Gray'
+$bgcolor = 'Black'
+$Host.UI.RawUI.ForegroundColor = $fgcolor
+$Host.UI.RawUI.BackgroundColor = $bgcolor
+if ((Get-Module -Name PSReadline).Version.Major -lt 2) {
+    Set-PSReadlineOption -TokenKind None      -ForegroundColor $fgcolor    -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Comment   -ForegroundColor 'DarkGreen' -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Keyword   -ForegroundColor 'Green'     -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind String    -ForegroundColor 'DarkCyan'  -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Operator  -ForegroundColor 'DarkGray'  -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Variable  -ForegroundColor 'Green'     -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Command   -ForegroundColor 'Yellow'    -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Parameter -ForegroundColor 'DarkGray'  -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Type      -ForegroundColor 'Gray'      -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Number    -ForegroundColor $fgcolor    -BackgroundColor $bgcolor
+    Set-PSReadlineOption -TokenKind Member    -ForegroundColor $fgcolor    -BackgroundColor $bgcolor
+} else {
+    Set-PSReadlineOption -Colors @{
+        'None'      = $fgcolor;
+        'Comment'   = 'DarkGreen';
+        'Keyword'   = 'Green';
+        'String'    = 'DarkCyan';
+        'Operator'  = 'DarkGray';
+        'Variable'  = 'Green';
+        'Command'   = 'Yellow';
+        'Parameter' = 'DarkGray';
+        'Type'      = 'Gray';
+        'Number'    = $fgcolor;
+        'Member'    = $fgcolor;
+    }
+}
