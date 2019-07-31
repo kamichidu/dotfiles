@@ -231,8 +231,3 @@ use prabirshrestha/vim-lsp
     depends (
         prabirshrestha/async.vim
     )
-
-use local ~/sources/vim-plugin/
-    excludes (
-        _*
-    )
