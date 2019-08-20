@@ -20,6 +20,7 @@ let g:loaded_javacomplete= 1
 
 " XXX: special constants
 let s:debug= get(g:, 'debug', 0)
+let s:local_vimrc_filename= $MYVIMRC . '.local'
 
 " disable mswin.vim
 let g:skip_loading_mswin= 1
@@ -106,6 +107,11 @@ elseif executable('pt')
 endif
 
 if has('vim_starting')
+    if filereadable(s:local_vimrc_filename)
+        execute 'source' s:local_vimrc_filename
+    endif
+
+    " load hariti
     set runtimepath+=$HOME/dotfiles/hariti/
     runtime plugin/hariti.vim
 endif
@@ -529,6 +535,8 @@ endif
 if get(g:hariti_bundles, 'lsp', 0)
     " let g:lsp_log_verbose = 1
     " let g:lsp_log_file = expand('~/vim-lsp.log')
+    let g:lsp_signs_enabled = 0
+    let g:lsp_highlights_enabled = 0
     " https://mattn.kaoriya.net/software/lang/go/20181217000056.htm
     if executable('gopls')
         command! GyokuroLspStopServer call lsp#stop_server(&l:filetype)
@@ -790,7 +798,6 @@ if get(g:hariti_bundles, 'csapprox', 0)
     endif
 endif
 
-let s:local_vimrc_filename= $MYVIMRC . '.local'
 if filereadable(s:local_vimrc_filename)
     execute 'source' s:local_vimrc_filename
 endif
