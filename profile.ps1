@@ -1,4 +1,17 @@
-$env:Path = "C:\msys64\usr\bin;$env:Path"
+$pathItems = @(
+    # msys2 ssh does not support colors, prefer to use Win32-OpenSSH.
+    'C:\Windows\System32\OpenSSH',
+    'C:\msys64\usr\bin')
+$oldPathItems = $env:Path.Split(';', [System.StringSplitOptions]::RemoveEmptyEntries)
+foreach ($p in $oldPathItems) {
+    # trim suffix to uniform path form
+    $p = $p.TrimEnd('\')
+    if ($pathItems -contains $p) {
+        continue
+    }
+    $pathItems = $pathItems + @($p)
+}
+$env:Path = ($pathItems -join ';')
 
 function Prompt {
     $LastExitCode = $global:LastExitCode
