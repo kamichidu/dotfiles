@@ -42,9 +42,14 @@ function Go-Activate {
         }
 
         $GoRoot = Join-Path $BaseDir $Version
+        $GoPath = $env:GOPATH
+        if (-not $GoPath) {
+            $GoPath = Join-Path $env:USERPROFILE 'local\opt\go'
+        }
 
         $env:Path = Path-Prepend $env:Path (Join-Path $GoRoot 'bin')
         $env:GOROOT = $GoRoot
+        $env:GOPATH = $GoPath
     }
 }
 
