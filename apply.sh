@@ -43,3 +43,8 @@ apply "$dotfilesdir/gvimrc" "$basedir/.gvimrc"
 apply "$dotfilesdir/vimfiles" "$basedir/.vim"
 apply "$dotfilesdir/bundles" "$basedir/.hariti/bundles"
 apply "$dotfilesdir/screenrc" "$basedir/.screenrc"
+
+if [[ "${OSTYPE}" == 'darwin'* ]]; then
+    apply "${dotfilesdir}/aquaskk/skkfep.rule"   "${basedir}/Library/Application Support/AquaSKK/skkfep.rule"
+    apply "${dotfilesdir}/aquaskk/sub-rule.desc" "${basedir}/Library/Application Support/AquaSKK/sub-rule.desc"
+fi

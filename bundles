@@ -231,3 +231,9 @@ use prabirshrestha/vim-lsp
     depends (
         prabirshrestha/async.vim
     )
+
+use editorconfig/editorconfig-vim
+    as editorconfig
+
+use jvirtanen/vim-hcl
+    as hcl

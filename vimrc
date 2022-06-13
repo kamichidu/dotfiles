@@ -82,7 +82,7 @@ endif
 " disable tag completion since it's too slow
 set complete=.,w,b,u
 " set completeopt=menu
-set completeopt=menuone
+set completeopt=menuone,popup,noselect
 " no beep
 set visualbell t_vb=
 " don't move cursor when <C-D> and <C-U> and...
@@ -535,11 +535,14 @@ endif
 if get(g:hariti_bundles, 'lsp', 0)
     " let g:lsp_log_verbose = 1
     " let g:lsp_log_file = expand('~/vim-lsp.log')
-    let g:lsp_signs_enabled = 0
-    let g:lsp_highlights_enabled = 0
+    let g:lsp_diagnostics_signs_enabled = 0
+    let g:lsp_document_code_action_signs_enabled = 0
+    let g:lsp_diagnostics_highlights_enabled = 0
+
+    command! GyokuroLspStopServer call lsp#stop_server(&l:filetype)
+
     " https://mattn.kaoriya.net/software/lang/go/20181217000056.htm
     if executable('gopls')
-        command! GyokuroLspStopServer call lsp#stop_server(&l:filetype)
         augroup gyokuro
             autocmd User lsp_setup call lsp#register_server({
             \   'name': 'go',
@@ -552,6 +555,29 @@ if get(g:hariti_bundles, 'lsp', 0)
             "autocmd CompleteDone * LspHover
         augroup END
     endif
+    if executable('pyls')
+        augroup gyokuro
+            autocmd User lsp_setup call lsp#register_server({
+            \   'name': 'python',
+            \   'cmd': {server_info -> ['pyls']},
+            \   'whitelist': ['python'],
+            \})
+            autocmd FileType python setlocal omnifunc=lsp#complete
+        augroup END
+    endif
+    if executable('typescript-language-server')
+        augroup gyokuro
+            autocmd User lsp_setup call lsp#register_server({
+            \   'name': 'typescript',
+            \   'cmd': {server_info -> ['typescript-language-server', '--stdio']},
+            \   'whitelist': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'typescript.tsx'],
+            \})
+            autocmd FileType python setlocal omnifunc=lsp#complete
+        augroup END
+    endif
+endif
+
+if get(g:hariti_bundles, 'editorconfig', 0)
 endif
 
 " automatically make directory when write file
@@ -734,7 +760,9 @@ function! GyokuroCompletefunc(findstart, base) abort
         let candidates= call(&omnifunc, [a:findstart, a:base])
         if type(candidates) == type([])
             for candidate in candidates
-                let candidate.icase= &ignorecase
+                if type(candidate) == type({})
+                    let candidate.icase= &ignorecase
+                endif
             endfor
         endif
         return candidates
