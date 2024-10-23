@@ -524,34 +524,27 @@ if get(g:hariti_bundles, 'tsuquyomi', 0)
     let g:tsuquyomi_completion_detail= 1
 endif
 
-if get(g:hariti_bundles, 'go', 0)
-    " stop modification for $GOPATH arbitrarily
-    let g:go_autodetect_gopath= 0
-    if executable('gopls')
-        let g:go_def_mode = 'gopls'
-    endif
-endif
-
 if get(g:hariti_bundles, 'lsp', 0)
     " let g:lsp_log_verbose = 1
     " let g:lsp_log_file = expand('~/vim-lsp.log')
     let g:lsp_diagnostics_signs_enabled = 0
+    let g:lsp_diagnostics_virtual_text_enabled = 0
     let g:lsp_document_code_action_signs_enabled = 0
     let g:lsp_diagnostics_highlights_enabled = 0
-
-    command! GyokuroLspStopServer call lsp#stop_server(&l:filetype)
 
     " https://mattn.kaoriya.net/software/lang/go/20181217000056.htm
     if executable('gopls')
         augroup gyokuro
-            autocmd User lsp_setup call lsp#register_server({
+            autocmd gyokuro User lsp_setup call lsp#register_server({
             \   'name': 'go',
             \   'cmd': {server_info -> ['gopls']},
             \   'whitelist': ['go'],
             \})
-            autocmd FileType go setlocal omnifunc=lsp#complete
-            autocmd FileType go nmap <buffer> gd <plug>(lsp-definition)
-            autocmd FileType go nmap <buffer> K <plug>(lsp-document-diagnostics)
+            autocmd gyokuro FileType go setlocal omnifunc=lsp#complete
+            autocmd gyokuro FileType go nmap <buffer> gd <plug>(lsp-definition)
+            autocmd gyokuro FileType go nmap <buffer> K <plug>(lsp-document-diagnostics)
+            autocmd gyokuro BufWritePre *.go LspDocumentFormatSync
+            autocmd gyokuro BufWritePre *.go call execute('LspCodeActionSync source.organizeImports')
             "autocmd CompleteDone * LspHover
         augroup END
     endif
