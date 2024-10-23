@@ -555,11 +555,11 @@ if get(g:hariti_bundles, 'lsp', 0)
             "autocmd CompleteDone * LspHover
         augroup END
     endif
-    if executable('pyls')
+    if executable('pylsp')
         augroup gyokuro
             autocmd User lsp_setup call lsp#register_server({
             \   'name': 'python',
-            \   'cmd': {server_info -> ['pyls']},
+            \   'cmd': {server_info -> ['pylsp']},
             \   'whitelist': ['python'],
             \})
             autocmd FileType python setlocal omnifunc=lsp#complete
