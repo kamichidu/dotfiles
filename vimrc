@@ -809,8 +809,10 @@ autocmd gyokuro BufEnter,BufReadPre   *.ebnf         setlocal filetype=ebnf
 autocmd gyokuro BufEnter,BufReadPre   *.yrl          setlocal filetype=erlang
 " TODO: make manager plugin for uncrustify
 " autocmd gyokuro FileType java let &l:equalprg= 'uncrustify -c ~/dotfiles/uncrustify.conf/java.conf -l JAVA'
-autocmd gyokuro BufNewFile,BufRead *.tsv setfiletype tsv
-autocmd gyokuro BufNewFile,BufRead *.tgo setfiletype gotexttmpl
+autocmd gyokuro BufNewFile,BufRead *.tsv       setlocal filetype=tsv
+autocmd gyokuro BufNewFile,BufRead *.tmpl      setlocal filetype=gotpl
+autocmd gyokuro BufNewFile,BufRead *.vim.tmpl  setlocal filetype=gotplvim
+autocmd gyokuro BufNewFile,BufRead *.html.tmpl setlocal filetype=gotplhtml
 
 " When editing a file, always jump to the last cursor position
 autocmd gyokuro BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$")
