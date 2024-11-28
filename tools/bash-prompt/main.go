@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/comail/colog"
@@ -69,15 +70,19 @@ func nodeInfo() string {
 }
 
 func writePrompt(ctx context.Context, w io.Writer) error {
-	reset := `\[` + ansi.Reset + `\]`
-	base := `\[` + ansi.LightBlack + `\]`
-	ps1 := strings.Join([]string{
-		reset + base + `[\u@` + nodeInfo(),
-		dirInfo(),
-		gitInfo(ctx) + `]\$ ` + reset,
-	}, " ")
-	_, err := fmt.Fprintln(w, `PS1='`+ps1+`'`)
-	return err
+	tpl := template.New("ps1")
+	tpl = tpl.Delims("{", "}")
+	tpl, err := tpl.Parse(`PS1='{.reset}{.base}[\u@{.nodeInfo} {.dirInfo} {.gitInfo}]\$ {.reset}'`)
+	if err != nil {
+		return err
+	}
+	return tpl.Execute(w, map[string]any{
+		"reset":    `\[` + ansi.Reset + `\]`,
+		"base":     `\[` + ansi.LightBlack + `\]`,
+		"nodeInfo": nodeInfo(),
+		"dirInfo":  dirInfo(),
+		"gitInfo":  gitInfo(ctx),
+	})
 }
 
 func writeInitScript(w io.Writer) error {
