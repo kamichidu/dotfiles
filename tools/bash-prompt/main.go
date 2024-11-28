@@ -3,18 +3,25 @@ package main
 import (
 	"bytes"
 	"context"
+	"embed"
+	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
-	"os/user"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/comail/colog"
 	"github.com/mgutz/ansi"
+)
+
+var (
+	//go:embed assets/*
+	assetsFS embed.FS
 )
 
 func stdoutContext(ctx context.Context, name string, args ...string) string {
@@ -53,22 +60,59 @@ func gitInfo(ctx context.Context) string {
 	return "(" + username + "@" + branch + ")"
 }
 
-func main() {
+func nodeInfo() string {
+	v, err := os.Hostname()
+	if err != nil {
+		return err.Error()
+	}
+	return v
+}
+
+func writePrompt(ctx context.Context, w io.Writer) error {
+	reset := `\[` + ansi.Reset + `\]`
+	base := `\[` + ansi.LightBlack + `\]`
+	ps1 := strings.Join([]string{
+		reset + base + `[\u@` + nodeInfo(),
+		dirInfo(),
+		gitInfo(ctx) + `]\$ ` + reset,
+	}, " ")
+	_, err := fmt.Fprintln(w, `PS1='`+ps1+`'`)
+	return err
+}
+
+func writeInitScript(w io.Writer) error {
+	b, err := assetsFS.ReadFile("assets/init.bash")
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(w, string(b))
+	return err
+}
+
+func run(stdout, stderr io.Writer, args []string) int {
 	colog.Register()
 	colog.SetDefaultLevel(colog.LInfo)
 	log.SetFlags(0)
 	log.SetPrefix("git-prompt: ")
+	log.SetOutput(stderr)
 
 	var (
 		timeout  = 3 * time.Second
 		loglevel = "error"
 	)
-	flag.DurationVar(&timeout, "timeout", timeout, "command timeout duration")
-	flag.StringVar(&loglevel, "loglevel", loglevel, "logging level")
-	flag.Parse()
+	flgs := flag.NewFlagSet("git-prompt", flag.ContinueOnError)
+	flgs.DurationVar(&timeout, "timeout", timeout, "command timeout duration")
+	flgs.StringVar(&loglevel, "loglevel", loglevel, "logging level")
+	if err := flgs.Parse(args[1:]); errors.Is(err, flag.ErrHelp) {
+		return 0
+	} else if err != nil {
+		log.Printf("error: %v", err)
+		return 1
+	}
 
 	if lvl, err := colog.ParseLevel(loglevel); err != nil {
-		panic(err)
+		log.Printf("error: unable to parse %q: %v", loglevel, err)
+		return 1
 	} else {
 		colog.SetMinLevel(lvl)
 	}
@@ -77,9 +121,20 @@ func main() {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	user.Current()
-	reset := `\[` + ansi.Reset + `\]`
-	base := `\[` + ansi.LightBlack + `\]`
-	ps1 := reset + base + `[\u@local ` + dirInfo() + " " + gitInfo(ctx) + `]\$ ` + reset
-	fmt.Println(`PS1='` + ps1 + `'`)
+	var err error
+	switch flgs.Arg(0) {
+	case "init":
+		err = writeInitScript(stdout)
+	default:
+		err = writePrompt(ctx, stdout)
+	}
+	if err != nil {
+		log.Printf("error: %v", err)
+		return 1
+	}
+	return 0
+}
+
+func main() {
+	os.Exit(run(os.Stdout, os.Stderr, os.Args))
 }
