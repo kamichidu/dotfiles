@@ -25,35 +25,46 @@ var (
 	assetsFS embed.FS
 )
 
-func stdoutContext(ctx context.Context, name string, args ...string) string {
+func stdoutContext(ctx context.Context, name string, args ...string) (string, error) {
 	var (
 		stdout bytes.Buffer
+		stderr bytes.Buffer
 	)
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		log.Printf("error: failed to execute command: %v %v: %v", filepath.Base(cmd.Path), strings.Join(cmd.Args, " "), err)
-		return ""
+		if ee, ok := err.(*exec.ExitError); ok {
+			ee.Stderr = stderr.Bytes()
+		}
+		return "", err
 	}
-	return strings.TrimSpace(stdout.String())
+	return strings.TrimSpace(stdout.String()), nil
 }
 
 func dirInfo() string {
 	wd, err := os.Getwd()
 	if err != nil {
-		log.Printf("error: failed to get working directory: %v", err)
-		return "-"
+		return err.Error()
 	}
-
 	return filepath.Base(wd)
 }
 
 func gitInfo(ctx context.Context) string {
-	username := stdoutContext(ctx, "git", "config", "user.name")
-	branch := stdoutContext(ctx, "git", "symbolic-ref", "--short", "HEAD")
-
+	username, err := stdoutContext(ctx, "git", "config", "user.name")
+	if ee, ok := err.(*exec.ExitError); ok {
+		log.Printf("warning: %v\n%v", ee.Error(), string(ee.Stderr))
+	} else if err != nil {
+		log.Printf("warning: %v", err)
+	}
 	if username == "" {
 		username = "-"
+	}
+	branch, err := stdoutContext(ctx, "git", "symbolic-ref", "--short", "HEAD")
+	if ee, ok := err.(*exec.ExitError); ok {
+		log.Printf("warning: %v\n%v", ee.Error(), string(ee.Stderr))
+	} else if err != nil {
+		log.Printf("warning: %v", err)
 	}
 	if branch == "" {
 		branch = "-"
@@ -64,7 +75,10 @@ func gitInfo(ctx context.Context) string {
 func nodeInfo() string {
 	v, err := os.Hostname()
 	if err != nil {
-		return err.Error()
+		log.Printf("warning: %v", err)
+	}
+	if v == "" {
+		v = "???"
 	}
 	return v
 }
@@ -97,9 +111,7 @@ func writeInitScript(w io.Writer) error {
 func run(stdout, stderr io.Writer, args []string) int {
 	colog.Register()
 	colog.SetDefaultLevel(colog.LInfo)
-	log.SetFlags(0)
-	log.SetPrefix("git-prompt: ")
-	log.SetOutput(stderr)
+	colog.SetOutput(stderr)
 
 	var (
 		timeout  = 3 * time.Second
