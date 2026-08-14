@@ -4,5 +4,6 @@
   },
   "git.openRepositoryInParentFolders": "always",
   "asciidoc.extensions.enableKroki": true,
-  "markdown-preview-enhanced.krokiServer": "http://kroki.localhost:28080"
+  "markdown-preview-enhanced.krokiServer": "http://kroki.localhost:28080",
+  "asciidoc.extensions.kroki.serverUrl": "http://kroki.localhost:28080"
 }
