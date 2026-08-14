@@ -43,6 +43,7 @@ apply "$dotfilesdir/gvimrc" "$basedir/.gvimrc"
 apply "$dotfilesdir/vimfiles" "$basedir/.vim"
 apply "$dotfilesdir/bundles" "$basedir/.hariti/bundles"
 apply "$dotfilesdir/screenrc" "$basedir/.screenrc"
+apply "$dotfilesdir/scripts/git-config-init.sh" "$basedir/local/bin/git-config-init.sh"
 
 if [[ "${OSTYPE}" == 'darwin'* ]]; then
     apply "${dotfilesdir}/aquaskk/keymap.conf"   "${basedir}/Library/Application Support/AquaSKK/keymap.conf"

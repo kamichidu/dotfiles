@@ -3,7 +3,7 @@
 set -euo pipefail
 
 os-release-value() {
-    local name="${1:?}"
+    local name="${1}"
 
     awk -F= -v name="${name}" '
         $1 == name {
