@@ -48,4 +48,5 @@ if [[ "${OSTYPE}" == 'darwin'* ]]; then
     apply "${dotfilesdir}/aquaskk/keymap.conf"   "${basedir}/Library/Application Support/AquaSKK/keymap.conf"
     apply "${dotfilesdir}/aquaskk/skkfep.rule"   "${basedir}/Library/Application Support/AquaSKK/skkfep.rule"
     apply "${dotfilesdir}/aquaskk/sub-rule.desc" "${basedir}/Library/Application Support/AquaSKK/sub-rule.desc"
+    apply "${dotfilesdir}/vscode/settings.json"  "${basedir}/Library/Application Support/Code/User/settings.json"
 fi

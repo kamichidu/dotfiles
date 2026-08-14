@@ -1,0 +1,7 @@
+{
+	auto_https off
+}
+
+http://kroki.localhost:28080 {
+	reverse_proxy kroki:8000
+}
