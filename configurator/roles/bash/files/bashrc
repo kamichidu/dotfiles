@@ -1,0 +1,43 @@
+if command -v brew >/dev/null 2>&1; then
+    __brew_prefix="$(brew --prefix)"
+    if [[ -r "${__brew_prefix}/etc/profile.d/bash_completion.sh" ]]; then
+        . "${__brew_prefix}/etc/profile.d/bash_completion.sh"
+    fi
+
+    # coreutils
+    export PATH="${__brew_prefix}/opt/coreutils/libexec/gnubin:${PATH}"
+    export MANPATH="${__brew_prefix}/opt/coreutils/libexec/gnuman:${MANPATH}"
+
+    # ed
+    export PATH="${__brew_prefix}/opt/ed/libexec/gnubin:${PATH}"
+    export MANPATH="${__brew_prefix}/opt/ed/libexec/gnuman:${MANPATH}"
+
+    # findutils
+    export PATH="${__brew_prefix}/opt/findutils/libexec/gnubin:${PATH}"
+    export MANPATH="${__brew_prefix}/opt/findutils/libexec/gnuman:${MANPATH}"
+
+    # sed
+    export PATH="${__brew_prefix}/opt/gnu-sed/libexec/gnubin:${PATH}"
+    export MANPATH="${__brew_prefix}/opt/gnu-sed/libexec/gnuman:${MANPATH}"
+
+    # tar
+    export PATH="${__brew_prefix}/opt/gnu-tar/libexec/gnubin:${PATH}"
+    export MANPATH="${__brew_prefix}/opt/gnu-tar/libexec/gnuman:${MANPATH}"
+
+    # grep
+    export PATH="${__brew_prefix}/opt/grep/libexec/gnubin:${PATH}"
+    export MANPATH="${__brew_prefix}/opt/grep/libexec/gnuman:${MANPATH}"
+fi
+
+function __prompt()
+{
+    if command -v bash-prompt >/dev/null 2>&1; then
+        eval "$(bash-prompt)"
+    fi
+}
+
+if [[ "${PROMPT_COMMAND}" != *'__prompt'* ]]; then
+    PROMPT_COMMAND="__prompt${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+fi
+
+export CLOUDSDK_PYTHON_SITEPACKAGES=1

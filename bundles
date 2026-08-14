@@ -195,12 +195,6 @@ use haya14busa/incsearch.vim
 use eyapp
     as eyapp
 
-use fatih/vim-go
-    as go
-
-# use vim-jp/vim-go-extra
-#     as go-extra
-
 use davidhalter/jedi-vim
     as jedi
     enable_if "has('python')"
@@ -237,3 +231,6 @@ use editorconfig/editorconfig-vim
 
 use jvirtanen/vim-hcl
     as hcl
+
+use andres-lowrie/vim-sqlx
+    as sqlx

@@ -1,0 +1,9 @@
+---
+- name: user-local directories
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ ansible_env.HOME }}/local/'
+    - '{{ ansible_env.HOME }}/local/bin/'
+    - '{{ ansible_env.HOME }}/local/var/tmp'

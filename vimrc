@@ -532,6 +532,9 @@ if get(g:hariti_bundles, 'lsp', 0)
     let g:lsp_document_code_action_signs_enabled = 0
     let g:lsp_diagnostics_highlights_enabled = 0
 
+    nnoremap <silent> gd :<C-U>LspDefinition<CR>
+    nnoremap <silent> <C-k> :<C-U>LspHover --ui=preview<CR>
+
     " https://mattn.kaoriya.net/software/lang/go/20181217000056.htm
     if executable('gopls')
         augroup gyokuro

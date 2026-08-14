@@ -7,7 +7,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! s:share_clipboard(event) abort
-    if index(['+', '*', 'c'], a:event.regname) < 0
+    if index(['c'], a:event.regname) < 0
         return
     endif
     let data = join(a:event.regcontents, "\n")

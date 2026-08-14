@@ -1,0 +1,15 @@
+---
+- name: direnv install
+  community.general.homebrew:
+    state: present
+    name: direnv
+
+- name: direnv configuration
+  ansible.builtin.lineinfile:
+    path: '{{ ansible_env.HOME }}/.profile'
+    state: present
+    create: true
+    search_string: '{{ expr }}'
+    line: '{{ expr }}'
+  vars:
+    expr: eval "$(/opt/homebrew/bin/direnv hook "${SHELL}")"

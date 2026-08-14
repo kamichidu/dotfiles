@@ -1,0 +1,21 @@
+---
+- name: anyenv install
+  community.general.homebrew:
+    state: present
+    name: anyenv
+
+- name: anyenv init
+  ansible.builtin.shell: |
+    /opt/homebrew/bin/anyenv install --force-init
+  args:
+    creates: '{{ ansible_env.HOME }}/.config/anyenv/anyenv-install'
+
+- name: anyenv configuration
+  ansible.builtin.lineinfile:
+    path: '{{ ansible_env.HOME }}/.profile'
+    state: present
+    create: true
+    search_string: '{{ expr }}'
+    line: '{{ expr }}'
+  vars:
+    expr: eval "$(/opt/homebrew/bin/anyenv init -)"

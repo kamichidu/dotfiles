@@ -1,0 +1,14 @@
+---
+- name: brew taps
+  community.general.homebrew_tap:
+    state: present
+    name:
+      - homebrew/cask-fonts
+
+- name: brew casks
+  community.general.homebrew_cask:
+    state: present
+    name:
+      - font-noto-sans
+      - font-noto-serif
+      - font-ricty-diminished

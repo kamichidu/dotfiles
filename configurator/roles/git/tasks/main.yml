@@ -1,0 +1,30 @@
+---
+- name: git ssh key auth
+  community.general.git_config:
+    state: present
+    scope: global
+    name: url.git@github.com:.insteadOf
+    value: https://github.com/
+
+- name: git ignore file
+  ansible.builtin.blockinfile:
+    path: '{{ ansible_env.HOME }}/.gitignore'
+    state: present
+    create: true
+    marker: '# {mark} this section managed by dotfiles'
+    block: |
+      .DS_Store
+
+- name: git ignore file
+  community.general.git_config:
+    state: present
+    scope: global
+    name: core.excludesfile
+    value: ~/.gitignore
+
+- name: git utilities
+  ansible.builtin.file:
+    state: link
+    path: '{{ ansible_env.HOME }}/local/bin/git-config-init.sh'
+    src: '{{ playbook_dir }}/roles/git/files/git-config-init.sh'
+

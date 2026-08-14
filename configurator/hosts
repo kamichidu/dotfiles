@@ -1,0 +1,5 @@
+---
+ungrouped:
+  hosts:
+    lo:
+      ansible_connection: ansible.builtin.local

@@ -1,0 +1,45 @@
+---
+- name: bash requirements
+  community.general.homebrew:
+    state: present
+    name:
+      - bash
+      - bash-completion@2
+      # the shell makes compat for linux
+      - coreutils
+      - diffutils
+      - ed
+      - findutils
+      - gawk
+      - gnu-sed
+      - gnu-tar
+      - grep
+      - gzip
+
+- name: bash .bash_profile
+  ansible.builtin.blockinfile:
+    state: present
+    create: true
+    path: '{{ ansible_env.HOME }}/.bash_profile'
+    marker: '# {mark} this section managed by dotfiles: CE5CA857-323A-41A3-961A-A2AA026501C3'
+    block: "{{ lookup('file', 'bash_profile') }}"
+
+- name: bash .bashrc
+  ansible.builtin.blockinfile:
+    state: present
+    create: true
+    path: '{{ ansible_env.HOME }}/.bashrc'
+    marker: '# {mark} this section managed by dotfiles: EF82CCFB-5A8C-41A2-8A4D-DC9A674E4A13'
+    block: "{{ lookup('file', 'bashrc') }}"
+
+- name: login shell
+  block:
+    - ansible.builtin.shell: |
+        dscl . -read '{{ ansible_env.HOME }}' UserShell | /usr/bin/awk '{print $2}'
+      register: user_shell
+      changed_when: false
+
+    # causes permission error usign `become', so use `sudo' directly
+    - ansible.builtin.shell: |
+        sudo dscl . -create '{{ ansible_env.HOME }}' UserShell "$(/opt/homebrew/bin/brew --prefix)/bin/bash"
+      when: ansible_facts.user_shell != user_shell.stdout

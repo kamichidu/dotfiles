@@ -1,0 +1,10 @@
+---
+- name: homebrew configuration
+  ansible.builtin.lineinfile:
+    path: '{{ ansible_env.HOME }}/.profile'
+    state: present
+    create: true
+    search_string: '{{ expr }}'
+    line: '{{ expr }}'
+  vars:
+    expr: eval "$(/opt/homebrew/bin/brew shellenv)"

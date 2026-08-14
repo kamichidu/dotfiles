@@ -1,0 +1,25 @@
+---
+- name: vim can find a python
+  ansible.builtin.lineinfile:
+    path: '{{ ansible_env.HOME }}/.profile'
+    state: present
+    create: true
+    search_string: '{{ expr }}'
+    line: '{{ expr }}'
+  vars:
+    expr: alias python=python3
+
+- name: vim install
+  community.general.homebrew:
+    state: present
+    name: vim
+
+- name: vim will defaults
+  ansible.builtin.lineinfile:
+    path: '{{ ansible_env.HOME }}/.profile'
+    state: present
+    create: true
+    search_string: '{{ expr }}'
+    line: '{{ expr }}'
+  vars:
+    expr: export EDITOR=vim

@@ -1,0 +1,13 @@
+---
+- name: lo
+  hosts: lo
+  roles:
+    - directory-structure
+    - homebrew
+    - bash
+    - anyenv
+    - direnv
+    - git
+    - vim
+    - misc
+    - font

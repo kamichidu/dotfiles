@@ -1,0 +1,28 @@
+---
+- name: terminal color tester
+  ansible.builtin.get_url:
+    url: https://gist.githubusercontent.com/hSATAC/1095100/raw/ee5b4d79aee151248bdafa8b8412497a5a688d42/256color.pl
+    dest: '{{ ansible_env.HOME }}/local/bin/256color.pl'
+    mode: 0755
+
+- name: brew formulas
+  community.general.homebrew:
+    state: present
+    name:
+      - jq
+      - hey
+      - peco
+      - go-task
+
+- name: brew casks
+  community.general.homebrew_cask:
+    state: present
+    name:
+      - karabiner-elements
+      - google-cloud-sdk
+      - adobe-acrobat-reader
+      - gimp
+      - inkscape
+      - key-codes
+      - zoom
+      - visual-studio-code
