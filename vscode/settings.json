@@ -1,3 +1,8 @@
 {
+  "asciidoc.preview.asciidoctorAttributes": {
+    "kroki-server-url": "http://kroki.localhost:28080"
+  },
+  "git.openRepositoryInParentFolders": "always",
+  "asciidoc.extensions.enableKroki": true,
   "markdown-preview-enhanced.krokiServer": "http://kroki.localhost:28080"
 }
