@@ -1,0 +1,98 @@
+#!/bin/bash
+
+set -euo pipefail
+
+__tmp_dir=''
+__staging_file=''
+
+die() {
+    printf 'gcloud-adc-login: %s\n' "${1}" >&2
+    exit 1
+}
+
+main() {
+    local command_name
+    local adc_file
+    local access_token
+    local userinfo
+    local email
+    local credential_dir
+    local destination
+
+    if [[ "$#" -ne 0 ]]; then
+        die 'this command takes no arguments.'
+    fi
+
+    for command_name in gcloud curl jq mktemp install mv; do
+        if ! command -v "${command_name}" >/dev/null 2>&1; then
+            die "required command not found: ${command_name}"
+        fi
+    done
+
+    __tmp_dir="$(mktemp -d)" || die 'could not create a temporary configuration directory.'
+    cleanup() {
+        if [[ -n "${__tmp_dir}" ]]; then
+            rm -rf "${__tmp_dir}"
+        fi
+        if [[ -n "${__staging_file}" ]]; then
+            rm -f "${__staging_file}"
+        fi
+    }
+    trap cleanup EXIT
+
+    export CLOUDSDK_CONFIG="${__tmp_dir}"
+    if ! gcloud auth application-default login; then
+        die 'gcloud application-default login failed.'
+    fi
+
+    adc_file="${__tmp_dir}/application_default_credentials.json"
+    if [[ ! -f "${adc_file}" ]]; then
+        die 'gcloud did not create application_default_credentials.json.'
+    fi
+
+    if ! access_token="$(gcloud auth application-default print-access-token 2>/dev/null)" || [[ -z "${access_token}" ]]; then
+        die 'could not obtain an access token from the generated ADC.'
+    fi
+
+    if ! userinfo="$(curl --fail --silent --show-error \
+        -H "Authorization: Bearer ${access_token}" \
+        'https://www.googleapis.com/oauth2/v2/userinfo' 2>/dev/null)"; then
+        die 'Google UserInfo request failed.'
+    fi
+    unset access_token
+
+    if ! email="$(jq -er '
+    if (.email | type) == "string" and .email != "" and .verified_email == true
+    then .email
+    else error("missing or unverified email")
+end
+' <<<"${userinfo}" 2>/dev/null)"; then
+        die 'Google UserInfo did not return a verified email address.'
+    fi
+    unset userinfo
+
+    # Email is an identity attribute from Google, but still treat it as a path component.
+    if [[ "${email}" == */* || "${email}" == *[[:cntrl:]] || "${email}" == '.' || "${email}" == '..' ]]; then
+        die 'Google returned an unsafe email value for a file name.'
+    fi
+
+    credential_dir="${HOME}/local/opt/creds/google"
+    destination="${credential_dir}/${email}"
+    mkdir -p "${credential_dir}" || die 'could not create the credential directory.'
+    chmod 700 "${credential_dir}" || die 'could not secure the credential directory.'
+
+    __staging_file="$(mktemp "${credential_dir}/.gcloud-adc-login.XXXXXX")" || die 'could not create a staging file.'
+
+    if ! install -m 600 "${adc_file}" "${__staging_file}"; then
+        die 'could not stage the ADC credential securely.'
+    fi
+    if ! mv -f "${__staging_file}" "${destination}"; then
+        die 'could not replace the saved credential.'
+    fi
+    __staging_file=''
+
+    printf 'Saved ADC for %s to %s\n' "${email}" "${destination}"
+    printf 'Use it with: export GOOGLE_APPLICATION_CREDENTIALS="%s"\n' "${destination}"
+}
+
+main "$@"
