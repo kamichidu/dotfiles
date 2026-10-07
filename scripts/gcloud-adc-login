@@ -50,8 +50,14 @@ main() {
         die 'gcloud did not create application_default_credentials.json.'
     fi
 
-    if ! access_token="$(gcloud auth application-default print-access-token 2>/dev/null)" || [[ -z "${access_token}" ]]; then
-        die 'could not obtain an access token from the generated ADC.'
+    if ! access_token="$(
+        GOOGLE_APPLICATION_CREDENTIALS="${adc_file}" \
+            gcloud auth application-default print-access-token
+    )"; then
+        die 'could not obtain an access token from the generated ADC; see the gcloud error above.'
+    fi
+    if [[ -z "${access_token}" ]]; then
+        die 'gcloud returned an empty access token for the generated ADC.'
     fi
 
     if ! userinfo="$(curl --fail --silent --show-error \
