@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#
+# utility scripts for kubectl
+#
+
+__::kubectl-select-context::usage() {
+    local name="$(awk -F '::' '{print $2}' <<<"${FUNCNAME}")"
+    cat <<EOF
+Usage:
+  ${name}
+EOF
+}
+
+kubectl-select-context() {
+    local OPT OPTARG OPTIND
+    while getopts h OPT; do
+        case "${OPT}" in
+            h)
+                "__::${FUNCNAME}::usage"
+                return 0
+                ;;
+            *)
+                "__::${FUNCNAME}::usage" 1>&2
+                return 1
+                ;;
+        esac
+    done
+
+    local value="$(kubectl config get-contexts --no-headers --output name | peco)"
+    if [[ -z "${value}" ]]; then
+        return 0
+    fi
+    kubectl config use "${value}"
+}

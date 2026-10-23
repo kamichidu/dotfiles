@@ -1,0 +1,83 @@
+#!/bin/bash
+
+#
+# utility scripts for google cloud
+#
+
+__dotfiles__config_dir="${HOME}/.config/dotfiles"
+
+__dotfiles__gcloud_auth_login_scopes=(\
+    'openid' \
+    'https://www.googleapis.com/auth/userinfo.email' \
+    'https://www.googleapis.com/auth/cloud-platform' \
+    'https://www.googleapis.com/auth/sqlservice.login' \
+)
+
+__::logi() {
+    echo "> I | ${@}" 1>&2
+}
+
+__::preserve-credentials-json::usage() {
+    cat <<EOF
+Usage:
+  preserve-credentials-json [{email}]
+
+Arguments:
+  email  What account will you authenticate (Default from gcloud config get core/account).
+EOF
+}
+
+preserve-credentials-json() {
+    local OPT OPTARG OPTIND
+    while getopts h OPT; do
+        case "${OPT}" in
+            h)
+                "__::${FUNCNAME}::usage"
+                return 0
+                ;;
+            *)
+                "__::${FUNCNAME}::usage" 1>&2
+                return 1
+                ;;
+        esac
+    done
+    shift "$((OPTIND - 1))"
+
+    local email="${1:-}"
+    if [[ -z "${email}" ]]; then
+        email="$(gcloud config get core/account)"
+    fi
+    if [[ -z "${email}" ]]; then
+        "__usage::${FUNCNAME}"
+        return 1
+    fi
+
+    local srcfile="${HOME}/.config/gcloud/application_default_credentials.json"
+    local dstfile="${HOME}/.local/opt/google-application-defaults/${email}"
+
+    local config_file="${__dotfiles__config_dir}/${email}/gcloud-scopes"
+    __::logi "finding additional scopes from ${config_file}"
+    local scopes=("${__dotfiles__gcloud_auth_login_scopes[@]}")
+    if [[ -r "${config_file}" ]]; then
+        local scope
+        while read scope; do
+            if [[ "${scope}" = '#'* ]]; then
+                continue
+            fi
+            scopes+=("${scope}")
+        done <"${config_file}"
+    fi
+
+    if [[ -r "${srcfile}" ]]; then
+        # restore previous
+        mv -v "${srcfile}" "${srcfile}.bk"
+        __::once() {
+            unset -f '__::once'
+            mv -v "${srcfile}.bk" "${srcfile}"
+        }
+        trap '__::once; trap - RETURN' RETURN
+    fi
+
+    gcloud auth application-default login --disable-quota-project --scopes "$(IFS=','; echo "${scopes[*]}")"
+    mv -v "${srcfile}" "${dstfile}"
+}

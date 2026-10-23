@@ -1,0 +1,6 @@
+#!/bin/bash
+
+__base_dir="$(dirname "${BASH_SOURCE:-${0}}")"
+
+source "${__base_dir}/google-cloud"
+source "${__base_dir}/kubectl"
